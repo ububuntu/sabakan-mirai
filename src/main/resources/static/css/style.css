@@ -4,20 +4,26 @@
     --text: #1f2a37;
     --muted: #6b7280;
     --card: #ffffff;
+
+    /* 基準フォントサイズ */
+    font-size: 16px;
 }
 
-body {
+html, body {
     margin: 0;
+    padding: 0;
+    width: 100%;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans JP", Meiryo, sans-serif;
     background: var(--bg);
     color: var(--text);
+    font-size: 1rem; /* 16px相当 */
 }
 
 /* ヘッダー */
 header {
     background: var(--card);
-    border-bottom: 1px solid #e5e7eb;
-    padding: 12px;
+    border-bottom: 0.1rem solid #e5e7eb;
+    padding: 3% 4%;
     text-align: center;
     font-weight: 600;
     position: sticky;
@@ -27,69 +33,72 @@ header {
 
 /* メイン */
 main {
-    padding: 12px;
+    padding: 4%;
+    max-width: 100%;
 }
 
 /* 目標セクション */
 .goal {
     background: var(--card);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    border-radius: 1rem;
+    padding: 5%;
+    margin-bottom: 5%;
+    box-shadow: 0 0.3rem 0.6rem rgba(0,0,0,.05);
 }
 
 .goal q {
-    font-size: 15px;
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 3%;
     display: block;
 }
 
 .goal .company {
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 2%;
+    font-size: 1rem;
 }
 
 .goal .countdown {
     color: var(--muted);
-    font-size: 14px;
+    font-size: 0.9rem;
 }
 
 /* メニュー */
 .menu q {
-    font-size: 15px;
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 3%;
     display: block;
 }
 
 .menu {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 4%;
 }
 
 .menu-item {
     background: var(--card);
-    border-radius: 12px;
-    padding: 14px;
+    border-radius: 1rem;
+    padding: 4%;
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    gap: 4%;
+    box-shadow: 0 0.3rem 0.6rem rgba(0,0,0,.05);
 }
 
 .menu-item .icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
+    width: 12%;
+    height: auto;
+    aspect-ratio: 1 / 1; /* 正方形を維持 */
+    border-radius: 0.5rem;
     background: #eef2ff;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--primary);
-    font-size: 12px;
+    font-size: 0.8rem;
     font-weight: 700;
 }
 
@@ -99,33 +108,35 @@ main {
 
 .menu-item .title {
     font-weight: 600;
-    margin: 0 0 4px;
+    margin: 0 0 2%;
+    font-size: 1rem;
 }
 
 .menu-item .desc {
     margin: 0;
     color: var(--muted);
-    font-size: 13px;
+    font-size: 0.9rem;
 }
 
 .menu-item .link {
     background: var(--primary);
     color: #fff;
     border: none;
-    border-radius: 8px;
-    padding: 10px 16px;
+    border-radius: 0.5rem;
+    padding: 2% 4%;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 0.9rem;
     cursor: pointer;
+    min-width: 25%;
 }
 
 /* フッター */
 footer {
     background: var(--card);
-    border-top: 1px solid #e5e7eb;
-    padding: 8px;
+    border-top: 0.1rem solid #e5e7eb;
+    padding: 2%;
     text-align: center;
-    font-size: 12px;
+    font-size: 0.8rem;
     color: var(--muted);
     position: fixed;
     bottom: 0;
@@ -135,13 +146,13 @@ footer {
 
 /* スペーサー（フッター分の余白） */
 .spacer {
-    height: 60px;
+    height: 12vh;
 }
 
-/* レスポンシブ調整（タブレット以上） */
+/* タブレット以上のレスポンシブ */
 @media (min-width: 600px) {
     main {
-        max-width: 600px;
+        max-width: 90%;
         margin: 0 auto;
     }
 }
