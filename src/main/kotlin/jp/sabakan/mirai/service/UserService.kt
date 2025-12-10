@@ -3,6 +3,8 @@ package jp.sabakan.mirai.service
 import jp.sabakan.mirai.data.UserData
 import jp.sabakan.mirai.entity.UserEntity
 import jp.sabakan.mirai.repository.UserRepository
+import jp.sabakan.mirai.request.UserRequest
+import jp.sabakan.mirai.response.UserResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -45,6 +47,76 @@ class UserService {
         return list.singleOrNull()
             //?: throw UserNameNotFoundException("ユーザ名またはパスワードが違います")
             ?: throw Exception("ユーザ情報が見つかりません")
+    }
+
+    /**
+     * ユーザ登録処理
+     *
+     * @param request ユーザ登録リクエスト
+     * @return ユーザ登録レスポンス
+     */
+    fun insertUser(request: UserRequest): UserResponse {
+        // リクエストからデータ変換
+        val data = UserData()
+        data.userId = request.userId
+        data.userName = request.userName
+        data.userAddress = request.userAddress
+        data.password = request.password
+        data.userRole = request.userRole
+        data.isValid = request.isValid
+
+        // リポジトリへ登録処理依頼
+        userRepository.insertUser(data)
+
+        // レスポンス生成
+        val response = UserResponse()
+        response.message = "ユーザ登録が完了しました"
+        return response
+    }
+
+    /**
+     * ユーザ更新処理
+     *
+     * @param request ユーザ更新リクエスト
+     * @return ユーザ更新レスポンス
+     */
+    var updateUser = fun(request: UserRequest): UserResponse {
+        // リクエストからデータ変換
+        val data = UserData()
+        data.userId = request.userId
+        data.userName = request.userName
+        data.userAddress = request.userAddress
+        data.password = request.password
+        data.userRole = request.userRole
+        data.isValid = request.isValid
+
+        // リポジトリへ更新処理依頼
+        userRepository.updateUser(data)
+
+        // レスポンス生成
+        val response = UserResponse()
+        response.message = "ユーザ情報の更新が完了しました"
+        return response
+    }
+
+    /**
+     * ユーザ削除処理
+     *
+     * @param request ユーザ削除リクエスト
+     * @return ユーザ削除レスポンス
+     */
+    var deleteUser = fun(request: UserRequest): UserResponse {
+        // リクエストからデータ変換
+        val data = UserData()
+        data.userId = request.userId
+
+        // リポジトリへ削除処理依頼
+        userRepository.deleteUser(data)
+
+        // レスポンス生成
+        val response = UserResponse()
+        response.message = "ユーザ削除が完了しました"
+        return response
     }
 
     /**
