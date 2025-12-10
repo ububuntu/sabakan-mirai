@@ -7,6 +7,7 @@ CREATE TABLE user_m(
     user_role       VARCHAR(5) NOT NULL ,
     user_valid      BOOLEAN NOT NULL ,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
     lasted_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

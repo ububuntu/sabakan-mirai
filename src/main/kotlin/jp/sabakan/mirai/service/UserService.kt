@@ -30,6 +30,24 @@ class UserService {
     }
 
     /**
+     * 指定ユーザの情報を取得する
+     *
+     * @param data ユーザデータ
+     * @return ユーザエンティティ
+     * @throws UserNameNotFoundException ユーザ情報が見つからない場合
+     */
+    fun getUserDetail(data: UserData): UserEntity {
+        // リポジトリへ問い合わせ
+        val table: List<Map<String, Any?>> = userRepository.getUserDetail(data)
+        val list: List<UserEntity> = tableToListEntity(table)
+
+        // 結果を返す
+        return list.singleOrNull()
+            //?: throw UserNameNotFoundException("ユーザ名またはパスワードが違います")
+            ?: throw Exception("ユーザ情報が見つかりません")
+    }
+
+    /**
      * テーブルデータをエンティティリストに変換する
      *
      * @param table テーブルデータ
