@@ -75,7 +75,7 @@ main {
 .menu {
     display: flex;
     flex-direction: column;
-    gap: 4%;
+    gap: 1.2rem; /* テストの際に.menu縦の隙間が崩れるようなら変更をかける必要がある */
 }
 
 .menu-item {
