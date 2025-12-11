@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository
 class UserRepository {
     @Autowired
     lateinit var njdbc: NamedParameterJdbcTemplate
+
     @Autowired
     lateinit var jdbc: JdbcTemplate
 
@@ -52,6 +53,9 @@ class UserRepository {
         SET lasted_at = CURRENT_TIMESTAMP
         WHERE user_id = :userId
     """.trimIndent()
+
+    // ユーザ一覧取得SQLクエリ
+    val getUserList = "SELECT * FROM user_m"
 
     /**
      * ユーザログイン処理
@@ -127,8 +131,6 @@ class UserRepository {
         return jdbc.update(updateUser, paramMap)
     }
 
-
-
     /**
      * 指定ユーザを削除する
      *
@@ -143,5 +145,15 @@ class UserRepository {
 
         // クエリの実行
         return jdbc.update(deleteUser, paramMap)
+    }
+
+    /**
+     * ユーザ一覧を取得する
+     *
+     * @return ユーザ情報リスト
+     */
+    fun getUserList(): List<Map<String, Any?>> {
+        // クエリの実行
+        return njdbc.queryForList(getUserList, emptyMap<String, Any?>())
     }
 }

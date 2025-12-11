@@ -56,17 +56,21 @@ class UserService {
      * @return ユーザ登録レスポンス
      */
     fun insertUser(request: UserRequest): UserResponse {
-        // リクエストからデータ変換
-        val data = UserData()
-        data.userId = request.userId
-        data.userName = request.userName
-        data.userAddress = request.userAddress
-        data.password = request.password
-        data.userRole = request.userRole
-        data.isValid = request.isValid
+        try {
+            // リクエストからデータ変換
+            val data = UserData()
+            data.userId = request.userId
+            data.userName = request.userName
+            data.userAddress = request.userAddress
+            data.password = request.password
+            data.userRole = request.userRole
+            data.isValid = request.isValid
 
-        // リポジトリへ登録処理依頼
-        userRepository.insertUser(data)
+            // リポジトリへ登録処理依頼
+            userRepository.insertUser(data)
+        } catch (e: Exception) {
+            throw Exception("ユーザ登録に失敗しました")
+        }
 
         // レスポンス生成
         val response = UserResponse()
@@ -81,17 +85,21 @@ class UserService {
      * @return ユーザ更新レスポンス
      */
     var updateUser = fun(request: UserRequest): UserResponse {
-        // リクエストからデータ変換
-        val data = UserData()
-        data.userId = request.userId
-        data.userName = request.userName
-        data.userAddress = request.userAddress
-        data.password = request.password
-        data.userRole = request.userRole
-        data.isValid = request.isValid
+        try{
+            // リクエストからデータ変換
+            val data = UserData()
+            data.userId = request.userId
+            data.userName = request.userName
+            data.userAddress = request.userAddress
+            data.password = request.password
+            data.userRole = request.userRole
+            data.isValid = request.isValid
 
-        // リポジトリへ更新処理依頼
-        userRepository.updateUser(data)
+            // リポジトリへ更新処理依頼
+            userRepository.updateUser(data)
+        } catch (e: Exception) {
+            throw Exception("ユーザ登録に失敗しました")
+        }
 
         // レスポンス生成
         val response = UserResponse()
@@ -106,16 +114,32 @@ class UserService {
      * @return ユーザ削除レスポンス
      */
     var deleteUser = fun(request: UserRequest): UserResponse {
-        // リクエストからデータ変換
-        val data = UserData()
-        data.userId = request.userId
+        try {
+            // リクエストからデータ変換
+            val data = UserData()
+            data.userId = request.userId
 
-        // リポジトリへ削除処理依頼
-        userRepository.deleteUser(data)
+            // リポジトリへ削除処理依頼
+            userRepository.deleteUser(data)
+        } catch (e: Exception) {
+            throw Exception("ユーザ登録に失敗しました")
+        }
 
         // レスポンス生成
         val response = UserResponse()
         response.message = "ユーザ削除が完了しました"
+        return response
+    }
+
+    val getUserList = fun(request: UserRequest): UserResponse {
+        // リポジトリへ問い合わせ
+        val table: List<Map<String, Any?>> = userRepository.getUserList()
+        val list: List<UserEntity> = tableToListEntity(table)
+
+        // レスポンス生成
+        val response = UserResponse()
+        response.users = list
+        response.message = "ユーザ一覧の取得が完了しました"
         return response
     }
 

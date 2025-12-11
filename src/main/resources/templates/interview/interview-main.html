@@ -1,10 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>面接トップ画面</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
-
+    <header>
+        <!-- ヘッダー呼び出し -->
+        <div th:replace="common/header :: siteHeader"></div>
+    </header>
+    <main>
+        <section class="card red-card">
+            <div class="card-content">
+                <img src="" class="card-icon" alt="camera">
+                <div class="card-text">
+                    <h3>Web面接練習</h3>
+                    <p>カメラを使った本格形式の面接練習</p>
+                </div>
+            </div>
+            <button class="primary-button red-button">面接開始</button>
+        </section>
+        <section class="card green-card">
+            <div class="card-content">
+                <img src="" class="card-icon" alt="document">
+                <div class="card-text">
+                    <h3>面接ログ</h3>
+                    <p>過去の面接記録と評価を確認</p>
+                </div>
+            </div>
+            <button class="primary-button green-button">評価確認</button>
+        </section>
+        <section class="card blue-card tips-card">
+            <div class="card-content">
+                <img src="" class="card-icon" alt="info">
+                <h3>面接のコツ</h3>
+            </div>
+            <p class="description">カメラの目線の高さを調整し、明るい場所で練習しましょう。結論から話すPREP法を意識すると、より説得力のある回答になります。</p>
+        </section>
+    </main>
+    <footer>
+        <!-- フッター呼び出し -->
+        <div th:replace="common/footer :: siteFooter"></div>
+        Mirai by ぎじゅつりょくがすごい人たち
+    </footer>
 </body>
 </html>
