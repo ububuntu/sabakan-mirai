@@ -59,6 +59,15 @@ main {
     align-items: flex-start;
     gap: 4%;
     box-shadow: 0 0.3rem 0.6rem rgba(0,0,0,.05);
+    text-decoration: none;
+}
+
+.menu-item:visited,
+.menu-item:hover,
+.menu-item:active,
+.menu-item:focus {
+    color: inherit;
+    text-decoration: none;
 }
 
 .menu-item .img{
@@ -92,13 +101,19 @@ main {
 .menu-item .title {
     font-weight: 600;
     margin: 0 0 2%;
-    font-size: 1rem;
+    font-size: 3rem;
 }
 
 .menu-item .desc {
     margin: 0;
     color: var(--muted);
-    font-size: 0.9rem;
+    font-size: 2rem;
+}
+
+.menu-item .contents {
+    margin: 0;
+    color: var(--muted);
+    font-size: 2rem;
 }
 
 .menu-item .link {
