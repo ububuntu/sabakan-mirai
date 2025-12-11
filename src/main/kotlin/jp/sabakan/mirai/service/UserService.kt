@@ -1,5 +1,6 @@
 package jp.sabakan.mirai.service
 
+import jp.sabakan.mirai.MessageConfig
 import jp.sabakan.mirai.data.UserData
 import jp.sabakan.mirai.entity.UserEntity
 import jp.sabakan.mirai.repository.UserRepository
@@ -16,39 +17,27 @@ class UserService {
     lateinit var userRepository: UserRepository
 
     /**
-     * ユーザログイン処理
-     *
-     * @param data ユーザデータ
-     * @return ユーザエンティティ
-     * @throws UserNameNotFoundException ユーザ名またはパスワードが違う場合
-     */
-    fun getUserLogin(data: UserData):  UserEntity {
-        // リポジトリへ問い合わせ
-        val table: List<Map<String, Any?>> = userRepository.getUserLogin(data)
-        val list: List<UserEntity> = tableToListEntity(table)
-
-        // 結果を返す
-        return list.singleOrNull()
-            //?: throw UserNameNotFoundException("ユーザ名またはパスワードが違います")
-            ?: throw Exception("ユーザ名またはパスワードが違います")
-    }
-
-    /**
      * 指定ユーザの情報を取得する
      *
      * @param data ユーザデータ
-     * @return ユーザエンティティ
-     * @throws UserNameNotFoundException ユーザ情報が見つからない場合
+     * @return ユーザレスポンス
+     * @throws UserNameNotFoundException ユーザが見つからない場合
      */
-    fun getUserDetail(data: UserData): UserEntity {
+    fun getUserDetail(data: UserData): UserResponse {
         // リポジトリへ問い合わせ
         val table: List<Map<String, Any?>> = userRepository.getUserDetail(data)
         val list: List<UserEntity> = tableToListEntity(table)
 
         // 結果を返す
-        return list.singleOrNull()
-            //?: throw UserNameNotFoundException("ユーザ名またはパスワードが違います")
-            ?: throw Exception("ユーザ情報が見つかりません")
+        val user = list.singleOrNull()
+            //?: throw UserNameNotFoundException(MessageConfig.USER_NOT_FOUND)
+            ?: throw Exception(MessageConfig.USER_NOT_FOUND)
+
+        return UserResponse().apply {
+            users = listOf(user)
+            message = "ユーザ情報の取得が完了しました"
+            userRole = user.userRole
+        }
     }
 
     /**
@@ -71,12 +60,12 @@ class UserService {
             // リポジトリへ登録処理依頼
             userRepository.insertUser(data)
         } catch (e: Exception) {
-            throw Exception("ユーザ登録に失敗しました")
+            throw Exception(MessageConfig.USER_REGISTER_FAILED)
         }
 
         // レスポンス生成
         val response = UserResponse()
-        response.message = "ユーザ登録が完了しました"
+        response.message = MessageConfig.USER_REGISTERED
         return response
     }
 
@@ -100,12 +89,12 @@ class UserService {
             // リポジトリへ更新処理依頼
             userRepository.updateUser(data)
         } catch (e: Exception) {
-            throw Exception("ユーザ登録に失敗しました")
+            throw Exception(MessageConfig.USER_UPDATE_FAILED)
         }
 
         // レスポンス生成
         val response = UserResponse()
-        response.message = "ユーザ情報の更新が完了しました"
+        response.message = MessageConfig.USER_UPDATE_SUCCESS
         return response
     }
 
@@ -124,12 +113,12 @@ class UserService {
             // リポジトリへ削除処理依頼
             userRepository.deleteUser(data)
         } catch (e: Exception) {
-            throw Exception("ユーザ登録に失敗しました")
+            throw Exception(MessageConfig.USER_DELETE_FAILED)
         }
 
         // レスポンス生成
         val response = UserResponse()
-        response.message = "ユーザ削除が完了しました"
+        response.message = MessageConfig.USER_DELETE_SUCCESS
         return response
     }
 
