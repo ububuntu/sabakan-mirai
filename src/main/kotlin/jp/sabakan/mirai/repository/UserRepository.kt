@@ -1,6 +1,7 @@
 package jp.sabakan.mirai.repository
 
 import jp.sabakan.mirai.data.UserData
+import jp.sabakan.mirai.request.UserRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -54,8 +55,22 @@ class UserRepository {
         WHERE user_id = :userId
     """.trimIndent()
 
+    // ユーザ検索SQLクエリ
+    val searchUser = """
+        SELECT * FROM user_m
+        WHERE user_name LIKE :keyword
+        OR user_address LIKE :keyword
+    """.trimIndent()
+
+    // 最大ユーザID取得SQLクエリ
+    val getMaxUserId = "SELECT MAX(user_id) AS max_user_id FROM user_m"
+
     // ユーザ一覧取得SQLクエリ
-    val getUserList = "SELECT * FROM user_m"
+    val getUserList = """
+        SELECT MAX(user_id) AS max_user_id
+        FROM user_m
+        WHERE user_id LIKE :prefix
+    """.trimIndent()
 
     /**
      * ユーザログイン処理
@@ -155,5 +170,37 @@ class UserRepository {
     fun getUserList(): List<Map<String, Any?>> {
         // クエリの実行
         return njdbc.queryForList(getUserList, emptyMap<String, Any?>())
+    }
+
+    /**
+     * ユーザを検索する
+     *
+     * @param request ユーザ検索リクエスト
+     * @return ユーザ情報リスト
+     */
+    fun searchUser(request: UserRequest): List<Map<String, Any?>> {
+        val keyword = request.keyword ?: ""
+
+        // パラメータマップの作成
+        val paramMap = mapOf<String, Any?>(
+            "keyword" to "%$keyword%"
+        )
+
+        // クエリの実行
+        return njdbc.queryForList(searchUser, paramMap)
+    }
+
+    /**
+     * ユーザIDの最大値を取得する
+     *
+     * @return 最大ユーザID
+     */
+    fun getMaxUserId(Ym: String): String? {
+        // キーワード抽出
+        val prefix = mapOf("prefix" to "U$Ym")
+
+        // クエリの実行
+        val result = njdbc.queryForList(getMaxUserId, prefix)
+        return result.firstOrNull()?.get("max_user_id") as String?
     }
 }

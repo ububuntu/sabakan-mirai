@@ -28,4 +28,7 @@ class UserRequest {
 
     // 最終ログイン日時
     var lastedAt: Date? = null
+
+    // 検索用キーワード
+    var keyword: String? = null
 }
