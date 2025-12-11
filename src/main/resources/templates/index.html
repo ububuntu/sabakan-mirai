@@ -14,7 +14,7 @@
 
 <body>
     <main>
-        <section class="goal" aria-label="目標セクション">
+        <section class="menu" aria-label="目標セクション">
             <q>あなたの目標</q>
             <div class="company" th:text="${goal_target}">株式会社〇〇〇〇〇 最終面接</div>
             <div class="countdown" th:text="'目標まであと ' + ${goal_remaining} + ' 日'">目標まであと〇日</div>
@@ -33,7 +33,7 @@
             </article>
 
             <article class="menu-item">
-                <img src="/img/past.svg" alt="過去問稽古場">
+                <img src="/img/questions.svg" alt="過去問稽古場">
                 <div class="texts">
                     <p class="title">過去問稽古場</p>
                     <p class="desc">SPI・CAB/GABの勉強をしよう！</p>

@@ -3,8 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-</head>
-<body>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 
+    <!-- ヘッダー呼び出し -->
+    <div th:replace="common/header :: siteHeader"></div>
+</head>
+
+<body>
+    <main>
+        <section class="menu" aria-label="メニュー">
+            <q>今日の作業を始めよう</q>
+
+            <article class="menu-item">
+                <img src="/img...." alt="追加">
+                <div class="texts">
+                    <p class="title">新規作成</p>
+                    <p class="desc">テンプレートから作成</p>
+                </div>
+                <button class="link">ああ</button>
+            </article>
+
+            <article class="menu-item">
+                <img src="/img...." alt="作成済みES">
+                <div class="texts">
+                    <p class="title">作成済みES</p>
+                    <p class="desc">編集管理</p>
+                </div>
+                <button class="link">ああ</button>
+            </article>
+        </section>
+
+        <section class="menu" aria-label="最近の作業">
+            <q>最近の作業</q>
+            <article class="menu-item">
+                <h2>適当に</h2>
+            </article>
+        </section>
+    </main>
 </body>
 </html>
