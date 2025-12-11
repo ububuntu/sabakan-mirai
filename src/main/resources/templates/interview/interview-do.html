@@ -1,10 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web面接練習</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
+<div class="container">
+    <!-- ヘッダー -->
+    <header id="header-placeholder"></header>
 
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <!-- カメラプレビュー -->
+        <div class="camera-preview">
+            <video id="camera-video" autoplay playsinline></video>
+            <div class="camera-placeholder" id="camera-placeholder">
+                <div class="camera-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                        <rect x="2" y="6" width="15" height="12" rx="2" stroke="white" stroke-width="1.5"/>
+                        <path d="M17 10L22 7V17L17 14V10Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- プログレスバー -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <span class="progress-text">XX%</span>
+        </div>
+
+        <!-- 質問セクション -->
+        <div class="question-section">
+            <p class="question-label">質問</p>
+            <p class="question-text">自己PRをお願いします。</p>
+        </div>
+
+        <!-- 停止ボタン -->
+        <button class="stop-button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2C10.3431 2 9 3.34315 9 5V12C9 13.6569 10.3431 15 12 15C13.6569 15 15 13.6569 15 12V5C15 3.34315 13.6569 2 12 2Z" fill="white"/>
+                <path d="M6 10V12C6 15.3137 8.68629 18 12 18C15.3137 18 18 15.3137 18 12V10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 18V22M12 22H9M12 22H15" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            面接停止
+        </button>
+    </main>
+
+    <!-- フッター -->
+    <footer id="footer-placeholder"></footer>
+</div>
+    <!-- カメラ機能をjavascriptで実装予定 -->
+<!--<script src="script.js"></script>-->
 </body>
 </html>
