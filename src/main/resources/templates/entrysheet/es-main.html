@@ -4,41 +4,49 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
 
+<header>
     <!-- ヘッダー呼び出し -->
     <div th:replace="common/header :: siteHeader"></div>
-</head>
+</header>
 
 <body>
     <main>
         <section class="menu" aria-label="メニュー">
             <q>今日の作業を始めよう</q>
 
-            <article class="menu-item">
-                <img src="/img...." alt="追加">
+            <a class="menu-item">
+                <img class="img" src="/img/es.svg" alt="追加">
                 <div class="texts">
                     <p class="title">新規作成</p>
                     <p class="desc">テンプレートから作成</p>
                 </div>
                 <button class="link">ああ</button>
-            </article>
+            </a>
 
-            <article class="menu-item">
-                <img src="/img...." alt="作成済みES">
+            <a class="menu-item">
+                <img class="img" src="/img/es.svg" alt="作成済みES">
                 <div class="texts">
                     <p class="title">作成済みES</p>
                     <p class="desc">編集管理</p>
                 </div>
                 <button class="link">ああ</button>
-            </article>
+            </a>
         </section>
 
         <section class="menu" aria-label="最近の作業">
             <q>最近の作業</q>
             <article class="menu-item">
-                <h2>適当に</h2>
+                <h2>数件表示するから書く</h2>
             </article>
         </section>
     </main>
 </body>
+
+<footer>
+    <!-- フッター呼び出し -->
+    <div th:replace="common/footer :: siteFooter"></div>
+    Mirai by ぎじゅつりょくがすごい人たち
+</footer>
 </html>

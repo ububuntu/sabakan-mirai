@@ -37,33 +37,6 @@ main {
     max-width: 100%;
 }
 
-/* 目標セクション */
-.goal {
-    background: var(--card);
-    border-radius: 1rem;
-    padding: 5%;
-    margin-bottom: 5%;
-    box-shadow: 0 0.3rem 0.6rem rgba(0,0,0,.05);
-}
-
-.goal q {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 3%;
-    display: block;
-}
-
-.goal .company {
-    font-weight: 600;
-    margin-bottom: 2%;
-    font-size: 1rem;
-}
-
-.goal .countdown {
-    color: var(--muted);
-    font-size: 0.9rem;
-}
-
 /* メニュー */
 .menu q {
     font-size: 1rem;
@@ -83,27 +56,37 @@ main {
     border-radius: 1rem;
     padding: 4%;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 4%;
     box-shadow: 0 0.3rem 0.6rem rgba(0,0,0,.05);
 }
 
-.menu-item .icon {
-    width: 12%;
+.menu-item .img{
+    width: 8%;
     height: auto;
-    aspect-ratio: 1 / 1; /* 正方形を維持 */
+    aspect-ratio: 1/1;
     border-radius: 0.5rem;
-    background: #eef2ff;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary);
-    font-size: 0.8rem;
-    font-weight: 700;
 }
+
+/*TODO ユーザーログイン等のcssが適応されているためそこらへんを訂正する必要がある*/
+/*.menu-item .icon {*/
+/*    width: 12%;*/
+/*    height: auto;*/
+/*    aspect-ratio: 1 / 1; !* 正方形を維持 *!*/
+/*    border-radius: 0.5rem;*/
+/*    background: #eef2ff;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    color: var(--primary);*/
+/*    font-size: 0.8rem;*/
+/*    font-weight: 700;*/
+/*}*/
 
 .menu-item .texts {
     flex: 1;
+    flex-direction: column;
 }
 
 .menu-item .title {
