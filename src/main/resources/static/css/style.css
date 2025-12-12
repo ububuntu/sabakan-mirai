@@ -18,9 +18,9 @@
     font-size: 16px;
     --font-xs: 0.75rem;     /* 12px - 補助テキスト */
     --font-sm: 0.875rem;    /* 14px - 説明文・フッター */
-    --font-md: 1rem;        /* 16px - 標準 */
-    --font-lg: 1.25rem;     /* 20px - desc */
-    --font-xl: 1.5rem;      /* 24px - タイトル */
+    --font-md: 1.75rem;        /* 16px - 標準 */
+    --font-lg: 2.5rem;     /* 20px - desc */
+    --font-xl: 3rem;      /* 24px - タイトル */
 
     /* ====== 角丸 ====== */
     --radius-sm: 0.5rem;    /* アイコン・ボタン */
@@ -29,7 +29,7 @@
 
     /* ====== アイコンサイズ ====== */
     --icon-size: 8%;            /* メニューアイコン */
-    --footer-icon-size: 1.5rem; /* フッターアイコン */
+    --footer-icon-size: 4rem; /* フッターアイコン */
 
     /* ====== シャドウ ====== */
     --shadow-card: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.05);
@@ -245,7 +245,7 @@ footer nav.bottom {
 
 .camera-text {
     color: white;
-    font-size: var(--font-sm);
+    font-size: var(--font-md);
     opacity: 0.9;
     margin: 0;
 }
@@ -253,7 +253,7 @@ footer nav.bottom {
 .progress-container {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: var(--gap-item);
     padding: 0;
 }
 
