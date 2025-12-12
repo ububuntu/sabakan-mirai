@@ -2,9 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>面接ログ</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
-<body>
 
+<header>
+    <!-- ヘッダー呼び出し -->
+    <div th:replace="common/header :: siteHeader"></div>
+</header>
+
+<body>
+    <main>
+        <section class="menu" aria-label="面接ロググラフ">
+            <q>スコア推移</q>
+            <a href="/" class="menu-item">
+                <div class="texts">
+                    <p class="desc">グラフが表示される予定のセクション。</p>
+                </div>
+            </a>
+        </section>
+
+        <section class="menu" aria-label="面接ログ">
+            <q>練習履歴</q>
+            <a href="/" class="menu-item">
+                <div class="icon-box">
+                    nn点
+                </div>
+                <div class="texts">
+                    <p class="title">2025年1月1日</p>
+                </div>
+            </a>
+
+            <a href="/" class="menu-item">
+                <div class="icon-box">
+                    nn点
+                </div>
+                <div class="texts">
+                    <p class="title">2025年1月2日</p>
+                </div>
+            </a>
+
+            <a href="/" class="menu-item">
+                <div class="icon-box">
+                    nn点
+                </div>
+                <div class="texts">
+                    <p class="title">2025年1月3日</p>
+                </div>
+            </a>
+        </section>
+    </main>
 </body>
+
+<footer>
+    <!-- フッター呼び出し -->
+    <div th:replace="common/footer :: siteFooter"></div>
+    Mirai by ぎじゅつりょくがすごい人たち
+</footer>
+
 </html>
