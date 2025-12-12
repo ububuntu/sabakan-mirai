@@ -1,6 +1,6 @@
 /* ユーザマスタ */
 CREATE TABLE user_m(
-    user_id         CHAR(20) PRIMARY KEY NOT NULL ,
+    user_id         CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
     user_name       VARCHAR(50) NOT NULL ,
     user_address    VARCHAR(50) NOT NULL ,
     password        VARCHAR(255) NOT NULL ,
@@ -13,7 +13,7 @@ CREATE TABLE user_m(
 
 /* 面接テーブル */
 CREATE TABLE interview_t(
-    interview_id      CHAR(20) PRIMARY KEY NOT NULL ,
+    interview_id      CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
     user_id           CHAR(20) NOT NULL ,
     interview_eyes    INT,
     interview_posture INT,
@@ -25,7 +25,7 @@ CREATE TABLE interview_t(
 
 /* ESテーブル */
 CREATE TABLE es_t(
-    es_id                   CHAR(20) PRIMARY KEY NOT NULL ,
+    es_id                   CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
     user_id                 CHAR(20) NOT NULL ,
     es_content_reason       VARCHAR(500),
     es_content_selfpr       VARCHAR(500),
@@ -38,7 +38,7 @@ CREATE TABLE es_t(
 
 /* ESテンプレテーブル */
 CREATE TABLE es_template_t(
-    es_template_id                  CHAR(20) PRIMARY KEY NOT NULL ,
+    es_template_id                  CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
     es_template_content_reason      VARCHAR(500),
     es_template_content_selfpr      VARCHAR(500),
     es_template_content_activities  VARCHAR(500),
@@ -48,7 +48,7 @@ CREATE TABLE es_template_t(
 
 /* SPIテーブル */
 CREATE TABLE spi_t(
-    spi_id              CHAR(20) PRIMARY KEY NOT NULL ,
+    spi_id              CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
     spi_content         VARCHAR(255),
     spi_answer1         VARCHAR(100),
     spi_answer2         VARCHAR(100),
@@ -60,7 +60,7 @@ CREATE TABLE spi_t(
 
 /* SPI結果テーブル */
 CREATE TABLE spi_result_t(
-    spi_result_id               CHAR(20) PRIMARY KEY NOT NULL ,
+    spi_result_id               CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
     user_id                     CHAR(20) NOT NULL ,
     spi_id                      CHAR(20) NOT NULL ,
     spi_user_answer             INT,
@@ -72,7 +72,7 @@ CREATE TABLE spi_result_t(
 
 /* CAB/GABテーブル */
 CREATE TABLE cabgab_t(
-    cabgab_id               CHAR(20) PRIMARY KEY NOT NULL ,
+    cabgab_id               CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
     cabgab_content          VARCHAR(255),
     cabgab_answer1          VARCHAR(100),
     cabgab_answer2          VARCHAR(100),
@@ -84,7 +84,7 @@ CREATE TABLE cabgab_t(
 
 /* CAB/GAB結果テーブル */
 CREATE TABLE cabgab_result_t(
-    cabgab_result_id            CHAR(20) PRIMARY KEY NOT NULL ,
+    cabgab_result_id            CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
     user_id                     CHAR(20) NOT NULL ,
     cabgab_id                   CHAR(20) NOT NULL ,
     cabgab_user_answer          INT,

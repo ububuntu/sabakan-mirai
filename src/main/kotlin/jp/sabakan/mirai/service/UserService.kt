@@ -7,6 +7,7 @@ import jp.sabakan.mirai.repository.UserRepository
 import jp.sabakan.mirai.request.UserRequest
 import jp.sabakan.mirai.response.UserResponse
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -47,20 +48,36 @@ class UserService {
      * @return ユーザ登録レスポンス
      */
     fun insertUser(request: UserRequest): UserResponse {
-        try {
-            // リクエストからデータ変換
-            val data = UserData()
-            data.userId = toCreateUserId()
-            data.userName = request.userName
-            data.userAddress = request.userAddress
-            data.password = request.password
-            data.userRole = request.userRole
-            data.isValid = request.isValid
+        var lastException: Exception? = null
 
-            // リポジトリへ登録処理依頼
-            userRepository.insertUser(data)
-        } catch (e: Exception) {
-            throw Exception(MessageConfig.USER_REGISTER_FAILED)
+        // ID重複対応のためリトライ処理
+        val maxRetry = 5
+        repeat(maxRetry) { attempt ->
+            try {
+                // リクエストからデータ変換
+                val data = UserData()
+                data.userId = toCreateUserId()
+                data.userName = request.userName
+                data.userAddress = request.userAddress
+                data.password = request.password
+                data.userRole = request.userRole
+                data.isValid = request.isValid
+
+                // リポジトリへ登録処理依頼
+                userRepository.insertUser(data)
+                lastException = null
+
+                // レスポンス生成
+                val response = UserResponse()
+                response.message = MessageConfig.USER_REGISTERED
+                return response // 正常終了
+            } catch (e: DataIntegrityViolationException) {
+                // ID重複の場合はリトライ
+                println("ユーザID重複: リトライ ${attempt + 1}/$maxRetry")
+                lastException = e
+            } catch (e: Exception) {
+                throw Exception(MessageConfig.USER_REGISTER_FAILED)
+            }
         }
 
         // レスポンス生成
@@ -173,7 +190,7 @@ class UserService {
             val maxUserId = userRepository.getMaxUserId(currentYm) // LIKE 'U202512%'
 
             // 連番の決定
-            val nextSerial = if (maxUserId != null && maxUserId.length >= 13) {
+            val nextSerial = if (maxUserId != null && maxUserId.length >= 12) {
                 val maxYm = maxUserId.substring(1, 7)
                 val maxSerial = maxUserId.substring(7).toIntOrNull() ?: 0
                 if (maxYm == currentYm) maxSerial + 1 else 1
@@ -188,7 +205,6 @@ class UserService {
             return "U$currentYm$serialStr"
         }
     }
-
 
     /**
      * テーブルデータをエンティティリストに変換する
@@ -212,5 +228,4 @@ class UserService {
         }
         return list
     }
-
 }
