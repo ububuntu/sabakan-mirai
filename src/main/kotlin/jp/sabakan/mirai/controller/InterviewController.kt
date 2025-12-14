@@ -22,6 +22,11 @@ class InterviewController {
         return "/interview/interview-log"
     }
 
+    @GetMapping("/interview-result")
+    fun getInterview_result(): String {
+        return "/interview/interview-result"
+    }
+
     @PostMapping("/interview-main")
     fun postInterview(): String {
         return "/interview/interview-main"
@@ -35,5 +40,10 @@ class InterviewController {
     @PostMapping("/interview-log")
     fun postInterview_log(): String {
         return "/interview/interview-log"
+    }
+
+    @PostMapping("/interview-result")
+    fun postInterview_result(): String {
+        return "/interview/interview-result"
     }
 }

@@ -4,56 +4,29 @@
     <meta charset="UTF-8">
     <title>Web面接練習 | Mirai</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <script th:src="@{/js/interview.js}"></script>
 </head>
 
-<header>
-    <!-- ヘッダー呼び出し -->
-    <div th:replace="common/header :: siteHeader"></div>
-</header>
+<header th:replace="common/header :: siteHeader"></header>
 
 <body>
 <main>
-    <section class="interview-content" aria-label="面接練習">
-        <!-- カメラプレビュー -->
-        <div class="camera-preview">
-            <video id="camera-video" autoplay playsinline></video>
-            <div class="camera-placeholder" id="camera-placeholder">
-                <div class="camera-icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
-                        <rect x="2" y="6" width="15" height="12" rx="2" stroke="white" stroke-width="1.5"/>
-                        <path d="M17 10L22 7V17L17 14V10Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <p class="camera-text">カメラプレビュー</p>
+    <section class="menu" aria-label="カメラ表示">
+        <!-- カメラ表示領域 -->
+        <a class="menu-item">
+            <video id="input_video" autoplay playsinline></video>
+        </a>
+
+        <!-- 進捗度 -->
+        <!-- valueに値を挿入します -->
+        <progress class="progress" max="100" value="70"></progress>
+
+        <!-- 面接終了ボタン -->
+        <a class="menu-item" href="/interview-result">
+            <div class="texts">
+                <p class="button-text">面接停止</p>
             </div>
-        </div>
-
-        <!-- プログレスバー -->
-        <div class="progress-container">
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
-            </div>
-            <span class="progress-text">XX%</span>
-        </div>
-
-        <!-- 質問セクション -->
-        <div class="question-section">
-            <p class="question-label">質問</p>
-            <p class="question-text">自己PRをお願いします。</p>
-        </div>
-
-        <!-- 停止ボタン -->
-        <button class="stop-button">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2C10.3431 2 9 3.34315 9 5V12C9 13.6569 10.3431 15 12 15C13.6569 15 15 13.6569 15 12V5C15 3.34315 13.6569 2 12 2Z" fill="white"/>
-                <path d="M6 10V12C6 15.3137 8.68629 18 12 18C15.3137 18 18 15.3137 18 12V10" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                <path d="M12 18V22M12 22H9M12 22H15" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            面接停止
-        </button>
+        </a>
     </section>
-    <div class="spacer" aria-hidden="true"></div>
 </main>
 </body>
 

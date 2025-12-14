@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script th:src="@{/js/script.js}"></script>
+</head>
+
+<header>
+    <!-- ヘッダー呼び出し -->
+    <div th:replace="common/header :: siteHeader"></div>
+</header>
+
+<body>
+<main>
+    <section class="menu" aria-label="SPI問題">
+        <progress class="progress" max="100" value="70"></progress>
+
+        <!-- 選択肢 -->
+        <label class="menu-item">
+            <input type="radio" name="answer" value="1" required>
+            <img class="img" src="/img/es.svg" alt="選択肢1">
+            <div class="texts">
+                <p class="title">選択肢1</p>
+            </div>
+        </label>
+        <label class="menu-item">
+            <input type="radio" name="answer" value="2" required>
+            <img class="img" src="/img/es.svg" alt="選択肢2">
+            <div class="texts">
+                <p class="title">選択肢2</p>
+            </div>
+        </label>
+        <label class="menu-item">
+            <input type="radio" name="answer" value="3" required>
+            <img class="img" src="/img/es.svg" alt="選択肢3">
+            <div class="texts">
+                <p class="title">選択肢3</p>
+            </div>
+        </label>
+        <label class="menu-item">
+            <input type="radio" name="answer" value="4" required>
+            <img class="img" src="/img/es.svg" alt="選択肢4">
+            <div class="texts">
+                <p class="title">選択肢4</p>
+            </div>
+        </label>
+        <a href="/spi-main" class="menu-item">
+            <div class="texts">
+                <p class="button-text">次の問題</p>
+            </div>
+        </a>
+    </section>
+</main>
+</body>
+
+<footer>
+    <!-- フッター呼び出し -->
+    <div th:replace="common/footer :: siteFooter"></div>
+    Mirai by ぎじゅつりょくがすごい人たち
+</footer>
+</html>
