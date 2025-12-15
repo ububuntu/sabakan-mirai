@@ -124,13 +124,19 @@ main {
     font-size: var(--font-lg);
 }
 
-.menu-item .button {
-    font-weight: 600;
-    margin: 0 0 2%;
+.menu button {
+    background: var(--card);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--padding-card);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    justify-content: center;
+    gap: var(--gap-item);
     font-size: var(--font-xl);
-    text-align: center;
+    text-decoration: none;
+    color: inherit;
 }
-
 
 .menu-item .link {
     background: var(--primary);
