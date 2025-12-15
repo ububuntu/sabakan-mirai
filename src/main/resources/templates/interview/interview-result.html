@@ -5,50 +5,29 @@
     <title>面接結果</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
-
-<header>
-    <!-- ヘッダー呼び出し -->
-    <div th:replace="common/header :: siteHeader"></div>
-</header>
-
 <body>
+    <header th:replace="common/header :: siteHeader"></header>
     <main>
         <section class="menu" aria-label="面接結果レーダー">
-            <q>スコア推移</q>
-            <div class="menu-item">
-                <p class="texts desc">レーダーチャートが表示される予定のセクション。</p>
-            </div>
+            <a class="note">スコア推移</a>
+            <p class="menu-item texts desc">レーダーチャートが表示される予定のセクション。</p>
         </section>
 
         <section class="menu" aria-label="面接アドバイス">
-            <q>表情</q>
-            <div class="menu-item">
-                <p>●　緊張から表情が硬くなる場面がありました。</p>
-            </div>
+            <a class="note">表情</a>
+            <p class="menu-item note">緊張から表情が硬くなる場面がありました。</p>
 
-            <q>視線</q>
-            <div class="menu-item">
-                <p>●　緊張から表情が硬くなる場面がありました。</p>
-            </div>
+            <a class="note">視線</a>
+            <p class="menu-item note">緊張から表情が硬くなる場面がありました。</p>
 
-            <q>姿勢</q>
-            <div class="menu-item">
-                <p>●　アドバイス</p>
-            </div>
+            <a class="note">姿勢</a>
+            <p class="menu-item note">緊張から表情が硬くなる場面がありました。</p>
 
-            <q>発話速度</q>
-            <div class="menu-item">
-                <p>●　アドバイス</p>
-            </div>
+            <a class="note">発話速度</a>
+            <p class="menu-item note">緊張から表情が硬くなる場面がありました。</p>
         </section>
     </main>
-
+    <footer th:replace="common/footer :: siteFooter"></footer>
 </body>
-
-<footer>
-    <!-- フッター呼び出し -->
-    <div th:replace="common/footer :: siteFooter"></div>
-    Mirai by ぎじゅつりょくがすごい人たち
-</footer>
 
 </html>

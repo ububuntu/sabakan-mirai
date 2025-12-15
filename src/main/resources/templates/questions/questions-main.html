@@ -6,36 +6,34 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 
-<header>
-    <!-- ヘッダー呼び出し -->
-    <div th:replace="common/header :: siteHeader"></div>
-</header>
+
 <body>
+<header th:replace="common/header :: siteHeader"></header>
     <main>
         <section class="menu" aria-label="試験選択">
-            <q>試験を選択</q>
+            <a class="note">試験を選択</a>
 
-            <a href="/spi-main" class="menu-item">
+            <div onclick="location.href='./spi-main'" class="menu-item">
                 <img class="img" src="/img/es.svg" alt="SPI">
                 <div class="texts">
                     <p class="title">SPI</p>
                     <p class="desc">言語・非言語・性格検査</p>
-                    <p class="contents">・言語10問</p>
-                    <p class="contents">・非言語15問</p>
-                    <p class="contents">・制限時間60分</p>
+                    <p class="note">・言語10問</p>
+                    <p class="note">・非言語15問</p>
+                    <p class="note">・制限時間60分</p>
                 </div>
-            </a>
+            </div>
 
-            <a href="/cabgab-main" class="menu-item">
-                <img class="img" src="/img/es.svg" alt="CAB・GAB">
+            <div onclick="location.href='./cabgab-main'" class="menu-item">
+                <img class="img" src="/img/es.svg" alt="SPI">
                 <div class="texts">
                     <p class="title">CAB・GAB</p>
                     <p class="desc">理論思考力・計数能力</p>
-                    <p class="contents">・暗記問題10問</p>
-                    <p class="contents">・法則性15問</p>
-                    <p class="contents">・制限時間60分</p>
+                    <p class="note">・暗記問題10問</p>
+                    <p class="note">・法則性15問</p>
+                    <p class="note">・制限時間60分</p>
                 </div>
-            </a>
+            </div>
         </section>
     </main>
 </body>

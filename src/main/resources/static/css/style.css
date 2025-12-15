@@ -92,6 +92,21 @@ main {
     text-decoration: none;
 }
 
+.menu .button-center {
+    background: var(--card);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--padding-card);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    justify-content: center;
+    gap: var(--gap-item);
+    font-size: var(--font-xl);
+    text-decoration: none;
+    color: inherit;
+}
+
+
 .menu-item .img {
     width: var(--icon-size);
     height: auto;
@@ -101,9 +116,9 @@ main {
 }
 
 .menu-item .texts {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
 }
 
 .menu-item .title {
@@ -122,20 +137,6 @@ main {
     margin: 0;
     color: var(--text);
     font-size: var(--font-lg);
-}
-
-.menu button {
-    background: var(--card);
-    border: none;
-    border-radius: var(--radius-md);
-    padding: var(--padding-card);
-    box-shadow: var(--shadow-card);
-    display: flex;
-    justify-content: center;
-    gap: var(--gap-item);
-    font-size: var(--font-xl);
-    text-decoration: none;
-    color: inherit;
 }
 
 .menu-item .link {
