@@ -126,7 +126,7 @@ main {
     font-size: var(--font-lg);
 }
 
-.menu-item .button-text {
+.menu-item .center-texts {
     font-weight: 600;
     margin: 0 0 2%;
     font-size: var(--font-xl);
