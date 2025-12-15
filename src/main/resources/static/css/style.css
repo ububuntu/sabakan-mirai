@@ -212,130 +212,27 @@ footer nav.bottom {
     height: 12vh;
 }
 
-/* ====== 面接 ====== */
-.interview-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    padding: 0;
-    width: 100%;
-}
-
+/* ====== 面接 ======*/
 .camera-preview {
     width: 100%;
     padding-bottom: 75%;
     height: 0;
-    background-color: #2c3340;
+    background-color: var(--border);
     border-radius: var(--radius-lg);
     position: relative;
     overflow: hidden;
     box-shadow: var(--shadow-button);
 }
 
-#camera-video {
-    display: none;
+#input_video {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-.camera-placeholder {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-}
-
-.camera-icon {
-    opacity: 0.9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.camera-text {
-    color: white;
-    font-size: var(--font-md);
-    opacity: 0.9;
-    margin: 0;
-}
-
-.progress-container {
-    display: flex;
-    align-items: center;
-    gap: var(--gap-item);
-    padding: 0;
-}
-
-.progress-bar {
-    flex: 1;
-    height: 0.5rem;
-    background-color: #d1d5db;
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-}
-
-.progress-fill {
-    width: 30%;
-    height: 100%;
-    background-color: var(--primary);
-    border-radius: var(--radius-sm);
-}
-
-.progress-text {
-    font-size: var(--font-xs);
-    color: var(--muted);
-    min-width: 2.5rem;
-    text-align: right;
-}
-
-.question-section {
-    text-align: center;
-    padding: 0;
-    background: transparent;
-    margin: 0.5rem 0;
-}
-
-.question-label {
-    font-size: var(--font-sm);
-    color: var(--muted);
-    margin: 0 0 0.75rem 0;
-    display: block;
-}
-
-.question-text {
-    font-size: var(--font-md);
-    color: var(--text);
-    margin: 0;
-}
-
-.stop-button {
-    width: 100%;
-    padding: 1rem;
-    background-color: var(--primary);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-md);
-    font-size: var(--font-md);
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.stop-button:active {
-    background-color: #4959cc;
+    object-position: center;
+    transform: scaleX(-1);
 }
 
 /* ====== レスポンシブ ====== */
