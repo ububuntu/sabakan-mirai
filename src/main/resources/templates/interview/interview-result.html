@@ -2,9 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>面接結果</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
+
+<header>
+    <!-- ヘッダー呼び出し -->
+    <div th:replace="common/header :: siteHeader"></div>
+</header>
+
 <body>
-    <h2>interview-result画面</h2>
+    <main>
+        <section class="menu" aria-label="面接結果レーダー">
+            <q>スコア推移</q>
+            <div class="menu-item">
+                <p class="texts desc">レーダーチャートが表示される予定のセクション。</p>
+            </div>
+        </section>
+
+        <section class="menu" aria-label="面接アドバイス">
+            <q>表情</q>
+            <div class="menu-item">
+                <p>●　緊張から表情が硬くなる場面がありました。</p>
+            </div>
+
+            <q>視線</q>
+            <div class="menu-item">
+                <p>●　緊張から表情が硬くなる場面がありました。</p>
+            </div>
+
+            <q>姿勢</q>
+            <div class="menu-item">
+                <p>●　アドバイス</p>
+            </div>
+
+            <q>発話速度</q>
+            <div class="menu-item">
+                <p>●　アドバイス</p>
+            </div>
+        </section>
+    </main>
+
 </body>
+
+<footer>
+    <!-- フッター呼び出し -->
+    <div th:replace="common/footer :: siteFooter"></div>
+    Mirai by ぎじゅつりょくがすごい人たち
+</footer>
+
 </html>
