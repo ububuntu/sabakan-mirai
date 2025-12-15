@@ -40,6 +40,15 @@ public class MessageConfig {
 
         // M011: パスワードの変更が完了しました
         const val PASSWORD_CHANGE_SUCCESS = "パスワードの変更が完了しました"
+
+        // M201: 面接履歴の取得に失敗しました
+        const val INTERVIEW_NOT_FOUND = "面接履歴が見つかりません"
+
+        // M202: 面接履歴の登録に成功しました
+        const val INTERVIEW_INSERT_SUCCESS = "面接履歴の登録に成功しました"
+
+        // M203: 面接履歴の登録に失敗しました
+        const val INTERVIEW_INSERT_FAILED = "面接履歴の登録に失敗しました"
     }
 }
 

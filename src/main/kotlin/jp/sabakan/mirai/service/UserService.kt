@@ -36,7 +36,7 @@ class UserService {
 
         return UserResponse().apply {
             users = listOf(user)
-            message = "ユーザ情報の取得が完了しました"
+            message = null
             userRole = user.userRole
         }
     }
@@ -79,7 +79,6 @@ class UserService {
                 throw Exception(MessageConfig.USER_REGISTER_FAILED)
             }
         }
-
         // レスポンス生成
         val response = UserResponse()
         response.message = MessageConfig.USER_REGISTERED
@@ -183,7 +182,7 @@ class UserService {
     private val userIdLock = Any()
     private fun toCreateUserId(): String {
         synchronized(userIdLock) {
-            // 現在の年月（yyyyMM）
+            // 現在の年月(yyyyMM)
             val currentYm = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM"))
 
             // 現在年月に一致する最大のユーザIDを取得（例: "U20251200007"）

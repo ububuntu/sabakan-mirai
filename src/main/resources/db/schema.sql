@@ -13,13 +13,14 @@ CREATE TABLE user_m(
 
 /* 面接テーブル */
 CREATE TABLE interview_t(
-    interview_id      CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
-    user_id           CHAR(20) NOT NULL ,
-    interview_eyes    INT,
-    interview_posture INT,
-    interview_voice   INT,
-    interview_date    DATE,
-    interview_score   INT,
+    interview_id            CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
+    user_id                 CHAR(20) NOT NULL ,
+    interview_expression    INT,
+    interview_eyes          INT,
+    interview_posture       INT,
+    interview_voice         INT,
+    interview_date          DATE,
+    interview_score         INT,
     FOREIGN KEY (user_id) REFERENCES user_m(user_id)
 );
 
