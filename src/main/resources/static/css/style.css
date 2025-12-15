@@ -66,13 +66,6 @@ main {
 }
 
 /* ====== メニュー ====== */
-.menu q {
-    font-size: var(--font-md);
-    font-weight: 600;
-    margin-bottom: 3%;
-    display: block;
-}
-
 .menu {
     display: flex;
     flex-direction: column;
@@ -119,14 +112,19 @@ main {
     font-size: var(--font-xl);
 }
 
-.menu-item .desc,
-.menu-item .contents {
+.menu-item .desc {
     margin: 0;
     color: var(--muted);
     font-size: var(--font-lg);
 }
 
-.menu-item .center-texts {
+.menu-item .note{
+    margin: 0;
+    color: var(--text);
+    font-size: var(--font-lg);
+}
+
+.menu-item .button {
     font-weight: 600;
     margin: 0 0 2%;
     font-size: var(--font-xl);
@@ -150,10 +148,34 @@ main {
     width: 100%;
 }
 
+/* ====== 面接 ====== */
+
 .video {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transform: scaleX(-1);
+}
+
+.camera-preview {
+    width: 100%;
+    padding-bottom: 75%;
+    height: 0;
+    background-color: var(--border);
+    border-radius: var(--radius-lg);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-button);
+}
+
+#input_video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
     transform: scaleX(-1);
 }
 
@@ -210,29 +232,6 @@ footer nav.bottom {
 /* ====== スペーサー ====== */
 .spacer {
     height: 12vh;
-}
-
-/* ====== 面接 ======*/
-.camera-preview {
-    width: 100%;
-    padding-bottom: 75%;
-    height: 0;
-    background-color: var(--border);
-    border-radius: var(--radius-lg);
-    position: relative;
-    overflow: hidden;
-    box-shadow: var(--shadow-button);
-}
-
-#input_video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    transform: scaleX(-1);
 }
 
 /* ====== レスポンシブ ====== */
