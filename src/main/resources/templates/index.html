@@ -7,62 +7,45 @@
     <script th:src="@{/js/script.js}"></script>
 </head>
 
-<header>
-    <!-- ヘッダー呼び出し -->
-    <div th:replace="common/header :: siteHeader"></div>
-</header>
-
 <body>
+<header th:replace="common/header :: siteHeader"></header>
     <main>
         <section class="menu" aria-label="目標セクション">
-            <q>あなたの目標</q>
+            <a class="note">あなたの目標</a>
             <div class="company" th:text="${goal_target}">株式会社〇〇〇〇〇 最終面接</div>
             <div class="countdown" th:text="'目標まであと ' + ${goal_remaining} + ' 日'">目標まであと〇日</div>
         </section>
 
         <section class="menu" aria-label="メニュー">
-            <q>メニュー</q>
+            <a class="note">メニュー</a>
 
-            <a href="/interview-main" class="menu-item">
-                    <img class="img" src="/img/interview.svg" alt="面接">
-                    <div class="texts">
-                        <p class="title">面接練習</p>
-                        <p class="desc">WEB面接を試してみよう！</p>
-                    </div>
-            </a>
+            <div onclick="location.href='./interview-main'" class="menu-item">
+                <img class="img" src="/img/interview.svg" alt="面接">
+                <div class="texts">
+                    <p class="title">面接練習</p>
+                    <p class="desc">WEB面接を試してみよう</p>
+                </div>
+            </div>
 
-            <a href="/questions-main" class="menu-item">
-                    <img class="img" src="/img/questions.svg" alt="過去問稽古場">
-                    <div class="texts">
-                        <p class="title">過去問稽古場</p>
-                        <p class="desc">SPI・CAB/GABの勉強をしよう！</p>
-                    </div>
-            </a>
+            <div onclick="location.href='./questions-main'" class="menu-item">
+                <img class="img" src="/img/questions.svg" alt="面接">
+                <div class="texts">
+                    <p class="title">過去問稽古場</p>
+                    <p class="desc">SPI・CAB/GABの勉強をしよう</p>
+                </div>
+            </div>
 
-            <a class="menu-item" href="/es-main">
-                <img class="img" src="/img/es.svg" alt="ES">
+            <div onclick="location.href='./es-main'" class="menu-item">
+                <img class="img" src="/img/es.svg" alt="面接">
                 <div class="texts">
                     <p class="title">エントリーシート</p>
-                    <p class="desc">ES添削をしてみよう！</p>
+                    <p class="desc">ESを添削してみよう</p>
                 </div>
-            </a>
-
-            <a href="/user" class="menu-item" th:if="${isAdmin}">
-                <div class="img" aria-hidden="true">管理者アイコン</div>
-                <div class="texts">
-                    <p class="title">管理者画面</p>
-                    <p class="desc">ユーザを管理しよう！</p>
-                </div>
-            </a>
+            </div>
         </section>
 
         <div class="spacer" aria-hidden="true"></div>
     </main>
+<footer th:replace="common/footer :: siteFooter"></footer>
 </body>
-
-<footer>
-    <!-- フッター呼び出し -->
-    <div th:replace="common/footer :: siteFooter"></div>
-    Mirai by ぎじゅつりょくがすごい人たち
-</footer>
 </html>
