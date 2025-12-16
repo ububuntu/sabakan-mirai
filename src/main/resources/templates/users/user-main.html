@@ -2,53 +2,49 @@
 <html lang="jp">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ユーザページ | Mirai</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 
-<header>
-    <!-- ヘッダー呼び出し -->
-    <div th:replace="common/header :: siteHeader"></div>
-</header>
-
 <body>
-    <main class="user-container">
-        <h1>ユーザページ</h1>
-        <p class="username" th:text="${userName}">たまーにラッキー✎</p>
-
-        <section class="goal-section">
-            <h2>現在の目標 <a th:href="@{/goal/edit}">編集</a></h2>
-            <div class="goal-company" th:text="${goalTarget}">株式会社〇〇〇〇 最終面接</div>
-            <div class="goal-deadline">
-                <span th:text="${goalDate}">2025年XX月XX日まで</span>
-                <span th:text="'あと ' + ${goalRemaining} + ' 日'">あとXX日</span>
+<header th:replace="common/header :: siteHeader"></header>
+    <main>
+        <section class="menu" aria-label="ユーザ画面">
+            <!-- ユーザーネーム -->
+            <div class="menu-item">
+                <img class="img" src="/img/user.svg" alt="ユーザー">
+                <div class="texts">
+                    <p class="title" th:text="${userName}">あいうえおさん</p>
+                </div>
             </div>
-            <div class="goal-progress" th:text="${goalPercent} + '%'">XX%</div>
+            <!-- 現在の目標 -->
+            <div class="menu-item">
+                <img class="img" src="/img/user.svg" alt="目標">
+                <div class="texts">
+                    <p class="title">現在の目標</p>
+                    <p class="note">株式会社〇〇 最終面接</p>
+                    <p class="note">残り〇日</p>
+                </div>
+            </div>
+
+            <!-- テーマカラー選択 -->
+            <form class="menu-item" th:action="@{/user/updateColor}" method="post">
+                <div class="texts">
+                    <p class="title">テーマカラー</p>
+                    <select name="userColor" id="userColor" th:value="${userColor}" onchange="this.form.submit()" class="color-select">
+                        <option value="1" th:selected="${userColor == 1}" style="background-color: #ff0000; color: white;">■ 赤</option>
+                        <option value="2" th:selected="${userColor == 2}" style="background-color: #0000ff; color: white;">■ 青</option>
+                        <option value="3" th:selected="${userColor == 3}" style="background-color: #000000; color: white;">■ 黒</option>
+                        <option value="4" th:selected="${userColor == 4}" style="background-color: #ffffff; color: black;">■ 白</option>
+                    </select>
+                </div>
+            </form>
+            <!-- パスワード変更 -->
+            <button class="button-center" onclick="location.href='/user/repassword'" type="button">パスワード変更</button>
+            <!-- ログアウト -->
+            <button class="button-center" onclick="location.href='/'" type="button">ログアウト</button>
         </section>
-
-        <section class="settings">
-            <h2>設定</h2>
-            <div class="setting-item">
-                <span>テーマカラー変更</span>
-                <span th:text="${themeColor}">ブルー</span>
-            </div>
-            <div class="setting-item">
-                <a th:href="@{/password}">パスワード変更</a>
-            </div>
-            <div class="setting-item">
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit">ログアウト</button>
-                </form>
-            </div>
-        </section>
-
     </main>
+<footer th:replace="common/footer :: siteFooter"></footer>
 </body>
-
-<footer class="auth-footer">
-    <!-- フッター呼び出し -->
-    <div th:replace="common/footer :: siteFooter"></div>
-    Mirai by ぎじゅつりょくがすごい人たち
-</footer>
 </html>

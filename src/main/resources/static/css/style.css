@@ -213,6 +213,18 @@ main {
     object-position: center;
     transform: scaleX(-1);
 }
+/* ====== ユーザー ====== */
+.color-select {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.color-select option {
+    padding: 8px;
+}
 
 /* ====== フッター ====== */
 footer {
