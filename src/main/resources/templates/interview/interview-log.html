@@ -6,58 +6,32 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 
-<header>
-    <!-- ヘッダー呼び出し -->
-    <div th:replace="common/header :: siteHeader"></div>
-</header>
-
 <body>
+<header th:replace="common/header :: siteHeader"></header>
     <main>
-        <section class="menu" aria-label="面接ロググラフ">
-            <q>スコア推移</q>
-            <a href="/" class="menu-item">
-                <div class="texts">
-                    <p class="desc">グラフが表示される予定のセクション。</p>
-                </div>
-            </a>
+        <section class="menu" aria-label="面接結果レーダー">
+            <a class="note">スコア推移</a>
+            <p class="menu-item texts desc">グラフが表示される予定のセクション。</p>
         </section>
 
-        <section class="menu" aria-label="面接ログ">
-            <q>練習履歴</q>
-            <a href="/" class="menu-item">
-                <div class="icon-box">
-                    nn点
-                </div>
-                <div class="texts">
-                    <p class="title">2025年1月1日</p>
-                </div>
-            </a>
+        <section class="menu" aria-label="面接結果レーダー">
+            <a class="note">練習履歴</a>
+            <button class="button-center menu-item" onclick="location.href='./'" type="button">
+                <span class="box">xx点</span>
+                <span class="note">2025年1月1日</span>
+            </button>
 
-            <a href="/" class="menu-item">
-                <div class="icon-box">
-                    nn点
-                </div>
-                <div class="texts">
-                    <p class="title">2025年1月2日</p>
-                </div>
-            </a>
+            <button class="button-center menu-item" onclick="location.href='./'" type="button">
+                <span class="box">xx点</span>
+                <span class="note">2025年1月2日</span>
+            </button>
 
-            <a href="/" class="menu-item">
-                <div class="icon-box">
-                    nn点
-                </div>
-                <div class="texts">
-                    <p class="title">2025年1月3日</p>
-                </div>
-            </a>
+            <button class="button-center menu-item" onclick="location.href='./'" type="button">
+                <span class="box">xx点</span>
+                <span class="note">2025年1月3日</span>
+            </button>
         </section>
     </main>
+    <footer th:replace="common/footer :: siteFooter"></footer>
 </body>
-
-<footer>
-    <!-- フッター呼び出し -->
-    <div th:replace="common/footer :: siteFooter"></div>
-    Mirai by ぎじゅつりょくがすごい人たち
-</footer>
-
 </html>
