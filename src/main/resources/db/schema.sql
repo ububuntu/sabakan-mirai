@@ -49,6 +49,30 @@ CREATE TABLE spi_t(
     spi_category        VARCHAR(50)
 );
 
+/* SPI回答率テーブル */
+CREATE TABLE spi_rate_t(
+    spi_rate_id     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
+    spi_id          BIGINT NOT NULL ,
+    user_id         CHAR(20) NOT NULL ,
+    spi_answers     CHAR(2) NOT NULL ,
+    spi_count       INT NOT NULL ,
+    UNIQUE(spi_id, user_id) ,
+    FOREIGN KEY (spi_id) REFERENCES spi_t(spi_id),
+    FOREIGN KEY (user_id) REFERENCES user_m(user_id)
+);
+
+/* SPI結果テーブル */
+CREATE TABLE spi_result_t(
+    spi_result_id   BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
+    spi_id          BIGINT NOT NULL ,
+    user_id         CHAR(20) NOT NULL ,
+    spi_answer      INT NOT NULL ,
+    spi_correct_answer  INT NOT NULL ,
+    spi_answer_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
+    FOREIGN KEY (spi_id) REFERENCES spi_t(spi_id),
+    FOREIGN KEY (user_id) REFERENCES user_m(user_id)
+);
+
 
 
 /* CAB/GABテーブル */

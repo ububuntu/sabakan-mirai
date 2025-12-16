@@ -49,6 +49,20 @@ public class MessageConfig {
 
         // M203: 面接履歴の登録に失敗しました
         const val INTERVIEW_INSERT_FAILED = "面接履歴の登録に失敗しました"
+
+        // M301-2: Cab/Gab問題の登録に成功しました
+        const val CABGAB_INSERT_SUCCESS = "Cab/Gab問題の登録に成功しました"
+
+        // M302-2: Cab/Gab問題の登録に失敗しました
+        const val CABGAB_INSERT_FAILED = "Cab/Gab問題の登録に失敗しました"
+
+        // M303-2: Cab/Gab問題の削除に成功しました
+        const val CABGAB_DELETE_SUCCESS = "Cab/Gab問題の削除に成功しました"
+
+        // M304-2: Cab/Gab問題の削除に失敗しました
+        const val CABGAB_DELETE_FAILED = "Cab/Gab問題の削除に失敗しました"
+
+
     }
 }
 
