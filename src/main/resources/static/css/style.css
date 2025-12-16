@@ -139,6 +139,13 @@ main {
     font-size: var(--font-lg);
 }
 
+.menu-item textarea{
+    field-sizing: content;
+    width: 100%;
+    justify-content: center;
+    font-size: var(--font-lg);
+}
+
 .menu-item .link {
     background: var(--primary);
     color: #fff;

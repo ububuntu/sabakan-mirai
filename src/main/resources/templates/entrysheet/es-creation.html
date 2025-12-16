@@ -6,52 +6,49 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 
-<header>
-    <!-- ヘッダー呼び出し -->
-    <div th:replace="common/header :: siteHeader"></div>
-</header>
-
 <body>
-<main>
-    <section class="menu" aria-label="ES新規作成">
-        <form action="/es-submit" method="post">
+<header th:replace="common/header :: siteHeader"></header>
+    <main>
+        <form action="/es-submit" method="post" class="menu">
             <div class="menu-item">
                 <div class="texts">
                     <label class="title" for="company-name">企業名</label>
-                    <textarea id="company-name" name="companyName" placeholder="企業名を入力してください" class="title"></textarea>
+                    <textarea id="company-name" name="companyName" placeholder="企業名を入力してください"></textarea>
                 </div>
             </div>
             <div class="menu-item">
                 <div class="texts">
                     <label class="title" for="motivation">志望動機</label>
-                    <textarea id="motivation" name="motivation" placeholder="志望動機を入力してください" class="title"></textarea>
+                    <textarea id="motivation" name="motivation" placeholder="志望動機を入力してください"></textarea>
                 </div>
             </div>
             <div class="menu-item">
                 <div class="texts">
                     <label class="title" for="self-pr">自己PR</label>
-                    <textarea id="self-pr" name="selfPr" placeholder="自己PRを入力してください" class="title"></textarea>
+                    <textarea id="self-pr" name="selfPr" placeholder="自己PRを入力してください"></textarea>
                 </div>
+
             </div>
             <div class="menu-item">
                 <div class="texts">
                     <label class="title" for="effort">学生時代力を入れたこと</label>
-                    <textarea id="effort" name="effort" placeholder="学生時代力を入れたことを入力してください" class="title"></textarea>
+                    <textarea id="effort" name="effort" placeholder="学生時代力を入れたことを入力してください"></textarea>
                 </div>
             </div>
             <div class="menu-item">
                 <div class="texts">
                     <label class="title" for="strengths">長所短所</label>
-                    <textarea id="strengths" name="strengths" placeholder="長所短所を入力してください" class="title"></textarea>
+                    <textarea id="strengths" name="strengths" placeholder="長所短所を入力してください"></textarea>
                 </div>
             </div>
-            <div class="menu-item">
-                <button type="submit" class="texts center-texts">送信</button>
-            </div>
+
+            <!-- 送信ボタン -->
+            <button class="button-center" type="submit">
+                面接停止
+            </button>
         </form>
-    </section>
-    <div class="spacer" aria-hidden="true"></div>
-</main>
+        <div class="spacer" aria-hidden="true"></div>
+    </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 </body>
 </html>
