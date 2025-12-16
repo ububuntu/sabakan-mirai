@@ -62,26 +62,3 @@ CREATE TABLE cabgab_t(
     cabgab_correct_answer   CHAR(1) DEFAULT NULL ,
     cabgab_category         VARCHAR(50)
 );
-
-/* 回答テーブル */
-CREATE TABLE cabgab_answer_t(
-    cabgab_answer_id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
-    user_id             CHAR(20) NOT NULL ,
-    cabgab_id          BIGINT NOT NULL ,
-    cabgab_user_answer         CHAR(1) DEFAULT NULL ,
-    is_correct         BOOLEAN DEFAULT NULL ,
-    answer_date        TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
-    FOREIGN KEY (user_id) REFERENCES user_m(user_id),
-    FOREIGN KEY (cabgab_id) REFERENCES cabgab_t(cabgab_id)
-);
-
-/* 正答率テーブル */
-CREATE TABLE cabgab_rate_t(
-    cabgab_rate_id     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
-    user_id            CHAR(20) NOT NULL ,
-    cabgab_id         BIGINT NOT NULL ,
-    cabgab_answers      CHAR(3) DEFAULT NULL,
-    total_count        INT DEFAULT 0 ,
-    lasted_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
-    FOREIGN KEY (user_id) REFERENCES user_m(user_id)
-);
