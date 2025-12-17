@@ -5,9 +5,161 @@
     <title>header</title>
 </head>
 <body>
-    <header th:fragment="siteHeader">
-        <div class="title">ホーム</div>
-        <div class="user">ようこそ — <span th:text="${userName}">ユーザ名</span> さん</div>
+    <header class="site-header" th:fragment="siteHeader(fragmentName)">
+        <th:block th:replace="this :: ${fragmentName}"></th:block>
     </header>
+
+    <!-- ホーム画面 -->
+    <th:block th:fragment="indexHeader">
+        <div class="header-center">
+            <img src="/img/home.svg" alt="aaa">
+            <div class="title">ホーム</div>
+        </div>
+    </th:block>
+
+    <!-- ユーザーメイン画面 -->
+    <th:block th:fragment="userMainHeader">
+        <div class="header-center">
+            <img src="/img/user.svg" alt="ユーザー">
+            <div class="title">ユーザー</div>
+        </div>
+    </th:block>
+
+    <!-- パスワード変更画面 -->
+    <th:block th:fragment="userRepasswordHeader">
+        <div class="header-center">
+            <img src="/img/user.svg" alt="パスワード">
+            <div class="title">パスワード変更</div>
+        </div>
+    </th:block>
+
+    <!-- ユーザー目標設定画面 -->
+    <th:block th:fragment="userTargetHeader">
+        <div class="header-center">
+            <img src="/img/user.svg" alt="目標">
+            <div class="title">ユーザー目標設定</div>
+        </div>
+    </th:block>
+
+    <!-- 面接メイン画面 -->
+    <th:block th:fragment="interviewHeader">
+        <div class="header-center">
+            <img src="/img/interview.svg" alt="面接練習">
+            <div class="title">面接練習</div>
+        </div>
+    </th:block>
+
+     <!-- Web面接画面 -->
+    <th:block th:fragment="interviewDoHeader">
+        <div class="header-center">
+            <img src="/img/interview.svg" alt="面接練習">
+            <div class="title">Web面接練習</div>
+        </div>
+    </th:block>
+
+    <!-- 面接ログ画面 -->
+    <th:block th:fragment="interviewLogHeader">
+        <div class="header-center">
+            <img src="/img/interview.svg" alt="面接練習">
+            <div class="title">面接ログ</div>
+        </div>
+    </th:block>
+
+    <!-- 面接結果画面 -->
+    <th:block th:fragment="interviewResultHeader">
+        <div class="header-center">
+            <img src="/img/interview.svg" alt="面接練習">
+            <div class="title">面接結果</div>
+        </div>
+    </th:block>
+
+    <!-- 適性試験メイン画面 -->
+    <th:block th:fragment="questionMainHeader">
+        <div class="header-center">
+            <img src="/img/questions.svg" alt="過去問稽古場">
+            <div class="title">過去問稽古場</div>
+        </div>
+    </th:block>
+
+    <!-- SPIメイン画面 -->
+    <th:block th:fragment="spiMainHeader">
+        <div class="header-center">
+            <img src="/img/questions.svg" alt="SPI">
+            <div class="title">SPI</div>
+        </div>
+    </th:block>
+
+    <!-- SPI問題画面 -->
+    <th:block th:fragment="spiStudyHeader">
+        <div class="header-center">
+            <img src="/img/questions.svg" alt="SPI">
+            <div class="title">SPI</div>
+        </div>
+    </th:block>
+
+    <!-- SPI結果画面 -->
+    <th:block th:fragment="spiResultHeader">
+        <div class="header-center">
+            <img src="/img/questions.svg" alt="SPI">
+            <div class="title">SPI</div>
+        </div>
+    </th:block>
+
+    <!-- CAB/GABメイン画面 -->
+    <th:block th:fragment="cabgabMainHeader">
+        <div class="header-center">
+            <img src="/img/questions.svg" alt="CAB/GAB">
+            <div class="title">CAB/GAB</div>
+        </div>
+    </th:block>
+
+    <!-- CAB/GAB問題画面 -->
+    <th:block th:fragment="cabgabStudyHeader">
+        <div class="header-center">
+            <img src="/img/questions.svg" alt="CAB/GAB">
+            <div class="title">CAB/GAB</div>
+        </div>
+    </th:block>
+
+    <!-- CAB/GAB結果画面 -->
+    <th:block th:fragment="cabgabResultHeader">
+        <div class="header-center">
+            <img src="/img/questions.svg" alt="CAB/GAB">
+            <div class="title">CAB/GAB</div>
+        </div>
+    </th:block>
+
+    <!-- 試験結果一覧画面 -->
+    <th:block th:fragment="interviewResultHeader">
+        <div class="header-center">
+            <img src="/img/questions.svg" alt="CAB/GAB">
+            <div class="title">CAB/GAB</div>
+        </div>
+    </th:block>
+
+    <!-- ESメイン画面 -->
+    <th:block th:fragment="esMainHeader">
+        <div class="header-center">
+            <img src="/img/es.svg" alt="ES">
+            <div class="title">ESメイン</div>
+        </div>
+    </th:block>
+
+    <!-- ES一覧画面 -->
+    <th:block th:fragment="esListHeader">
+        <div class="header-center">
+            <img src="/img/es.svg" alt="ES">
+            <div class="title">ES一覧</div>
+        </div>
+    </th:block>
+
+    <!-- ES作成画面 -->
+    <th:block th:fragment="esCreationHeader">
+        <div class="header-center">
+            <img src="/img/es.svg" alt="ES">
+            <div class="title">ES作成</div>
+        </div>
+    </th:block>
+
 </body>
 </html>

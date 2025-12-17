@@ -6,7 +6,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
-<header th:replace="common/header :: siteHeader"></header>
+<header th:replace="common/header :: siteHeader('spiStudyHeader')"></header>
 <main>
     <progress class="progress" max="100" value="70"></progress>
     <form class="menu" action="/spi-submit" method="post">

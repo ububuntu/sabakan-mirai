@@ -30,6 +30,7 @@
 
     /* ====== アイコンサイズ ====== */
     --icon-size: 8%;            /* メニューアイコン */
+    --header-icon-size: 4rem; /* ヘッダーアイコン */
     --footer-icon-size: 4rem; /* フッターアイコン */
 
     /* ====== シャドウ ====== */
@@ -53,11 +54,27 @@ header {
     background: var(--card);
     border-bottom: 0.1rem solid var(--border);
     padding: 3% var(--padding-section);
+    display: flex;
+    justify-content: center;
     text-align: center;
     font-weight: 600;
+    font-size: var(--font-xl);
     position: sticky;
     top: 0;
     z-index: 10;
+}
+
+header .header-center {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-icon-text);
+}
+
+header img{
+    width: var(--header-icon-size);
+    height: auto;
+    aspect-ratio: 1/1;
+    border-radius: var(--radius-sm);
 }
 
 /* ====== メイン ====== */
