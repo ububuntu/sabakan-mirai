@@ -1,0 +1,39 @@
+:root {
+    /* ====== 共通色設定 ====== */
+    --primary: #2b73ff;
+    --question: #2B73FF0D;
+    --bg: #f7f8fb;
+    --text: #1f2a37;
+    --muted: #6b7280;
+    --card: #ffffff;
+    --border: #e5e7eb;
+
+    /* ====== 間隔・余白 ====== */
+    --padding-section: 4%;
+    --padding-card: 4%;
+    --gap-menu: 1.2rem;
+    --gap-item: 4%;
+    --gap-icon-text: 0.3rem;
+
+    /* ====== フォントサイズ ====== */
+    font-size: 16px;
+    --font-xs: 0.75rem;     /* 12px - 補助テキスト */
+    --font-sm: 0.875rem;    /* 14px - 説明文・フッター */
+    --font-md: 1.75rem;        /* 16px - 標準 */
+    --font-lg: 2.5rem;     /* 20px - desc */
+    --font-xl: 3rem;      /* 24px - タイトル */
+
+    /* ====== 角丸 ====== */
+    --radius-sm: 0.5rem;    /* アイコン・ボタン */
+    --radius-md: 1rem;      /* カード */
+    --radius-lg: 1.5rem;    /* 大きなカード */
+
+    /* ====== アイコンサイズ ====== */
+    --icon-size: 8%;            /* メニューアイコン */
+    --header-icon-size: 4rem; /* ヘッダーアイコン */
+    --footer-icon-size: 4rem; /* フッターアイコン */
+
+    /* ====== シャドウ ====== */
+    --shadow-card: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.05);
+    --shadow-button: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
