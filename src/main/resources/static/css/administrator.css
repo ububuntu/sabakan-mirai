@@ -1,0 +1,243 @@
+:root {
+    /* ====== 共通色設定 ====== */
+    --primary: #2b73ff;
+    --question: #2B73FF0D;
+    --bg: #f7f8fb;
+    --text: #1f2a37;
+    --muted: #6b7280;
+    --card: #ffffff;
+    --border: #e5e7eb;
+
+    /* ====== 間隔・余白 ====== */
+    --padding-section: 4%;
+    --padding-card: 4%;
+    --gap-menu: 1.2rem;
+    --gap-item: 4%;
+    --gap-icon-text: 0.3rem;
+
+    /* ====== フォントサイズ ====== */
+    font-size: 16px;
+    --font-xs: 0.75rem;     /* 12px - 補助テキスト */
+    --font-sm: 0.875rem;    /* 14px - 説明文・フッター */
+    --font-md: 1.75rem;     /* 16px - 標準 */
+    --font-lg: 2.5rem;      /* 20px - desc */
+    --font-xl: 3rem;        /* 24px - タイトル */
+
+    /* ====== 角丸 ====== */
+    --radius-sm: 0.5rem;    /* アイコン・ボタン */
+    --radius-md: 1rem;      /* カード */
+    --radius-lg: 1.5rem;    /* 大きなカード */
+
+    /* ====== アイコンサイズ ====== */
+    --icon-size: 8%;            /* メニューアイコン */
+    --header-icon-size: 4rem;   /* ヘッダーアイコン */
+    --footer-icon-size: 4rem;   /* フッターアイコン */
+
+    /* ====== シャドウ ====== */
+    --shadow-card: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.05);
+    --shadow-button: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ====== 基本設定 ====== */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans JP", Meiryo, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: var(--font-md);
+}
+
+/* ====== ヘッダー ====== */
+header {
+    background: var(--card);
+    border-bottom: 0.1rem solid var(--border);
+    padding: 3% var(--padding-section);
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-weight: 600;
+    font-size: var(--font-xl);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header .header-center {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-icon-text);
+}
+
+header img{
+    width: var(--header-icon-size);
+    height: auto;
+    aspect-ratio: 1/1;
+    border-radius: var(--radius-sm);
+}
+
+/* ====== メニュー ====== */
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-menu);
+}
+
+.menu-item {
+    background: var(--card);
+    border-radius: var(--radius-md);
+    padding: var(--padding-card);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--gap-item);
+    box-shadow: var(--shadow-card);
+    text-decoration: none;
+    color: inherit;
+}
+
+.menu-item:visited,
+.menu-item:hover,
+.menu-item:active,
+.menu-item:focus {
+    color: inherit;
+    text-decoration: none;
+}
+.menu-item:has(.menu-content) {
+    flex-direction: column;
+}
+
+.menu-content {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-item);
+}
+
+.menu-item .img {
+    width: var(--icon-size);
+    height: auto;
+    aspect-ratio: 1/1;
+    border-radius: var(--radius-sm);
+}
+
+.menu-item .texts {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.menu-item .title {
+    font-weight: 600;
+    margin: 0 0 2%;
+    font-size: var(--font-xl);
+}
+
+.menu-item .desc {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--font-lg);
+}
+
+.menu-item .note{
+    margin: 0;
+    color: var(--text);
+    font-size: var(--font-lg);
+}
+
+/* ====== 統計表示 ====== */
+.menu-item:has(.menu-content) {
+    flex-direction: column;
+    gap: 0;
+}
+
+.menu-content {
+    display: grid;
+    grid-template-columns: var(--icon-size) 1fr 1fr;
+    align-items: center;
+    gap: var(--gap-item);
+    padding: 3% 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.menu-content:last-child {
+    border-bottom: none;
+}
+
+.stat-text {
+    display: contents;
+    font-size: var(--font-xl);
+    font-weight: 600;
+}
+
+.stat-label {
+    color: var(--text);
+    text-align: center;
+}
+
+.stat-value {
+    color: var(--primary);
+    text-align: right;
+}
+
+/* ====== フッター ====== */
+footer {
+    background: var(--card);
+    border-top: 0.1rem solid var(--border);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2% 0;
+}
+
+footer nav.bottom {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+}
+
+.footer-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap-icon-text);
+    text-decoration: none;
+    color: var(--muted);
+}
+
+.footer-icon:visited,
+.footer-icon:hover,
+.footer-icon:active,
+.footer-icon:focus {
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.footer-icon img {
+    width: var(--footer-icon-size);
+    height: auto;
+    aspect-ratio: 1/1;
+}
+
+.footer-text {
+    font-size: var(--font-sm);
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* ====== スペーサー ====== */
+.spacer {
+    height: 12vh;
+}
+
+/* ====== レスポンシブ ====== */
+@media (min-width: 600px) {
+    main {
+        max-width: 90%;
+        margin: 0 auto;
+    }
+}

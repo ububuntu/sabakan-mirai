@@ -1,10 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="jp">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>管理者画面 | Mirai</title>
+    <link rel="stylesheet" th:href="@{/css/administrator.css}" />
 </head>
 <body>
+<header th:replace="common/header :: siteHeader('manageHeader')"></header>
+<main>
+    <!-- システム統計 -->
+    <section class="menu" aria-label="システム統計">
+        <div class="menu-item">
+            <div class="menu-content">
+                <img class="img" src="/img/user.svg" alt="総ユーザー数">
+                <p class="stat-text">
+                    <span class="stat-label">総ユーザー数</span>
+                    <span class="stat-value">1,234人</span>
+                </p>
+            </div>
 
+            <div class="menu-content">
+                <img class="img" src="/img/questions.svg" alt="SPI問題数">
+                <p class="stat-text">
+                    <span class="stat-label">SPI問題数</span>
+                    <span class="stat-value">500問</span>
+                </p>
+            </div>
+
+            <div class="menu-content">
+                <img class="img" src="/img/questions.svg" alt="CAB/GAB問題数">
+                <p class="stat-text">
+                    <span class="stat-label">CAB/GAB問題数</span>
+                    <span class="stat-value">300問</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 管理者メニュー -->
+    <section class="menu" aria-label="管理者メニュー">
+        <p class="note">管理者メニュー</p>
+
+        <div onclick="location.href='./manage/spi'" class="menu-item">
+            <img class="img" src="/img/questions.svg" alt="SPI問題管理">
+            <div class="texts">
+                <p class="title">SPI問題管理</p>
+                <p class="desc">編集・管理</p>
+            </div>
+        </div>
+
+        <div onclick="location.href='./manage/cabgab'" class="menu-item">
+            <img class="img" src="/img/questions.svg" alt="CAB/GAB問題管理">
+            <div class="texts">
+                <p class="title">CAB/GAB問題管理</p>
+                <p class="desc">編集・管理</p>
+            </div>
+        </div>
+
+        <div onclick="location.href='./manage/users'" class="menu-item">
+            <img class="img" src="/img/user.svg" alt="ユーザー管理">
+            <div class="texts">
+                <p class="title">ユーザー管理</p>
+                <p class="desc">編集・削除</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+</main>
+<footer th:replace="common/footer :: siteFooter"></footer>
 </body>
 </html>
