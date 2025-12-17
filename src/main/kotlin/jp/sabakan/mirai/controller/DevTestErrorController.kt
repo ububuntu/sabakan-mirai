@@ -16,11 +16,11 @@ class DevTestErrorController {
 
     @GetMapping("/dev/test/400")
     fun getTest400(): String {
-        return "error/400"
+        return "/error/400-error"
     }
 
     @GetMapping("/dev/test/500")
     fun getTest500(): String {
-        return "error/500"
+        return "/error/500-error"
     }
 }

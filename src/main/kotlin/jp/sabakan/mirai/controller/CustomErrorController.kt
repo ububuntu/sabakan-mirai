@@ -22,15 +22,15 @@ class CustomErrorController: ErrorController {
             when{
                 // 400番台のエラー
                 status in 400..499 -> {
-                    return "error/400"
+                    return "/error/400-error"
             }
                 // 500番台のエラー
                 status in 500..599 -> {
-                    return "error/500"
+                    return "/error/500-error"
                 }
             }
         }
         // その他のエラー
-        return "error"
+        return "/error"
     }
 }
