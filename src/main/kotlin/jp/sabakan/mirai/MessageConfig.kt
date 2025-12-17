@@ -50,6 +50,18 @@ public class MessageConfig {
         // M203: 面接履歴の登録に失敗しました
         const val INTERVIEW_INSERT_FAILED = "面接履歴の登録に失敗しました"
 
+        // M301-1: SPI問題の登録に成功しました
+        const val SPI_INSERT_SUCCESS = "SPI問題の登録に成功しました"
+
+        // M302-1: SPI問題の登録に失敗しました
+        const val SPI_INSERT_FAILED = "SPI問題の登録に失敗しました"
+
+        // M303-1: SPI問題の削除に成功しました
+        const val SPI_DELETE_SUCCESS = "SPI問題の削除に成功しました"
+
+        // M304-1: SPI問題の削除に失敗しました
+        const val SPI_DELETE_FAILED = "SPI問題の削除に失敗しました"
+
         // M301-2: Cab/Gab問題の登録に成功しました
         const val CABGAB_INSERT_SUCCESS = "Cab/Gab問題の登録に成功しました"
 

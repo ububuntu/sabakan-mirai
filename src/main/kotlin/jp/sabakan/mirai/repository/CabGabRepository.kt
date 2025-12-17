@@ -197,9 +197,9 @@ class CabGabRepository {
         )
 
         // クエリの実行
-        jdbc.update(deleteCabGab, paramMap)
         jdbc.update(deleteCabGabRate, paramMap)
-        return jdbc.update(deleteCabGabResult, paramMap)
+        jdbc.update(deleteCabGabResult, paramMap)
+        return jdbc.update(deleteCabGab, paramMap)
     }
 
     /**
