@@ -10,12 +10,19 @@
 <header th:replace="common/header :: siteHeader('indexHeader')"></header>
 
     <main>
+        <!-- 現在の目標 -->
         <section class="menu" aria-label="目標セクション">
-            <a class="note">あなたの目標</a>
-            <div class="company" th:text="${goal_target}">株式会社〇〇〇〇〇 最終面接</div>
-            <div class="countdown" th:text="'目標まであと ' + ${goal_remaining} + ' 日'">目標まであと〇日</div>
+            <div class="menu-item">
+                <img class="img" src="/img/user.svg" alt="目標">
+                <div class="texts">
+                    <p class="title">現在の目標</p>
+                    <p class="note">株式会社〇〇 最終面接</p>
+                    <p class="note">残り〇日</p>
+                </div>
+            </div>
         </section>
 
+        <!-- メニュー -->
         <section class="menu" aria-label="メニュー">
             <a class="note">メニュー</a>
 
