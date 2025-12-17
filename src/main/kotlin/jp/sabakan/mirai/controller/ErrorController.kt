@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 
 @Controller
-class errorController {
+class ErrorController {
 
     // 共通のエラー画面
     @GetMapping("/errors")
