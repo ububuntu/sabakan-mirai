@@ -113,7 +113,7 @@ main {
 .menu .button-center {
     background: var(--card);
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     padding: var(--padding-card);
     box-shadow: var(--shadow-card);
     display: flex;
