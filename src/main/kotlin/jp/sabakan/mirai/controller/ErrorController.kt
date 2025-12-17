@@ -17,7 +17,7 @@ class ErrorController {
     // 400エラー画面
     @GetMapping("/error/400")
     fun get404Error(): String {
-        return "400-error"
+        return "error/400-error"
     }
 
     // 500エラー画面
