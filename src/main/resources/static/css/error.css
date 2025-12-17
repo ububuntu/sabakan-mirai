@@ -1,12 +1,7 @@
 :root {
     /* ====== 共通色設定 ====== */
     --primary: #2b73ff;
-    --question: #2B73FF0D;
-    --bg: #f7f8fb;
-    --text: #1f2a37;
     --muted: #6b7280;
-    --card: #ffffff;
-    --border: #e5e7eb;
 
     /* ====== 間隔・余白 ====== */
     --padding-section: 4%;
@@ -25,15 +20,79 @@
 
     /* ====== 角丸 ====== */
     --radius-sm: 0.5rem;    /* アイコン・ボタン */
-    --radius-md: 1rem;      /* カード */
+    --radius-md: 1rem;      /* カード　*/
     --radius-lg: 1.5rem;    /* 大きなカード */
-
     /* ====== アイコンサイズ ====== */
-    --icon-size: 8%;            /* メニューアイコン */
-    --header-icon-size: 4rem; /* ヘッダーアイコン */
-    --footer-icon-size: 4rem; /* フッターアイコン */
+    --button-icon-size: 8%;
+    --icon-size: 4rem;      /* メニューアイコン */
+}
 
-    /* ====== シャドウ ====== */
-    --shadow-card: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.05);
-    --shadow-button: 0 4px 8px rgba(0, 0, 0, 0.08);
+img{
+    width: var(--icon-size);
+    height: auto;
+    aspect-ratio: 1/1;
+    border-radius: var(--radius-sm);
+    display: block;
+    margin: 4% auto;
+}
+
+.menu {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--gap-item);
+}
+
+.title {
+    margin: 0 0 4%;
+    font-size: var(--font-md);
+    text-align: center;
+}
+
+.text {
+    color: var(--muted);
+    margin: 0 0 10%;
+    font-size: var(--font-sm);
+    text-align: center;
+}
+
+.note {
+    color: var(--muted);
+    margin: 5% 0 0;
+    font-size: var(--font-xs);
+    text-align: center;
+}
+
+.button {
+    border-radius: var(--radius-sm);
+    padding: var(--padding-card);
+    display: flex;
+    justify-content: center;
+    font-size: var(--font-sm);
+    font-weight: bold;
+    text-decoration: none;
+    width: 80vw;
+    margin: 3% auto;
+}
+
+.button img {
+    width: var(--button-icon-size);
+    height: auto;
+    aspect-ratio: 1/1;
+    border-radius: var(--radius-sm);
+    display: flex;
+}
+
+.button-primary {
+    background: var(--primary);
+    border: 2px solid var(--primary);
+    color: white;
+}
+
+.button-white {
+    background: white;
+    border: 2px solid var(--primary);
+    color: var(--primary);
 }

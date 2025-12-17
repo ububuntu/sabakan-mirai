@@ -2,10 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>総合エラー画面</title>
+    <link rel="stylesheet" th:href="@{/css/error.css}" />
 </head>
 <body>
-<h2>texttext</h2>
-<h3>errors</h3>
+<main class="auth-container">
+    <section class="menu">
+        <img class="img" src="/img/error_all.svg" alt="総合エラーアイコン">
+
+        <p class="title">エラーが発生しました</p>
+
+        <p class="text">
+            予期しない問題が発生しました。<br>
+            もう一度お試しください。
+        </p>
+
+        <!-- 再試行ボタン -->
+        <button class="button button-primary" onclick="location.href='./'" type="button">
+            再試行
+        </button>
+
+        <!-- ホームボタン -->
+        <button class="button button-white" onclick="location.href='./'" type="button">
+            ホームに戻る
+        </button>
+
+        <p class="note">問題が解決しない場合は、サポートまでご連絡ください。</p>
+    </section>
+</main>
 </body>
 </html>
