@@ -1,81 +1,118 @@
 package jp.sabakan.mirai.component
 
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
-import org.springframework.web.client.postForEntity
 import java.lang.Exception
+import java.util.concurrent.CompletableFuture
 
 @Component
 class InterviewComponent(
-    private val restTemplate: RestTemplate
+    private val restTemplate: RestTemplate,
+    private val baseUrl: String = "http://192.168.1.100:5000"
 ) {
-    private val url = "http://192.168.1.100:5000"
 
     /**
-     * 例外発生時にデフォルト値を返す安全な呼び出し
+     * 非同期呼び出しを行うユーティリティメソッド
+     *
+     * @param default 例外発生時に返すデフォルト値
+     * @param block 実行する処理
+     * @return CompletableFuture<T>
      */
-    private inline fun <T> safeCall(default: T, block: () -> T): T {
-        return try {
-            block()
-        } catch (e: Exception) {
-            default
+    private inline fun <T> asyncCall(default: T, crossinline block: () -> T): CompletableFuture<T> {
+        return CompletableFuture.supplyAsync {
+            try {
+                block()
+            } catch (e: Exception) {
+                default
+            }
         }
     }
 
     /**
-     * 面接分析サービスへの接続確認
+     * 面接システムへの接続確認を行う
+     *
+     * @return CompletableFuture<Boolean>
      */
-    fun testConnection(): Boolean = safeCall(false) {
-        restTemplate.getForEntity<String>(url)
+    fun testConnection(): CompletableFuture<Boolean> = asyncCall(false) {
+        restTemplate.getForEntity<String>(baseUrl)
         true
     }
 
     /**
-     * 面接分析開始指示
+     * 面接分析を開始する
+     *
+     * @return CompletableFuture<Boolean>
      */
-    fun startAnalysis(): Boolean = safeCall(false) {
-        restTemplate.getForEntity<String>("$url/interview/start")
-        true
+    fun startAnalysis(): CompletableFuture<Boolean> = post("/interview/start")
+
+    /**
+     * フレーム画像を分析する
+     *
+     * @param base64 画像のBase64エンコード文字列
+     * @return CompletableFuture<Boolean>
+     */
+    fun analyzeFrame(base64: String): CompletableFuture<Boolean> {
+        val body = mapOf("image" to base64)
+        return post("/interview/analyze", body)
     }
 
     /**
-     * フレーム画像の送信と分析指示
+     * 音声データを分析する
+     *
+     * @param base64Audio 音声データのBase64エンコード文字列
+     * @return CompletableFuture<Boolean>
      */
-    fun analyzeFrame(base64: String): Boolean = safeCall(false) {
-        val request = mapOf("base64" to base64)
-        restTemplate.postForEntity<String>("$url/interview/frame", request)
-        true
+    fun analyzeAudio(base64Audio: String): CompletableFuture<Boolean> {
+        val body = mapOf("audio" to base64Audio)
+        return post("/interview/analyze-audio", body)
     }
 
     /**
-     * 音声分析結果の取得
+     * 面接分析の音声結果を取得する
+     *
+     * @return CompletableFuture<ByteArray?>
      */
-    fun getAudioAnalysis(): String? = safeCall(null) {
-        restTemplate.getForEntity<String>("$url/interview/audio").body
+    fun getAudioResult(): CompletableFuture<ByteArray?> = asyncCall(null) {
+        restTemplate.getForEntity("$baseUrl/interview/audio", ByteArray::class.java).body
     }
 
     /**
-     * 面接分析停止指示
+     * 面接分析を停止する
+     *
+     * @return CompletableFuture<String?>
      */
-    fun stopAnalysis(): Boolean = safeCall(false) {
-        restTemplate.getForEntity<String>("$url/interview/stop")
-        true
+    fun stopAnalysis(): CompletableFuture<String?> = asyncCall(null) {
+        val headers = HttpHeaders().apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+        val request = HttpEntity(emptyMap<String, String>(), headers)
+        restTemplate.postForEntity("$baseUrl/interview/stop", request, String::class.java).body
     }
 
     /**
-     * 面接分析データリセット指示
+     * 面接分析データをリセットする
+     *
+     * @return CompletableFuture<Boolean>
      */
-    fun resetAnalysis(): Boolean = safeCall(false) {
-        restTemplate.getForEntity<String>("$url/interview/reset")
-        true
-    }
+    fun reset(): CompletableFuture<Boolean> = post("/interview/reset")
 
     /**
-     * 汎用POSTリクエスト送信
+     * POSTリクエストを送信するユーティリティメソッド
+     *
+     * @param path エンドポイントのパス
+     * @param body リクエストボディ
+     * @return CompletableFuture<Boolean>
      */
-    fun post(path: String, body: Any? = null): Boolean = safeCall(false) {
-        restTemplate.postForEntity<String>("$url$path", body)
-        true
+    private fun post(path: String, body: Map<String, String> = emptyMap()): CompletableFuture<Boolean> = asyncCall(false) {
+        val headers = HttpHeaders().apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+        val request = HttpEntity(body, headers)
+        val response = restTemplate.postForEntity("$baseUrl$path", request, String::class.java)
+        response.statusCode.is2xxSuccessful
     }
 }
