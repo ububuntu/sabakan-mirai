@@ -105,15 +105,15 @@ class CabGabService {
      * @return CabGabレスポンス
      */
     fun getCabGab(request: CabGabRequest): CabGabResponse {
-        //リクエストからデータ変換
+        // リクエストからデータ変換
         val data = CabGabData()
         data.cabGabCategory = request.cabGabCategory
 
-        //リポジトリへ問い合わせ
+        // リポジトリへ問い合わせ
         val table: List<Map<String, Any?>> = cabGabRepository.getCabGab(data)
         val list: List<CabGabEntity> = tableToListEntity(table)
 
-        //結果を返す
+        // 結果を返す
         return CabGabResponse().apply {
             cabGabs = list
             message = null

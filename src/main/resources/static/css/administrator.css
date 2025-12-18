@@ -11,6 +11,7 @@
     /* ====== 間隔・余白 ====== */
     --padding-section: 4%;
     --padding-card: 4%;
+    --padding-sort: 1.5% 6%;
     --gap-menu: 1.2rem;
     --gap-item: 4%;
     --gap-icon-text: 0.3rem;
@@ -29,9 +30,8 @@
     --radius-lg: 1.5rem;    /* 大きなカード */
 
     /* ====== アイコンサイズ ====== */
-    --icon-size: 8%;            /* メニューアイコン */
-    --header-icon-size: 4rem;   /* ヘッダーアイコン */
-    --footer-icon-size: 4rem;   /* フッターアイコン */
+    --menu-icon-size: 8%;     /* メニューアイコン */
+    --icon-size: 4rem;   /* アイコン */
 
     /* ====== シャドウ ====== */
     --shadow-card: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.05);
@@ -107,14 +107,8 @@ header img{
     flex-direction: column;
 }
 
-.menu-content {
-    display: flex;
-    align-items: center;
-    gap: var(--gap-item);
-}
-
 .menu-item .img {
-    width: var(--icon-size);
+    width: var(--menu-icon-size);
     height: auto;
     aspect-ratio: 1/1;
     border-radius: var(--radius-sm);
@@ -144,19 +138,53 @@ header img{
     font-size: var(--font-lg);
 }
 
-/* ====== 統計表示 ====== */
-.menu-item:has(.menu-content) {
+.menu-item .meta {
+    margin-left: auto;
+    display: flex;
     flex-direction: column;
-    gap: 0;
+    align-items: flex-end;
+    gap: 0.8rem;
+}
+
+.menu-item .role,
+.menu-item .status{
+    background: var(--primary);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-lg);
+    color: #ffffff;
+    padding: 0.2em 0.8em;
+    margin: 0.3em 0;
+}
+/* 権限が利用者 */
+.menu-item .role.normal {
+    background: #30C851;
+}
+/* 停止中 */
+.menu-item .status.inactive {
+    background: #99999C;
+}
+
+.statistics{
+    background: var(--card);
+    border-radius: var(--radius-md);
+    padding: var(--padding-card);
+    gap: var(--gap-item);
+    box-shadow: var(--shadow-card);
 }
 
 .menu-content {
-    display: grid;
-    grid-template-columns: var(--icon-size) 1fr 1fr;
+    display: flex;
     align-items: center;
     gap: var(--gap-item);
-    padding: 3% 0;
-    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+}
+
+.menu-content .img {
+    width: var(--menu-icon-size);
+    height: auto;
+    aspect-ratio: 1/1;
+    border-radius: var(--radius-sm);
 }
 
 .menu-content:last-child {
@@ -164,19 +192,59 @@ header img{
 }
 
 .stat-text {
-    display: contents;
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
     font-size: var(--font-xl);
     font-weight: 600;
 }
 
 .stat-label {
     color: var(--text);
-    text-align: center;
 }
 
 .stat-value {
     color: var(--primary);
-    text-align: right;
+}
+
+/* ====== ソート条件ボタン ====== */
+.sort {
+    padding: var(--padding-card);
+    display: flex;
+    gap: var(--gap-item);
+    font-size: var(--font-lg);
+}
+
+.sort input {
+    display: none;
+}
+
+.sort label {
+    padding: var(--padding-sort);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    background: #fff;
+    user-select: none;
+}
+
+.sort input:checked + label {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    font-weight: 600;
+}
+
+/* ====== 新規登録ボタン ====== */
+.fab-register {
+    position: fixed;
+    right: 2rem;
+    bottom: 12vh;
+    z-index: 20;
+    background: var(--card);
+    font-size: var(--font-lg);
+    padding: 0.8em 1.4em;
+    border-radius: var(--radius-lg);
+    border: 2px solid #9F9F9F;
 }
 
 /* ====== フッター ====== */
@@ -216,7 +284,7 @@ footer nav.bottom {
 }
 
 .footer-icon img {
-    width: var(--footer-icon-size);
+    width: var(--icon-size);
     height: auto;
     aspect-ratio: 1/1;
 }
