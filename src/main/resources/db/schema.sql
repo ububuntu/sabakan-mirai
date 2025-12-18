@@ -38,7 +38,7 @@ CREATE TABLE es_t(
 );
 
 /* SPIテーブル */
-CREATE TABLE spi_t(
+CREATE TABLE spi_m(
     spi_id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
     spi_content         VARCHAR(255),
     spi_answer1         VARCHAR(100),
@@ -57,7 +57,7 @@ CREATE TABLE spi_rate_t(
     spi_answers     CHAR(2) NOT NULL ,
     spi_count       INT NOT NULL ,
     UNIQUE(spi_id, user_id) ,
-    FOREIGN KEY (spi_id) REFERENCES spi_t(spi_id),
+    FOREIGN KEY (spi_id) REFERENCES spi_m(spi_id),
     FOREIGN KEY (user_id) REFERENCES user_m(user_id)
 );
 
@@ -69,14 +69,14 @@ CREATE TABLE spi_result_t(
     spi_answer      INT NOT NULL ,
     spi_correct_answer  INT NOT NULL ,
     spi_answer_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
-    FOREIGN KEY (spi_id) REFERENCES spi_t(spi_id),
+    FOREIGN KEY (spi_id) REFERENCES spi_m(spi_id),
     FOREIGN KEY (user_id) REFERENCES user_m(user_id)
 );
 
 
 
 /* CAB/GABテーブル */
-CREATE TABLE cabgab_t(
+CREATE TABLE cabgab_m(
     cabgab_id               BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
     cabgab_content          VARCHAR(255),
     cabgab_answer1          VARCHAR(100),
@@ -95,7 +95,7 @@ CREATE TABLE cabgab_rate_t(
     cabgab_answers  CHAR(3) NOT NULL ,
     cabgab_count    INT NOT NULL ,
     UNIQUE(cabgab_id, user_id) ,
-    FOREIGN KEY (cabgab_id) REFERENCES cabgab_t(cabgab_id),
+    FOREIGN KEY (cabgab_id) REFERENCES cabgab_m(cabgab_id),
     FOREIGN KEY (user_id) REFERENCES user_m(user_id)
 );
 
@@ -107,6 +107,6 @@ CREATE TABLE cabgab_result_t(
     cabgab_answer       CHAR(1) NOT NULL ,
     cabgab_correct_answer   CHAR(1) NOT NULL ,
     cabgab_answer_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
-    FOREIGN KEY (cabgab_id) REFERENCES cabgab_t(cabgab_id),
+    FOREIGN KEY (cabgab_id) REFERENCES cabgab_m(cabgab_id),
     FOREIGN KEY (user_id) REFERENCES user_m(user_id)
 );
