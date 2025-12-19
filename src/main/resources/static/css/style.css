@@ -165,6 +165,24 @@ main {
     font-size: var(--font-lg);
 }
 
+/* ====== ソート条件ボタン ====== */
+.sort{
+    padding: var(--padding-card);
+    display: flex;
+    gap:var(--gap-item);
+    font-size: var(--font-lg);
+}
+
+.sort input{
+    display: none;
+}
+
+.sort input:checked + label{
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    font-weight: 600;
+}
 
 /* ====== 適性試験 ====== */
 .choice-label {
