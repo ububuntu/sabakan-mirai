@@ -11,6 +11,7 @@
     /* ====== 間隔・余白 ====== */
     --padding-section: 4%;
     --padding-card: 4%;
+    --padding-sort: 1.5% 6%;
     --gap-menu: 1.2rem;
     --gap-item: 4%;
     --gap-icon-text: 0.3rem;
@@ -29,9 +30,8 @@
     --radius-lg: 1.5rem;    /* 大きなカード */
 
     /* ====== アイコンサイズ ====== */
-    --icon-size: 8%;            /* メニューアイコン */
-    --header-icon-size: 4rem;   /* ヘッダーアイコン */
-    --footer-icon-size: 4rem;   /* フッターアイコン */
+    --menu-icon-size: 8%;     /* メニューアイコン */
+    --icon-size: 4rem;   /* アイコン */
 
     /* ====== シャドウ ====== */
     --shadow-card: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.05);
@@ -108,7 +108,7 @@ header img{
 }
 
 .menu-item .img {
-    width: var(--icon-size);
+    width: var(--menu-icon-size);
     height: auto;
     aspect-ratio: 1/1;
     border-radius: var(--radius-sm);
@@ -138,11 +138,33 @@ header img{
     font-size: var(--font-lg);
 }
 
-/*!* ====== 統計表示 ====== *!*/
-/*.menu-item:has(.menu-content) {*/
-/*    flex-direction: column;*/
-/*    gap: 0;*/
-/*}*/
+.menu-item .meta {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.8rem;
+}
+
+.menu-item .role,
+.menu-item .status{
+    background: var(--primary);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-lg);
+    text-align: center;
+    color: #ffffff;
+    padding: 0.2em 0.8em;
+    margin: 0.3em 0;
+}
+/* 権限が利用者 */
+.menu-item .role.normal {
+    background: #30C851;
+}
+/* 停止中 */
+.menu-item .status.inactive {
+    background: #99999C;
+}
+
 .statistics{
     background: var(--card);
     border-radius: var(--radius-md);
@@ -160,7 +182,7 @@ header img{
 }
 
 .menu-content .img {
-    width: var(--icon-size);
+    width: var(--menu-icon-size);
     height: auto;
     aspect-ratio: 1/1;
     border-radius: var(--radius-sm);
@@ -184,6 +206,86 @@ header img{
 
 .stat-value {
     color: var(--primary);
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    border-radius: var(--radius-sm);
+    margin: 3rem 0;
+}
+
+.form-label {
+    font-size: var(--font-md);
+    color: var(--text);
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea{
+    width: 100%;
+    box-sizing: border-box;
+    height: 100px;
+    padding: 0 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid #ccc;
+    font-size: var(--font-md);
+}
+.button{
+    width: 100%;
+    height: 80px;
+    border-radius: var(--radius-lg);
+    color: #ffffff;
+    background: var(--primary);
+    font-size: var(--font-md);
+    margin: 75px 0;
+    border: none;
+    outline: none;
+}
+/* ====== ソート条件ボタン ====== */
+.sort {
+    padding: var(--padding-card);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-item);
+    font-size: var(--font-lg);
+}
+
+.radio {
+    display: flex;
+    gap: var(--gap-item);
+}
+
+.sort .radio input {
+    display: none;
+}
+
+.sort .radio label {
+    padding: var(--padding-sort);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    background: #fff;
+    user-select: none;
+}
+
+.sort input:checked + label {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+}
+
+/* ====== 新規登録ボタン ====== */
+.fab-register {
+    position: fixed;
+    right: 2rem;
+    bottom: 12vh;
+    z-index: 20;
+    background: var(--card);
+    font-size: var(--font-lg);
+    padding: 0.8em 1.4em;
+    border-radius: var(--radius-lg);
+    border: 2px solid #9F9F9F;
 }
 
 /* ====== フッター ====== */
@@ -223,7 +325,7 @@ footer nav.bottom {
 }
 
 .footer-icon img {
-    width: var(--footer-icon-size);
+    width: var(--icon-size);
     height: auto;
     aspect-ratio: 1/1;
 }

@@ -2,9 +2,152 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>ユーザ管理メイン画面</title>
+    <link rel="stylesheet" th:href="@{/css/administrator.css}" />
 </head>
 <body>
+<header th:replace="common/header :: siteHeader('manageHeader')"></header>
+<main>
+    <!-- 管理者メニュー -->
+    <section class="menu" aria-label="ユーザリスト">
+        <div class="sort">
+            <div class="form-row">
+                <label class="form-label" for="user-name">ユーザ名で絞り込む</label>
+                <input type="text" id="user-name" name="userName" placeholder="ユーザ名を入力">
+            </div>
+            <div class="radio">
+                <!-- ラジオボタンのcssがボタン選択によって変化する事を確かめるために仮でnameやidをつけています -->
+                <input type="radio" name="status" id="all" checked>
+                <label for="all">すべて</label>
 
+                <input type="radio" name="status" id="active">
+                <label for="active">利用中</label>
+
+                <input type="radio" name="status" id="stop">
+                <label for="stop">停止中</label>
+            </div>
+        </div>
+
+        <div onclick="location.href='./users/edit'" class="menu-item">
+            <div class="texts">
+                <p class="title">たまーにラッキー</p>
+                <p class="desc">最終ログイン：1時間前</p>
+                <p class="desc">作成日：2025/12/03</p>
+            </div>
+
+            <div class="meta">
+                <span class="role admin">管理者</span>
+                <span class="status active">利用中</span>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="texts">
+                <p class="title">たまーにヨッシー</p>
+                <p class="desc">最終ログイン：1時間前</p>
+                <p class="desc">作成日：2025/12/03</p>
+            </div>
+
+            <div class="meta">
+                <span class="role normal">利用者</span>
+                <span class="status active">利用中</span>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="texts">
+                <p class="title">たまーにスズッキー</p>
+                <p class="desc">最終ログイン：1時間前</p>
+                <p class="desc">作成日：2025/12/03</p>
+            </div>
+
+            <div class="meta">
+                <span class="role normal">利用者</span>
+                <span class="status active">利用中</span>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="texts">
+                <p class="title">オニヤンマ</p>
+                <p class="desc">最終ログイン：1時間前</p>
+                <p class="desc">作成日：2025/12/03</p>
+            </div>
+
+            <div class="meta">
+                <span class="role normal">利用者</span>
+                <span class="status inactive">停止中</span>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="texts">
+                <p class="title">オニヤンマ</p>
+                <p class="desc">最終ログイン：1時間前</p>
+                <p class="desc">作成日：2025/12/03</p>
+            </div>
+
+            <div class="meta">
+                <span class="role normal">利用者</span>
+                <span class="status inactive">停止中</span>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="texts">
+                <p class="title">オニヤンマ</p>
+                <p class="desc">最終ログイン：1時間前</p>
+                <p class="desc">作成日：2025/12/03</p>
+            </div>
+
+            <div class="meta">
+                <span class="role normal">利用者</span>
+                <span class="status inactive">停止中</span>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="texts">
+                <p class="title">オニヤンマ</p>
+                <p class="desc">最終ログイン：1時間前</p>
+                <p class="desc">作成日：2025/12/03</p>
+            </div>
+
+            <div class="meta">
+                <span class="role normal">利用者</span>
+                <span class="status inactive">停止中</span>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="texts">
+                <p class="title">オニヤンマ</p>
+                <p class="desc">最終ログイン：1時間前</p>
+                <p class="desc">作成日：2025/12/03</p>
+            </div>
+
+            <div class="meta">
+                <span class="role normal">利用者</span>
+                <span class="status inactive">停止中</span>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="texts">
+                <p class="title">オニヤンマ</p>
+                <p class="desc">最終ログイン：1時間前</p>
+                <p class="desc">作成日：2025/12/03</p>
+            </div>
+
+            <div class="meta">
+                <span class="role normal">利用者</span>
+                <span class="status inactive">停止中</span>
+            </div>
+        </div>
+    </section>
+    <div class="spacer" aria-hidden="true"></div>
+</main>
+<footer th:replace="common/footer :: siteFooter"></footer>
+<button onclick="location.href='./users/add'" class="fab-register">新規登録 ＋</button>
 </body>
 </html>

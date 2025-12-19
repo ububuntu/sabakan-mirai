@@ -1,10 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="jp">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>管理者画面 | Mirai</title>
+    <link rel="stylesheet" th:href="@{/css/administrator.css}" />
 </head>
 <body>
+<header th:replace="common/header :: siteHeader('manageHeader')"></header>
+<main>
+    <!-- システム統計 -->
+    <p class="note">ユーザ設定変更</p>
+    <section class="statistics" aria-label="システム統計">
+        <div class="form-row">
+            <label class="form-label" for="user-name">ユーザ名</label>
+            <input type="text" id="user-name" name="userName" placeholder="ユーザ名を入力">
+        </div>
 
+        <div class="form-row">
+            <label class="form-label" for="user-role">権限</label>
+            <select id="user-role" name="userRole">
+                <option>利用者</option>
+                <option>管理者</option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label class="form-label" for="user_valid">状態</label>
+            <select id="user_valid" name="userValid">
+                <option>利用中</option>
+                <option>停止中</option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label class="form-label" for="password">新しいパスワード</label>
+            <input type="text" id="password" name="password" placeholder="パスワードを入力">
+        </div>
+
+        <div class="form-row">
+            <label class="form-label" for="password-confirm">新しいパスワード（確認）</label>
+            <input type="text" id="password-confirm" name="passwordConfirm" placeholder="パスワードを入力">
+        </div>
+
+        <!-- 送信ボタン -->
+        <button onclick="location.href='/manage/users'" class="button" type="submit">
+            追加
+        </button>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+</main>
+<footer th:replace="common/footer :: siteFooter"></footer>
 </body>
 </html>
