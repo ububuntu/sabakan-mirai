@@ -31,6 +31,7 @@
 
     /* ====== アイコンサイズ ====== */
     --menu-icon-size: 8%;     /* メニューアイコン */
+    --header-icon-size: 4rem; /* ヘッダーアイコン */
     --icon-size: 4rem;   /* アイコン */
 
     /* ====== シャドウ ====== */
@@ -68,6 +69,13 @@ header .header-center {
     display: flex;
     align-items: center;
     gap: var(--gap-icon-text);
+}
+
+header img {
+    width: var(--header-icon-size);
+    height: auto;
+    aspect-ratio: 1/1;
+    border-radius: var(--radius-sm);
 }
 
 header img{
