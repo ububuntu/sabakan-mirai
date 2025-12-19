@@ -11,18 +11,24 @@
     <!-- 管理者メニュー -->
     <section class="menu" aria-label="ユーザリスト">
         <div class="sort">
-            <!-- ラジオボタンのcssがボタン選択によって変化する事を確かめるために仮でnameやidをつけています -->
-            <input type="radio" name="status" id="all" checked>
-            <label for="all">すべて</label>
+            <div class="form-row">
+                <label class="form-label" for="user-name">ユーザ名で絞り込む</label>
+                <input type="text" id="user-name" name="userName" placeholder="ユーザ名を入力">
+            </div>
+            <div class="radio">
+                <!-- ラジオボタンのcssがボタン選択によって変化する事を確かめるために仮でnameやidをつけています -->
+                <input type="radio" name="status" id="all" checked>
+                <label for="all">すべて</label>
 
-            <input type="radio" name="status" id="active">
-            <label for="active">利用中</label>
+                <input type="radio" name="status" id="active">
+                <label for="active">利用中</label>
 
-            <input type="radio" name="status" id="stop">
-            <label for="stop">停止中</label>
+                <input type="radio" name="status" id="stop">
+                <label for="stop">停止中</label>
+            </div>
         </div>
 
-        <div class="menu-item">
+        <div onclick="location.href='./users/edit'" class="menu-item">
             <div class="texts">
                 <p class="title">たまーにラッキー</p>
                 <p class="desc">最終ログイン：1時間前</p>
@@ -30,8 +36,8 @@
             </div>
 
             <div class="meta">
-                <p class="role admin">管理者</p>
-                <p class="status active">利用中</p>
+                <span class="role admin">管理者</span>
+                <span class="status active">利用中</span>
             </div>
         </div>
 
@@ -43,8 +49,8 @@
             </div>
 
             <div class="meta">
-                <p class="role normal">利用者</p>
-                <p class="status active">利用中</p>
+                <span class="role normal">利用者</span>
+                <span class="status active">利用中</span>
             </div>
         </div>
 
@@ -56,8 +62,8 @@
             </div>
 
             <div class="meta">
-                <p class="role normal">利用者</p>
-                <p class="status active">利用中</p>
+                <span class="role normal">利用者</span>
+                <span class="status active">利用中</span>
             </div>
         </div>
 
@@ -69,8 +75,8 @@
             </div>
 
             <div class="meta">
-                <p class="role normal">利用者</p>
-                <p class="status inactive">停止中</p>
+                <span class="role normal">利用者</span>
+                <span class="status inactive">停止中</span>
             </div>
         </div>
 
@@ -82,8 +88,8 @@
             </div>
 
             <div class="meta">
-                <p class="role normal">利用者</p>
-                <p class="status inactive">停止中</p>
+                <span class="role normal">利用者</span>
+                <span class="status inactive">停止中</span>
             </div>
         </div>
 
@@ -95,8 +101,8 @@
             </div>
 
             <div class="meta">
-                <p class="role normal">利用者</p>
-                <p class="status inactive">停止中</p>
+                <span class="role normal">利用者</span>
+                <span class="status inactive">停止中</span>
             </div>
         </div>
 
@@ -108,8 +114,8 @@
             </div>
 
             <div class="meta">
-                <p class="role normal">利用者</p>
-                <p class="status inactive">停止中</p>
+                <span class="role normal">利用者</span>
+                <span class="status inactive">停止中</span>
             </div>
         </div>
 
@@ -121,8 +127,8 @@
             </div>
 
             <div class="meta">
-                <p class="role normal">利用者</p>
-                <p class="status inactive">停止中</p>
+                <span class="role normal">利用者</span>
+                <span class="status inactive">停止中</span>
             </div>
         </div>
 
@@ -134,8 +140,8 @@
             </div>
 
             <div class="meta">
-                <p class="role normal">利用者</p>
-                <p class="status inactive">停止中</p>
+                <span class="role normal">利用者</span>
+                <span class="status inactive">停止中</span>
             </div>
         </div>
     </section>
