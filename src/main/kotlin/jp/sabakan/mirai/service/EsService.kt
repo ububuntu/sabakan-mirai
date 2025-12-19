@@ -7,6 +7,7 @@ import jp.sabakan.mirai.request.EsRequest
 import jp.sabakan.mirai.response.EsResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class EsService {
@@ -43,7 +44,7 @@ class EsService {
     fun insertEs(request: EsRequest): EsResponse {
         // リクエストからデータ変換
         val data = EsData().apply {
-            esId = request.esId
+            esId = toCreateEsId()
             userId = request.userId
             esContentReason = request.esContentReason
             esContentSelfpr = request.esContentSelfpr
@@ -109,7 +110,7 @@ class EsService {
     fun deleteEs(request: EsRequest): EsResponse {
         // リクエストからデータ変換
         val data = EsData().apply {
-            esId = request.esId
+            esId = toCreateEsId()
             userId = request.userId
         }
 
@@ -129,12 +130,26 @@ class EsService {
     }
 
     /**
+     * 新しいESIDを生成する
+     *
+     * @return 新しいESID
+     */
+    private fun toCreateEsId(): String {
+        // UUIDを生成
+        val uuid = UUID.randomUUID().toString()
+
+        // 新しいESIDの生成
+        return "E$uuid"
+    }
+
+
+    /**
      * テーブルデータをEsEntityリストに変換する
      *
      * @param table テーブルデータ
      * @return EsEntityリスト
      */
-    fun tableToListEntity (table: List<Map<String, Any?>>): List<EsEntity> {
+    fun tableToListEntity(table: List<Map<String, Any?>>): List<EsEntity> {
         return table.map { row ->
             EsEntity().apply {
                 esId = row["esId"] as String?

@@ -1,6 +1,6 @@
 /* ユーザマスタ */
 CREATE TABLE user_m(
-    user_id         CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
+    user_id         CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
     user_name       VARCHAR(50) NOT NULL ,
     user_address    VARCHAR(50) NOT NULL ,
     password        VARCHAR(255) NOT NULL ,
@@ -13,8 +13,8 @@ CREATE TABLE user_m(
 
 /* 面接テーブル */
 CREATE TABLE interview_t(
-    interview_id            CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
-    user_id                 CHAR(20) NOT NULL ,
+    interview_id            CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
+    user_id                 CHAR(37) NOT NULL ,
     interview_expression    INT,
     interview_eyes          INT,
     interview_posture       INT,
@@ -26,8 +26,8 @@ CREATE TABLE interview_t(
 
 /* ESテーブル */
 CREATE TABLE es_t(
-    es_id                   CHAR(20) PRIMARY KEY NOT NULL UNIQUE ,
-    user_id                 CHAR(20) NOT NULL ,
+    es_id                   CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
+    user_id                 CHAR(37) NOT NULL ,
     es_content_reason       VARCHAR(500),
     es_content_selfpr       VARCHAR(500),
     es_content_activities   VARCHAR(500),
@@ -53,8 +53,8 @@ CREATE TABLE spi_m(
 CREATE TABLE spi_rate_t(
     spi_rate_id     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
     spi_id          BIGINT NOT NULL ,
-    user_id         CHAR(20) NOT NULL ,
-    spi_answers     CHAR(2) NOT NULL ,
+    user_id         CHAR(37) NOT NULL ,
+    spi_answers     CHAR(3) NOT NULL ,
     spi_count       INT NOT NULL ,
     UNIQUE(spi_id, user_id) ,
     FOREIGN KEY (spi_id) REFERENCES spi_m(spi_id),
@@ -65,7 +65,7 @@ CREATE TABLE spi_rate_t(
 CREATE TABLE spi_result_t(
     spi_result_id   BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
     spi_id          BIGINT NOT NULL ,
-    user_id         CHAR(20) NOT NULL ,
+    user_id         CHAR(37) NOT NULL ,
     spi_answer      INT NOT NULL ,
     spi_correct_answer  INT NOT NULL ,
     spi_answer_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
@@ -89,9 +89,9 @@ CREATE TABLE cabgab_m(
 
 /* CAB/GAB回答率テーブル */
 CREATE TABLE cabgab_rate_t(
-    cabgab_rate_id  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
+    cabgab_rate_id  CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
     cabgab_id       BIGINT NOT NULL ,
-    user_id         CHAR(20) NOT NULL ,
+    user_id         CHAR(37) NOT NULL ,
     cabgab_answers  CHAR(3) NOT NULL ,
     cabgab_count    INT NOT NULL ,
     UNIQUE(cabgab_id, user_id) ,
@@ -101,9 +101,9 @@ CREATE TABLE cabgab_rate_t(
 
 /* CAB/GAB結果テーブル */
 CREATE TABLE cabgab_result_t(
-    cabgab_result_id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
+    cabgab_result_id    CHAR(38) PRIMARY KEY NOT NULL UNIQUE ,
     cabgab_id           BIGINT NOT NULL ,
-    user_id             CHAR(20) NOT NULL ,
+    user_id             CHAR(37) NOT NULL ,
     cabgab_answer       CHAR(1) NOT NULL ,
     cabgab_correct_answer   CHAR(1) NOT NULL ,
     cabgab_answer_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,

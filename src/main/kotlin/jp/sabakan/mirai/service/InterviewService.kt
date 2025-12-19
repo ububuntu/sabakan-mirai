@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 @Service
 class InterviewService {
@@ -94,30 +95,12 @@ class InterviewService {
     *
      * @return 面接ID
      */
-    private val userIdLock = Any()
     private fun toCreateInterviewId(): String {
-        synchronized(userIdLock) {
-            // 現在の年月(yyyyMM)
-            val currentYm = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM"))
+        // UUIDを生成
+        val uuid = UUID.randomUUID().toString()
 
-            // 現在年月に一致する最大の面接IDを取得 (例: "I20251201234")
-            val maxInterviewId = interviewRepository.getMaxInterviewId(currentYm) // LIKE 'I202512%'
-
-            // 連番の決定
-            val nextSerial = if (maxInterviewId != null && maxInterviewId.length >= 12) {
-                val maxYm = maxInterviewId.substring(1, 7)
-                val maxSerial = maxInterviewId.substring(7).toIntOrNull() ?: 0
-                if (maxYm == currentYm) maxSerial + 1 else 1
-            } else {
-                1
-            }
-
-            // ゼロ埋め5桁の連番
-            val serialStr = String.format("%05d", nextSerial)
-
-            // 新しい面接IDの生成 (例: "I20251201235")
-            return "I${currentYm}${serialStr}"
-        }
+        // 新しい面接IDの生成
+        return "I$uuid"
     }
 
     /**

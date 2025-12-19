@@ -13,6 +13,7 @@ import jp.sabakan.mirai.response.SpiResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Service
 class SpiService {
@@ -54,6 +55,7 @@ class SpiService {
         }
     }
 
+    // #TODO rateとresultを分割する必要がある
     /**
      * SPI回答を登録する
      *
@@ -64,7 +66,7 @@ class SpiService {
     fun insertSpiAnswer(request: SpiRequest): SpiResponse {
         //リクエストからデータ変換
         val data = AnsweredSpiData()
-        data.spiResultId = request.spiResultId
+        data.spiResultId = toCreateSpiResultId()
         data.spiId = request.spiId
         data.userId = request.userId
         data.userAnswer = request.userAnswer
@@ -196,6 +198,32 @@ class SpiService {
                 message = MessageConfig.SPI_DELETE_SUCCESS
             }
         }
+    }
+
+    /**
+     * 新しいSPI IDを生成する
+     *
+     * @return 新しいSPI ID
+     */
+    private fun toCreateSpiId(): String {
+        // UUIDを生成
+        val uuid = UUID.randomUUID().toString()
+
+        // 新しいSPI IDを作成
+        return "S$uuid"
+    }
+
+    /**
+     * 新しいSPI_RESULT IDを生成する
+     *
+     * @return 新しいSPI ID
+     */
+    private fun toCreateSpiResultId(): String {
+        // UUIDを生成
+        val uuid = UUID.randomUUID().toString()
+
+        // 新しいSPI IDを作成
+        return "SR$uuid"
     }
 
     /**

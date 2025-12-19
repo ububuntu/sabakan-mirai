@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 @Service
 class UserService {
@@ -175,34 +176,16 @@ class UserService {
     }
 
     /**
-     * ユーザID生成処理
+     * ユーザIDを生成する
      *
      * @return ユーザID
      */
-    private val userIdLock = Any()
-    private fun toCreateUserId(): String {
-        synchronized(userIdLock) {
-            // 現在の年月(yyyyMM)
-            val currentYm = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM"))
+    private fun toCreateUserId(): String{
+        // UUIDを生成
+        val uuid = UUID.randomUUID().toString()
 
-            // 現在年月に一致する最大のユーザIDを取得（例: "U20251200007"）
-            val maxUserId = userRepository.getMaxUserId(currentYm) // LIKE 'U202512%'
-
-            // 連番の決定
-            val nextSerial = if (maxUserId != null && maxUserId.length >= 12) {
-                val maxYm = maxUserId.substring(1, 7)
-                val maxSerial = maxUserId.substring(7).toIntOrNull() ?: 0
-                if (maxYm == currentYm) maxSerial + 1 else 1
-            } else {
-                1
-            }
-
-            // ゼロ埋め5桁の連番
-            val serialStr = String.format("%05d", nextSerial)
-
-            // ユーザID生成（例: U20251200008）
-            return "U$currentYm$serialStr"
-        }
+        // 新しいユーザIDを返す
+        return "U$uuid"
     }
 
     /**

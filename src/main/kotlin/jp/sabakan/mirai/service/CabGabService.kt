@@ -10,6 +10,7 @@ import jp.sabakan.mirai.response.CabGabResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Service
 class CabGabService {
@@ -51,6 +52,7 @@ class CabGabService {
         }
     }
 
+    // #TODO rateとresultを分割する必要がある
     /**
      * CabGab回答を登録する
      *
@@ -61,7 +63,7 @@ class CabGabService {
     fun insertCabGabAnswer(request: CabGabRequest): CabGabResponse {
         //リクエストからデータ変換
         val data = AnsweredCabGabData()
-        data.cabgabResultId = request.cabgabResultId
+        data.cabgabResultId = toCreateCabGabResultId()
         data.cabGabId = request.cabGabId
         data.userId = request.userId
         data.userAnswer = request.userAnswer
@@ -193,6 +195,32 @@ class CabGabService {
                 message = MessageConfig.CABGAB_DELETE_SUCCESS
             }
         }
+    }
+
+    /**
+     * 新しいCabGabIDを生成する
+     *
+     * @return 新しいCabGabID
+     */
+    private fun toCreateCabGabId(): String{
+        // UUIDを生成
+        val uuid = UUID.randomUUID().toString()
+
+        // 新しいCabGabIDの生成
+        return "C$uuid"
+    }
+
+    /**
+     * 新しいCabGabResultIDを生成する
+     *
+     * @return 新しいCabGabResultID
+     */
+    private fun toCreateCabGabResultId(): String{
+        // UUIDを生成
+        val uuid = UUID.randomUUID().toString()
+
+        // 新しいCabGabResultIDの生成
+        return "CR$uuid"
     }
 
     /**

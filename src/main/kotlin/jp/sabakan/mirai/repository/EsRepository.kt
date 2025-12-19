@@ -40,6 +40,12 @@ class EsRepository {
         WHERE es_id = :esId AND user_id = :userId
         """.trimIndent()
 
+    // ESの最大IDを取得するSQLクエリ
+    val getMaxEsId = """
+        SELECT MAX(es_id) AS max_es_id FROM es_t
+        WHERE es_id LIKE :prefix
+        """.trimIndent()
+
     /**
      * 指定ユーザのES一覧を取得する
      *
@@ -114,5 +120,14 @@ class EsRepository {
 
         // クエリの実行
         return jdbc.update(deleteEs, paramMap)
+    }
+
+    fun getMaxEsId(Ym: String): String? {
+        // キーワード抽出
+        val prefix = mapOf("prefix" to "U$Ym")
+
+        // クエリの実行
+        val result = jdbc.queryForList(getMaxEsId, prefix)
+        return result.firstOrNull()?.get("max_es_id")?.toString()
     }
 }
