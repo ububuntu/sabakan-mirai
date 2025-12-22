@@ -238,6 +238,7 @@ header img{
     border: 1px solid #ccc;
     font-size: var(--font-lg);
 }
+
 .button{
     width: 100%;
     padding: var(--padding-card);
@@ -246,6 +247,7 @@ header img{
     background: var(--primary);
     font-size: var(--font-lg);
     margin: 75px 0;
+    border: none;
 }
 /* ====== ソート条件ボタン ====== */
 .sort {
@@ -261,10 +263,6 @@ header img{
     gap: var(--gap-item);
 }
 
-.sort .radio input {
-    display: none;
-}
-
 .sort .radio label {
     padding: var(--padding-sort);
     border-radius: var(--radius-lg);
@@ -273,10 +271,18 @@ header img{
     user-select: none;
 }
 
+.sort .radio input {
+    display: none;
+}
+
 .sort input:checked + label {
     background: var(--primary);
     color: white;
     font-weight: 600;
+}
+
+.sort .radio input:not(:checked) + label {
+    border: 1px solid #9F9F9F;
 }
 
 /* ====== 新規登録ボタン ====== */
