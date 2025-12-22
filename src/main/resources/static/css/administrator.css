@@ -225,8 +225,9 @@ header img{
 }
 
 .form-label {
-    font-size: var(--font-md);
-    color: var(--text);
+    font-weight: 600;
+    margin: 0 0 2%;
+    font-size: var(--font-xl);
 }
 
 .form-row input,
@@ -235,7 +236,7 @@ header img{
     padding: var(--padding-card);
     border-radius: var(--radius-sm);
     border: 1px solid #ccc;
-    font-size: var(--font-md);
+    font-size: var(--font-lg);
 }
 .button{
     width: 100%;
@@ -243,10 +244,8 @@ header img{
     border-radius: var(--radius-lg);
     color: #ffffff;
     background: var(--primary);
-    font-size: var(--font-md);
+    font-size: var(--font-lg);
     margin: 75px 0;
-    border: none;
-    outline: none;
 }
 /* ====== ソート条件ボタン ====== */
 .sort {
