@@ -11,6 +11,7 @@
     /* ====== 間隔・余白 ====== */
     --padding-section: 4%;
     --padding-card: 4%;
+    --padding-sort: 1.5% 6%;
     --gap-menu: 1.2rem;
     --gap-item: 4%;
     --gap-icon-text: 0.3rem;
@@ -115,7 +116,7 @@ main {
 .menu .button-center {
     background: var(--card);
     border: none;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-lg);
     padding: var(--padding-card);
     box-shadow: var(--shadow-card);
     display: flex;
@@ -167,23 +168,81 @@ main {
     font-size: var(--font-lg);
 }
 
-/* ====== ソート条件ボタン ====== */
-.sort{
-    padding: var(--padding-card);
+.menu-item .meta{
     display: flex;
-    gap:var(--gap-item);
+    gap: 0.8rem;
+}
+
+.menu-item .status{
+    background: var(--primary);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-lg);
+    color: #ffffff;
+    padding: 0.2em 0.8em;
+    margin: 0.3em 0;
+}
+
+/* 制作中アイコン */
+.menu-item .status.draft{
+    background: #ff9853;
+}
+
+/* 完成アイコン */
+.menu-item .status.complite{
+    background: #30C851;
+}
+
+.status-row {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-menu);
+    margin-bottom: 12px;
+}
+
+.title {
+    margin: 0 0 0;
+}
+
+.desc {
+    margin: 0;
+    color: var(--muted);
     font-size: var(--font-lg);
 }
 
-.sort input{
+/* ====== ソート条件ボタン ====== */
+.sort {
+    padding: var(--padding-card);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-item);
+    font-size: var(--font-lg);
+}
+
+.radio {
+    display: flex;
+    gap: var(--gap-item);
+}
+
+.sort .radio label {
+    padding:var(--padding-sort);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    background: #fff;
+    user-select: none;
+}
+
+.sort .radio input {
     display: none;
 }
 
-.sort input:checked + label{
+.sort input:checked + label {
     background: var(--primary);
-    border-color: var(--primary);
     color: white;
     font-weight: 600;
+}
+
+.sort .radio input:not(:checked) + label{
+    border: 1px solid #9f9f9f;
 }
 
 /* ====== 適性試験 ====== */

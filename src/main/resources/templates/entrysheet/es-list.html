@@ -1,11 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="jp">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>es-list</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
 <header th:replace="common/header :: siteHeader('esListHeader')"></header>
+<main>
+    <!-- 作成済みエントリーシートメニュー -->
+    <section class="menu" aria-label="esリスト">
 
+         <p class="title">作成済みエントリーシート</p>
+         <p class="desc">全6件</p>
+
+        <div class="sort">
+            <div class="radio">
+                <input type="radio" name="status" id="all" checked>
+                <label for="all">すべて</label>
+
+                <input type="radio" name="status" id="draft">
+                <label for="draft">下書き</label>
+
+                <input type="radio" name="status" id="comp">
+                <label for="comp">完成</label>
+            </div>
+        </div>
+
+            <div class="menu-item">
+                <div class="texts">
+                    <p class="title">株式会社○○システムズ</p>
+
+                    <div class="meta status-row">
+                        <p class="status draft">制作中</p>
+                        <p class="desc">4時間前</p>
+                    </div>
+
+                    <p class="desc">作成日：2025/12/03</p>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="texts">
+                    <p class="title">△△株式会社</p>
+
+                    <div class="meta status-row">
+                        <p class="status draft">制作中</p>
+                        <p class="desc">3日前</p>
+                    </div>
+
+                    <p class="desc">作成日：2025/11/30</p>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="texts">
+                    <p class="title">株式会社○○システムズ</p>
+
+                    <div class="meta status-row">
+                        <p class="status complite">完成</p>
+                        <p class="desc">1カ月前</p>
+                    </div>
+
+                    <p class="desc">作成日：2025/11/03</p>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="texts">
+                    <p class="title">株式会社○○システムズ</p>
+
+                    <div class="meta status-row">
+                        <p class="status complite">完成</p>
+                        <p class="desc">1カ月前</p>
+                    </div>
+
+                    <p class="desc">作成日：2025/10/24</p>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="texts">
+                    <p class="title">株式会社○○システムズ</p>
+
+                    <div class="meta status-row">
+                        <p class="status complite">完成</p>
+                        <p class="desc">2カ月前</p>
+                    </div>
+
+                    <p class="desc">作成日：2025/10/16</p>
+                </div>
+            </div>
+
+
+    </section>
+    <div class="spacer" aria-hidden="true"></div>
+</main>
+<footer th:replace="common/footer :: siteFooter"></footer>
 </body>
 </html>
