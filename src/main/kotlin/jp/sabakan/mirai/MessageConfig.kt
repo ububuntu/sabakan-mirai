@@ -41,6 +41,9 @@ public class MessageConfig {
         // M011: パスワードの変更が完了しました
         const val PASSWORD_CHANGE_SUCCESS = "パスワードの変更が完了しました"
 
+        // M012: 文字数制限エラー
+        const val LENGTH_LIMIT_ERROR = "入力が長すぎます"
+
         // M201: 面接履歴の取得に失敗しました
         const val INTERVIEW_NOT_FOUND = "面接履歴が見つかりません"
 
