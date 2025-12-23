@@ -373,6 +373,89 @@ footer nav.bottom {
     white-space: nowrap;
 }
 
+/* テーマ切り替えボタン */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background: var(--icon-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.3s ease;
+    z-index: 100;
+}
+
+/* ダークテーマ */
+/* アイコンの基本色 */
+.icon {
+    color: #3498db;  /* 青色 */
+    transition: color 0.3s ease;
+}
+
+/* ダークテーマのアイコン色 */
+/* テーマ切り替えプルダウン */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background: white;
+    color: var(--text);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    min-width: 150px;
+}
+
+/* アイコンの基本設定 */
+.icon {
+    color: var(--icon-color, #2b73ff);
+    transition: color 0.3s ease;
+}
+
+/* ===== テーマカラー定義 ===== */
+
+/* ブルーテーマ（デフォルト） */
+[data-theme="blue"] {
+    --icon-color: #6382FF;
+}
+
+/* オレンジテーマ */
+[data-theme="orange"] {
+    --icon-color: #FF9853;
+}
+
+/* グリーンテーマ */
+[data-theme="green"] {
+    --icon-color: #30C851;
+}
+
+/* テーマ切り替えボタン */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
 /* ====== スペーサー ====== */
 .spacer {
     height: 12vh;

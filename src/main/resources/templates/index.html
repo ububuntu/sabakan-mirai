@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="jp" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>ようこそ | Mirai</title>
@@ -7,59 +7,74 @@
 </head>
 
 <body>
-<header th:replace="common/header :: siteHeader('indexHeader')"></header>
 
-    <main>
-        <!-- 現在の目標 -->
-        <section class="menu" aria-label="目標セクション">
-            <div class="menu-item">
-                <img class="img" src="/img/user.svg" alt="目標">
-                <div class="texts">
-                    <p class="title">現在の目標</p>
-                    <p class="note">株式会社〇〇 最終面接</p>
-                    <p class="note">残り〇日</p>
-                </div>
+<header th:replace="~{common/header :: siteHeader('indexHeader')}"></header>
+<div th:replace="common/color :: svgIcons"></div>
+
+<main>
+    <!-- 現在の目標 -->
+    <section class="menu" aria-label="目標セクション">
+        <div class="menu-item">
+            <svg class="icon" width="48" height="48">
+                <use href="#user"></use>
+            </svg>
+            <div class="texts">
+                <p class="title">現在の目標</p>
+                <p class="note">株式会社〇〇 最終面接</p>
+                <p class="note">残り〇日</p>
             </div>
+        </div>
 
-            <!-- メニュー -->
-            <a class="note">メニュー</a>
+        <!-- メニュー -->
+        <p class="note">メニュー</p>
 
-            <div onclick="location.href='./interview'" class="menu-item">
-                <img class="img" src="/img/interview.svg" alt="面接">
-                <div class="texts">
-                    <p class="title">面接練習</p>
-                    <p class="desc">WEB面接を試してみよう</p>
-                </div>
+        <div onclick="location.href='./interview'" class="menu-item">
+            <svg class="icon" width="48" height="48">
+                <use href="#interview"></use>
+            </svg>
+            <div class="texts">
+                <p class="title">面接練習</p>
+                <p class="desc">WEB面接を試してみよう</p>
             </div>
+        </div>
 
-            <div onclick="location.href='./questions'" class="menu-item">
-                <img class="img" src="/img/question.svg" alt="面接">
-                <div class="texts">
-                    <p class="title">過去問稽古場</p>
-                    <p class="desc">SPI・CAB/GABの勉強をしよう</p>
-                </div>
+        <div onclick="location.href='./questions'" class="menu-item">
+            <svg class="icon" width="48" height="48">
+                <use href="#question"></use>
+            </svg>
+            <div class="texts">
+                <p class="title">過去問稽古場</p>
+                <p class="desc">SPI・CAB/GABの勉強をしよう</p>
             </div>
+        </div>
 
-            <div onclick="location.href='./es'" class="menu-item">
-                <img class="img" src="/img/es.svg" alt="面接">
-                <div class="texts">
-                    <p class="title">エントリーシート</p>
-                    <p class="desc">ESを添削してみよう</p>
-                </div>
+        <div onclick="location.href='./es'" class="menu-item">
+            <svg class="icon" width="48" height="48">
+                <use href="#es"></use>
+            </svg>
+            <div class="texts">
+                <p class="title">エントリーシート</p>
+                <p class="desc">ESを添削してみよう</p>
             </div>
+        </div>
 
-            <!--FIXME 管理者のみ実行可能に変更予定 -->
-            <div onclick="location.href='./manage'" class="menu-item">
-                <img class="img" src="/img/settings.svg" alt="管理">
-                <div class="texts">
-                    <p class="title">管理者画面</p>
-                    <p class="desc">ユーザを管理しよう</p>
-                </div>
+        <!--FIXME 管理者のみ実行可能に変更予定 -->
+        <div onclick="location.href='./manage'" class="menu-item">
+            <svg class="icon" width="48" height="48">
+                <use href="#settings"></use>
+            </svg>
+            <div class="texts">
+                <p class="title">管理者画面</p>
+                <p class="desc">ユーザを管理しよう</p>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <div class="spacer" aria-hidden="true"></div>
-    </main>
-<footer th:replace="common/footer :: siteFooter"></footer>
+    <div class="spacer" aria-hidden="true"></div>
+</main>
+
+<footer th:replace="~{common/footer :: siteFooter}"></footer>
+
+<script th:src="@{/js/style.js}"></script>
 </body>
 </html>

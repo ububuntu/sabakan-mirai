@@ -39,6 +39,13 @@
                     </select>
                 </div>
             </form>
+
+            <!-- テーマ切り替えプルダウン -->
+            <select class="theme-toggle" onchange="changeTheme(this.value)">
+                <option value="blue">🔵 ブルー</option>
+                <option value="orange">🟠 オレンジ</option>
+                <option value="green">🟢 グリーン</option>
+            </select>
             <!-- パスワード変更 -->
             <button class="button-center" onclick="location.href='/user/repassword'" type="button">パスワード変更</button>
             <!-- ログアウト -->
@@ -46,5 +53,6 @@
         </section>
     </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
+<script th:src="@{/js/style.js}"></script>
 </body>
 </html>
