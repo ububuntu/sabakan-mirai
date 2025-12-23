@@ -27,25 +27,18 @@
                 </div>
             </div>
 
-            <!-- テーマカラー選択 -->
-            <form class="menu-item" th:action="@{/user/updateColor}" method="post">
+            <!-- テーマ切り替えプルダウン -->
+            <div class="menu-item">
+                <img class="img" src="/img/user.svg" alt="aa">
                 <div class="texts">
                     <p class="title">テーマカラー</p>
-                    <select name="userColor" id="userColor" th:value="${userColor}" onchange="this.form.submit()" class="color-select">
-                        <option value="1" th:selected="${userColor == 1}" style="background-color: #ff0000; color: white;">■ 赤</option>
-                        <option value="2" th:selected="${userColor == 2}" style="background-color: #0000ff; color: white;">■ 青</option>
-                        <option value="3" th:selected="${userColor == 3}" style="background-color: #000000; color: white;">■ 黒</option>
-                        <option value="4" th:selected="${userColor == 4}" style="background-color: #ffffff; color: black;">■ 白</option>
-                    </select>
                 </div>
-            </form>
-
-            <!-- テーマ切り替えプルダウン -->
-            <select class="theme-toggle" onchange="changeTheme(this.value)">
-                <option value="blue">🔵 ブルー</option>
-                <option value="orange">🟠 オレンジ</option>
-                <option value="green">🟢 グリーン</option>
-            </select>
+                <select class="button-center" onchange="changeTheme(this.value)">
+                    <option value="blue">青</option>
+                    <option value="orange">おれ</option>
+                    <option value="green">みどあ</option>
+                </select>
+            </div>
             <!-- パスワード変更 -->
             <button class="button-center" onclick="location.href='/user/repassword'" type="button">パスワード変更</button>
             <!-- ログアウト -->

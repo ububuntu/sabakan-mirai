@@ -436,23 +436,6 @@ footer nav.bottom {
     --icon-color: #30C851;
 }
 
-/* テーマ切り替えボタン */
-.theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    background: #3498db;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    z-index: 1000;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
 /* ====== スペーサー ====== */
 .spacer {
     height: 12vh;
