@@ -126,6 +126,19 @@ header img{
     border-radius: var(--radius-sm);
 }
 
+.menu-item .icon {
+    width: 5rem;
+    border: 2px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 600;
+    font-size: var(--font-xl);
+    color: #333;
+    box-sizing: border-box;
+}
+
 .texts {
     display: flex;
     flex-direction: column;
@@ -255,8 +268,8 @@ header img{
 }
 
 .form-row select option {
-    padding: 0.2rem 0.5rem;  /* optionのpaddingを小さく */
-    font-size: 1rem;  /* 文字は大きいまま */
+    padding: var(--padding-card);
+    font-size: 1rem;
     line-height: 1.2;
 }
 
