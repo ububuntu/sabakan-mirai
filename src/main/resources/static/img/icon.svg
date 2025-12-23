@@ -1,0 +1,25 @@
+<svg viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg" width="144" height="144">
+    <defs>
+        <linearGradient id="path-grad-2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color: #0891B2; stop-opacity: 1" />
+            <stop offset="100%" style="stop-color: #06B6D4; stop-opacity: 1" />
+        </linearGradient>
+    </defs>
+    <rect width="144" height="144" rx="32.4" fill="url(#path-grad-2)" />
+
+    <path d="M36 86.4 Q54 64.8 72 50.4 T108 36"
+          stroke="white" stroke-width="4.32" fill="none" stroke-linecap="round" stroke-dasharray="8.64,5.76" opacity="0.4" />
+
+    <path d="M36 86.4 Q54 64.8 72 50.4 T108 36"
+          stroke="white" stroke-width="2.88" fill="none" stroke-linecap="round" />
+
+    <circle cx="36" cy="86.4" r="5.76" fill="white" />
+    <circle cx="36" cy="86.4" r="2.88" fill="#0891B2" />
+
+    <circle cx="72" cy="50.4" r="4.32" fill="white" opacity="0.8" />
+    <circle cx="72" cy="50.4" r="2.16" fill="#FCD34D" />
+
+    <path d="M108 28.8 L110.16 33.84 L115.92 33.84 L111.6 37.44 L113.04 43.2 L108 39.6 L102.96 43.2 L104.4 37.44 L99.36 33.84 L105.12 33.84 Z" fill="#FCD34D" />
+
+    <text x="72" y="116.64" font-size="33.12" fill="white" text-anchor="middle" font-weight="700" font-family="system-ui, -apple-system, sans-serif">mirai</text>
+</svg>
