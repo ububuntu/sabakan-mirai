@@ -9,37 +9,102 @@
 <header th:replace="common/header :: siteHeader('manageHeader')"></header>
 <main>
     <!-- SPIメイン画面 -->
-    <p class="note">SPI問題管理</p>
     <section class="menu" aria-label="SPI問題リスト">
-        <div class="sort statistics">
-            <div class="form-row">
-                <label class="form-label" for="user-name">ユーザ名で絞り込む</label>
-                <input type="text" id="user-name" name="userName" placeholder="ユーザ名を入力">
-            </div>
+        <p class="note">SPI問題管理</p>
+        <div class="sort">
             <div class="radio">
                 <!-- ラジオボタンのcssがボタン選択によって変化する事を確かめるために仮でnameやidをつけています -->
                 <input type="radio" name="status" id="all" checked>
                 <label for="all">すべて</label>
 
                 <input type="radio" name="status" id="active">
-                <label for="active">利用中</label>
+                <label for="active">言語</label>
 
                 <input type="radio" name="status" id="stop">
-                <label for="stop">停止中</label>
+                <label for="stop">非言語</label>
             </div>
         </div>
     </section>
 
     <section class="menu" aria-label="SPI問題管理">
-        <div class="menu-item" onclick="location.href='./spi/edit'">
-            <div class="texts">
-                <p class="">言語</p>
-                <p class="note">「鳥：飛ぶ」と同じ関係にあるものを、次の選択肢から選びなさい。</p>
+        <div class="statistics box" onclick="location.href='./spi/edit'">
+            <label class="category">言語</label>
+            <p class="note">「鳥：飛ぶ」と同じ関係にあるものを、次の選択肢から選びなさい。</p>
+            <div class="menu-item">
+                <img class="img" src="/img/question.svg" alt="SPI問題管理">
+                <div class="texts">
+                    <p class="title">魚：泳ぐ</p>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img class="img" src="/img/question.svg" alt="SPI問題管理">
+                <div class="texts">
+                    <p class="title">犬：吠える</p>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img class="img" src="/img/question.svg" alt="SPI問題管理">
+                <div class="texts">
+                    <p class="title">猫：毛</p>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img class="img" src="/img/question.svg" alt="SPI問題管理">
+                <div class="texts">
+                    <p class="title">象：大きい</p>
+                </div>
+            </div>
+            <div class="meta">
+                <p class="note">解答：A</p>
             </div>
         </div>
     </section>
 
+    <section class="menu" aria-label="SPI問題管理2">
+        <div class="statistics box" onclick="location.href='./spi/edit'">
+            <label class="category">非言語</label>
+            <p class="note">P、Q、R、Sの4人が1冊の本を順番に読んだ。
 
+                4人の読んだ順番について、次のことがわかっている。
+
+                Sの次にPが読んだ
+                最初に読んだのはRではない
+                最も少ない情報で4人の読んだ順番が全てわかるためには、ⅠとⅡのほかに、次のカ、キ、クのうちどれが加われば良いか。
+
+                AからHまでの中から1つ選びなさい。
+
+                カ：Qより先にPが読んだ
+                キ：Qより先にRが読んだ
+                ク：Rより先にSが読んだ</p>
+            <div class="menu-item">
+                <img class="img" src="/img/question.svg" alt="SPI問題管理">
+                <div class="texts">
+                    <p class="title">カだけ</p>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img class="img" src="/img/question.svg" alt="SPI問題管理">
+                <div class="texts">
+                    <p class="title">キとクの両方</p>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img class="img" src="/img/question.svg" alt="SPI問題管理">
+                <div class="texts">
+                    <p class="title">カとキとクの全て</p>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img class="img" src="/img/question.svg" alt="SPI問題管理">
+                <div class="texts">
+                    <p class="title">すべてが加わってもわからない</p>
+                </div>
+            </div>
+            <div class="meta">
+                <p class="note">解答：?</p>
+            </div>
+        </div>
+    </section>
 
 
     <div class="spacer" aria-hidden="true"></div>
