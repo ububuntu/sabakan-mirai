@@ -71,13 +71,6 @@ header .header-center {
     gap: var(--gap-icon-text);
 }
 
-header img {
-    width: var(--header-icon-size);
-    height: auto;
-    aspect-ratio: 1/1;
-    border-radius: var(--radius-sm);
-}
-
 header img{
     width: var(--header-icon-size);
     height: auto;
