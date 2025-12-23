@@ -96,6 +96,8 @@ main {
 .menu-item {
     background: var(--card);
     border-radius: var(--radius-md);
+    /* 枠わくさん */
+    /*border: 2px solid #ccc;*/
     padding: var(--padding-card);
     display: flex;
     align-items: flex-start;
@@ -181,6 +183,33 @@ main {
     padding: 0.2em 0.8em;
     font-weight: 600;
     margin: 0.3em 0;
+}
+
+
+.form-row {
+    font-weight: 600;
+    width: 180%;
+    font-size: var(--font-xl);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    border-radius: var(--radius-sm);
+    margin: 2.2rem 0;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea{
+    padding: var(--padding-card);
+    border-radius: var(--radius-sm);
+    border: 1px solid #ccc;
+    font-size: var(--font-lg);
+}
+
+.form-row select option {
+    padding: var(--padding-card);
+    font-size: 1rem;
+    line-height: 1.2;
 }
 
 /* 制作中アイコン */

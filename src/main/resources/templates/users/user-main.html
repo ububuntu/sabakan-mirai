@@ -28,17 +28,22 @@
             </div>
 
             <!-- テーマ切り替えプルダウン -->
+
             <div class="menu-item">
-                <img class="img" src="/img/user.svg" alt="aa">
+                <img class="img" src="/img/user.svg" alt="テーマカラー">
                 <div class="texts">
                     <p class="title">テーマカラー</p>
+                    <div class="form-row">
+                        <label for="color"></label>
+                        <select id="color" onchange="changeTheme(this.value)">
+                            <option value="default">デフォルト</option>
+                            <option value="dark">ダークモード</option>
+                            <option value="qwer">あいうえお</option>
+                        </select>
+                    </div>
                 </div>
-                <select class="button-center" onchange="changeTheme(this.value)">
-                    <option value="blue">青</option>
-                    <option value="orange">おれ</option>
-                    <option value="green">みどあ</option>
-                </select>
             </div>
+
             <!-- パスワード変更 -->
             <button class="button-center" onclick="location.href='/user/repassword'" type="button">パスワード変更</button>
             <!-- ログアウト -->
