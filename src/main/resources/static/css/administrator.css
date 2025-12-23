@@ -126,7 +126,7 @@ header img{
     border-radius: var(--radius-sm);
 }
 
-.menu-item .icon {
+.menu-item .selectIcon {
     width: 5rem;
     border: 2px solid #ccc;
     display: flex;
