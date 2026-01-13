@@ -110,13 +110,11 @@ header img{
     aspect-ratio: 1/1;
     border-radius: var(--radius-sm);
 }
-
 /* ====== メイン ====== */
 main {
     padding: var(--padding-section);
     max-width: 100%;
 }
-
 /* ====== メニュー ====== */
 .menu {
     display: flex;
@@ -139,7 +137,6 @@ main {
     text-decoration: none;
     color: inherit;
 }
-
 .menu-item:visited,
 .menu-item:hover,
 .menu-item:active,
@@ -147,7 +144,6 @@ main {
     color: inherit;
     text-decoration: none;
 }
-
 .menu .button-center {
     background: var(--card);
     border: none;
@@ -163,7 +159,6 @@ main {
     color: inherit;
 }
 
-
 .menu-item .img {
     width: var(--icon-size);
     height: auto;
@@ -171,43 +166,36 @@ main {
     border-radius: var(--radius-sm);
     display: flex;
 }
-
 .menu-item .texts {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
-
 .menu-item .title {
     font-weight: 600;
     margin: 0 0 2%;
     font-size: var(--font-xl);
 }
-
 .menu-item .desc {
     margin: 0;
     color: var(--muted);
     font-size: var(--font-lg);
 }
-
 .menu-item .note{
     margin: 0;
     color: var(--text);
     font-size: var(--font-lg);
 }
-
 .menu-item textarea{
     field-sizing: content;
     width: 100%;
     justify-content: center;
     font-size: var(--font-lg);
 }
-
 .menu-item .meta{
     display: flex;
     gap: 0.8rem;
 }
-
 .menu-item .status{
     background: var(--primary);
     border-radius: var(--radius-lg);
@@ -217,8 +205,6 @@ main {
     font-weight: 600;
     margin: 0.3em 0;
 }
-
-
 .form-row {
     font-weight: 600;
     width: 180%;
@@ -229,7 +215,6 @@ main {
     border-radius: var(--radius-sm);
     margin: 2.2rem 0;
 }
-
 .form-row input,
 .form-row select,
 .form-row textarea{
@@ -240,7 +225,6 @@ main {
     background: var(--select-bg);
     color: var(--select-text);
 }
-
 .form-row select option {
     padding: var(--padding-card);
     font-size: 1rem;
@@ -248,31 +232,25 @@ main {
     background: var(--select-bg);
     color: var(--select-text);
 }
-
 /* 制作中アイコン */
 .menu-item .status.draft{
     background: #ff9853;
 }
-
 /* 完成アイコン */
 .menu-item .status.complite{
     background: #30C851;
 }
-
 .status-row {
     display: flex;
     align-items: center;
     gap: var(--gap-menu);
     margin-bottom: 12px;
 }
-
-
 .desc {
     margin: 0;
     color: var(--muted);
     font-size: var(--font-lg);
 }
-
 /* ====== ソート条件ボタン ====== */
 .sort {
     padding: var(--padding-card);
@@ -281,12 +259,10 @@ main {
     gap: var(--gap-item);
     font-size: var(--font-lg);
 }
-
 .radio {
     display: flex;
     gap: var(--gap-item);
 }
-
 .sort .radio label {
     padding:var(--padding-sort);
     border-radius: var(--radius-lg);
@@ -294,39 +270,31 @@ main {
     background: #fff;
     user-select: none;
 }
-
 .sort .radio input {
     display: none;
 }
-
 .sort input:checked + label {
     background: var(--primary);
     color: white;
     font-weight: 600;
 }
-
 .sort .radio input:not(:checked) + label{
     border: 1px solid #9f9f9f;
 }
-
 /* ====== 適性試験 ====== */
 .choice-label {
     align-items: center;
 }
-
 .choice-label:hover {
     background: var(--question);
 }
-
 .choice-label input[type="radio"] {
     display: none;
 }
-
 .choice-label input[type="radio"]:checked ~ .note {
     color: var(--primary);
     font-weight: 600;
 }
-
 .menu-item .link {
     background: var(--primary);
     color: #fff;
@@ -338,13 +306,10 @@ main {
     cursor: pointer;
     min-width: 25%;
 }
-
 .progress {
     width: 100%;
 }
-
 /* ====== 面接 ====== */
-
 .video {
     width: 100%;
     height: 100%;
@@ -444,6 +409,45 @@ main {
 
 .radar-chart-1 dd {
     margin: 0;
+}
+/* ====== 棒グラフ全体のリサイズ ====== */
+.bar-chart-wrap {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 85%;
+    height: 24rem;
+    margin: 2rem auto;
+    padding-bottom: 0;
+    /* 下から50%の位置に薄い黒線を引く設定 */
+    background-image: linear-gradient(to top, transparent 49.7%, #ccc 49.7%, #ccc 50.3%, transparent 50.3%);
+    background-size: 100% 100%;
+    /* --- 棒グラフの下部分に黒線を引く --- */
+    border-bottom: 3px solid #333;
+}
+/* 各グラフのコンテナ（dl） */
+.bar-chart-1 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    position: relative;
+    margin: 0;
+}
+/* 棒（dd）の調整 */
+.bar-chart-1 dd {
+    margin: 0;
+    width: 60%;
+    background-color: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 8px 8px 0 0; /* 上側の角のみ丸く調整 */
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+    font-size: var(--font-sm);
+    margin-top: auto;
 }
 /* ====== フッター ====== */
 footer {
