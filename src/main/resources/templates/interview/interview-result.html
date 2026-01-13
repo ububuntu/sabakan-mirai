@@ -10,9 +10,43 @@
     <main>
         <section class="menu" aria-label="面接結果">
             <div class="menu-item">
-                <div class="texts">
-                    <p class="title">スコア数値</p>
-                    <img src="/img/es.svg" alt="aa" width="800" height="800">
+                <div class="radar-chart-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 205 205">
+                        <!-- 軸 -->
+                        <g stroke="#dce5eb">
+                            <path d="M 100 100 L 100 0"/>
+                            <path d="M 100 100 L 200 100"/>
+                            <path d="M 100 100 L 100 200"/>
+                            <path d="M 100 100 L 0 100"/>
+                        </g>
+                        <!-- 目盛り -->
+                        <g stroke="#dce5eb" fill="none">
+                            <circle cx="100" cy="100" r="100"/>
+                            <circle cx="100" cy="100" r="80"/>
+                            <circle cx="100" cy="100" r="60"/>
+                            <circle cx="100" cy="100" r="40"/>
+                            <circle cx="100" cy="100" r="20"/>
+                        </g>
+                        <!-- データ（例：4,3,5,2） -->
+                        <path
+                                d="M 100 20 L 160 100 L 100 200 L 60 100 Z"
+                                fill="#2589d030"
+                                stroke="#2589d0"/>
+                        <!-- 頂点 -->
+                        <g fill="#2589d0">
+                            <circle cx="100" cy="20" r="4"/>
+                            <circle cx="160" cy="100" r="4"/>
+                            <circle cx="100" cy="200" r="4"/>
+                            <circle cx="60" cy="100" r="4"/>
+                        </g>
+                    </svg>
+                    <!-- ラベル -->
+                    <dl>
+                        <div>表情</div>
+                        <div>視線</div>
+                        <div>発話速度</div>
+                        <div>姿勢</div>
+                    </dl>
                 </div>
             </div>
 
