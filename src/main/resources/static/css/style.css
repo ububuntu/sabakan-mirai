@@ -8,7 +8,9 @@
     --muted: #6b7280;
     --card: #ffffff;
     --border: #e5e7eb;
-    --icon-color: #ff0000;
+    --icon-color: #6b7280;
+    --select-bg: #ffffff;
+    --select-text: #1f2a37;
 
     /* ====== 間隔・余白 ====== */
     --padding-section: 4%;
@@ -51,6 +53,8 @@
     --card: #1e1e1e;
     --border: #374151;
     --icon-color: #ffffff;
+    --select-bg: #2d2d2d;  /* ← 追加 */
+    --select-text: #e0e0e0;  /* ← 追加 */
 }
 
 /* ===== カスタムテーマ（あいうえお） ===== */
@@ -63,6 +67,8 @@
     --card: #ffffff;
     --border: #ffcc80;
     --icon-color: #fb8c00;
+    --select-bg: #ffffff;
+    --select-text: #5d4037;
 }
 
 /* ====== 基本設定 ====== */
@@ -74,6 +80,7 @@ html, body {
     background: var(--bg);
     color: var(--text);
     font-size: var(--font-md);
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* ====== ヘッダー ====== */
@@ -230,12 +237,16 @@ main {
     border-radius: var(--radius-sm);
     border: 1px solid #ccc;
     font-size: var(--font-lg);
+    background: var(--select-bg);  /* ← 追加 */
+    color: var(--select-text);  /* ← 追加 */
 }
 
 .form-row select option {
     padding: var(--padding-card);
     font-size: 1rem;
     line-height: 1.2;
+    background: var(--select-bg);
+    color: var(--select-text);
 }
 
 /* 制作中アイコン */
@@ -484,23 +495,6 @@ footer nav.bottom {
     white-space: nowrap;
 }
 
-/* テーマ切り替えボタン */
-.theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    background: var(--icon-color);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background 0.3s ease;
-    z-index: 100;
-}
-
 /* テーマ切り替えプルダウン */
 .theme-toggle {
     position: fixed;
@@ -519,7 +513,11 @@ footer nav.bottom {
     min-width: 150px;
 }
 
-
+/* ====== アイコン ====== */
+.icon {
+    color: var(--icon-color);
+    transition: color 0.3s ease;
+}
 
 /* ====== スペーサー ====== */
 .spacer {
