@@ -8,18 +8,23 @@
 
 <body>
 <header th:replace="common/header :: siteHeader('userMainHeader')"></header>
+<div th:replace="~{common/color :: svg-sprite}"></div>
     <main>
         <section class="menu" aria-label="ユーザ画面">
             <!-- ユーザーネーム -->
             <div class="menu-item">
-                <img class="img" src="/img/user.svg" alt="ユーザー">
+                <svg class="icon" width="48" height="48">
+                    <use href="#user"></use>
+                </svg>
                 <div class="texts">
                     <p class="title" th:text="${userName}">あいうえおさん</p>
                 </div>
             </div>
             <!-- 現在の目標 -->
             <div class="menu-item">
-                <img class="img" src="/img/user.svg" alt="目標">
+                <svg class="icon" width="48" height="48">
+                    <use href="#user"></use>
+                </svg>
                 <div class="texts">
                     <p class="title">現在の目標</p>
                     <p class="note">株式会社〇〇 最終面接</p>
@@ -30,15 +35,17 @@
             <!-- テーマ切り替えプルダウン -->
 
             <div class="menu-item">
-                <img class="img" src="/img/user.svg" alt="テーマカラー">
+                <svg class="icon" width="48" height="48">
+                    <use href="#user"></use>
+                </svg>
                 <div class="texts">
                     <p class="title">テーマカラー</p>
                     <div class="form-row">
                         <label for="color"></label>
-                        <select id="color" onchange="changeTheme(this.value)">
-                            <option value="default">デフォルト</option>
-                            <option value="dark">ダークモード</option>
-                            <option value="qwer">あいうえお</option>
+                        <select id="color" onchange="changeTheme(this.value)" th:attr="data-theme=${currentTheme}">
+                            <option value="default" th:selected="${currentTheme == 'default'}">デフォルト</option>
+                            <option value="dark" th:selected="${currentTheme == 'dark'}">ダークモード</option>
+                            <option value="qwer" th:selected="${currentTheme == 'qwer'}">あいうえお</option>
                         </select>
                     </div>
                 </div>
