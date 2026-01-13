@@ -8,12 +8,15 @@
 
 <body>
 <header th:replace="common/header :: siteHeader('esMainHeader')"></header>
+<div th:replace="~{common/color :: svg-sprite}"></div>
     <main>
         <section class="menu" aria-label="メニュー">
             <a class="note">ESを作成してみよう</a>
 
             <div onclick="location.href='./es/creation'" class="menu-item">
-                <img class="img" src="/img/es.svg" alt="SPI">
+                <svg class="icon" width="48" height="48">
+                    <use href="#es"></use>
+                </svg>
                 <div class="texts">
                     <p class="title">新規作成</p>
                     <p class="desc">テンプレートから作成</p>
@@ -21,7 +24,9 @@
             </div>
 
             <div onclick="location.href='./es/list'" class="menu-item">
-                <img class="img" src="/img/es.svg" alt="SPI">
+                <svg class="icon" width="48" height="48">
+                    <use href="#es"></use>
+                </svg>
                 <div class="texts">
                     <p class="title">作成済みES</p>
                     <p class="desc">編集管理</p>
@@ -31,9 +36,10 @@
 
             <!-- 最近作業 -->
             <a class="note">最近の作業</a>
-
             <div onclick="location.href='./es-creation'" class="menu-item">
-                <img class="img" src="/img/es.svg" alt="SPI">
+                <svg class="icon" width="48" height="48">
+                    <use href="#es"></use>
+                </svg>
                 <div class="texts">
                     <p class="title">あいうえお</p>
                     <p class="desc">かきくけこ</p>
@@ -42,5 +48,6 @@
         </section>
     </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
+<script th:src="@{/js/style.js}"></script>
 </body>
 </html>

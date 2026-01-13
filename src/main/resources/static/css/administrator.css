@@ -1,4 +1,5 @@
-:root {
+:root,
+[data-theme="default"] {
     /* ====== 共通色設定 ====== */
     --primary: #2b73ff;
     --question: #2B73FF0D;
@@ -37,6 +38,34 @@
     /* ====== シャドウ ====== */
     --shadow-card: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.05);
     --shadow-button: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== ダークモード ===== */
+[data-theme="dark"] {
+    --primary: #64b5f6;
+    --question: #64b5f61a;
+    --bg: #121212;
+    --text: #e0e0e0;
+    --muted: #9ca3af;
+    --card: #1e1e1e;
+    --border: #374151;
+    --icon-color: #ffffff;
+    --select-bg: #2d2d2d;  /* ← 追加 */
+    --select-text: #e0e0e0;  /* ← 追加 */
+}
+
+/* ===== カスタムテーマ（あいうえお） ===== */
+[data-theme="qwer"] {
+    --primary: #ff9800;
+    --question: #ff98001a;
+    --bg: #fff8e1;
+    --text: #5d4037;
+    --muted: #8d6e63;
+    --card: #ffffff;
+    --border: #ffcc80;
+    --icon-color: #fb8c00;
+    --select-bg: #ffffff;
+    --select-text: #5d4037;
 }
 
 /* ====== 基本設定 ====== */

@@ -8,6 +8,7 @@
 
 <body>
 <header th:replace="common/header :: siteHeader('cabgabMainHeader')"></header>
+<div th:replace="~{common/color :: svg-sprite}"></div>
     <main>
         <section class="menu" aria-label="CAB・GABメイン">
             <a href="cabgab/study" class="menu-item">
@@ -18,5 +19,6 @@
         </section>
     </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
+<script th:src="@{/js/style.js}"></script>
 </body>
 </html>

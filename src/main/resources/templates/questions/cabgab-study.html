@@ -7,6 +7,7 @@
 </head>
 <body>
 <header th:replace="common/header :: siteHeader('cabgabStudyHeader')"></header>
+<div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
     <form class="menu" action="/spi-submit" method="post">
         <!-- 進捗 -->
@@ -17,22 +18,30 @@
         </div>
         <!-- 選択肢 -->
         <label class="menu-item choice-label" for="1">
-            <img class="img" src="/img/es.svg" alt="aa">
+            <svg class="icon" width="48" height="48">
+                <use href="#es"></use>
+            </svg>
             <input type="radio" id="1" name="answer" value="1" required>
             <span class="note">札幌</span>
         </label>
         <label class="menu-item choice-label" for="2">
-            <img class="img" src="/img/es.svg" alt="aa">
+            <svg class="icon" width="48" height="48">
+                <use href="#es"></use>
+            </svg>
             <input type="radio" id="2" name="answer" value="2">
             <span class="note">大阪</span>
         </label>
         <label class="menu-item choice-label" for="3">
-            <img class="img" src="/img/es.svg" alt="aa">
+            <svg class="icon" width="48" height="48">
+                <use href="#es"></use>
+            </svg>
             <input type="radio" id="3" name="answer" value="3">
             <span class="note">東京</span>
         </label>
         <label class="menu-item choice-label" for="4">
-            <img class="img" src="/img/es.svg" alt="aa">
+            <svg class="icon" width="48" height="48">
+                <use href="#es"></use>
+            </svg>
             <input type="radio" id="4" name="answer" value="4">
             <span class="note">京都</span>
         </label>
@@ -41,5 +50,6 @@
     </form>
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
+<script th:src="@{/js/style.js}"></script>
 </body>
 </html>

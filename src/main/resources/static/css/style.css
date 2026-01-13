@@ -237,8 +237,8 @@ main {
     border-radius: var(--radius-sm);
     border: 1px solid #ccc;
     font-size: var(--font-lg);
-    background: var(--select-bg);  /* ← 追加 */
-    color: var(--select-text);  /* ← 追加 */
+    background: var(--select-bg);
+    color: var(--select-text);
 }
 
 .form-row select option {

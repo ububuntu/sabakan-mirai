@@ -7,13 +7,16 @@
 </head>
 <body>
 <header th:replace="common/header :: siteHeader('manageHeader')"></header>
+<div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
     <!-- システム統計 -->
     <section class="menu" aria-label="システム統計">
         <p class="note">システム統計</p>
         <div class="statistics">
             <div class="menu-content">
-                <img class="img" src="/img/user.svg" alt="総ユーザー数">
+                <svg class="icon" width="48" height="48">
+                    <use href="#es"></use>
+                </svg>
                 <p class="stat-text">
                     <span class="stat-label">総ユーザー数</span>
                     <span class="stat-value">1,234人</span>
@@ -21,7 +24,9 @@
             </div>
 
             <div class="menu-content">
-                <img class="img" src="/img/question.svg" alt="SPI問題数">
+                <svg class="icon" width="48" height="48">
+                    <use href="#es"></use>
+                </svg>
                 <p class="stat-text">
                     <span class="stat-label">SPI問題数</span>
                     <span class="stat-value">500問</span>
@@ -29,7 +34,9 @@
             </div>
 
             <div class="menu-content">
-                <img class="img" src="/img/question.svg" alt="CAB/GAB問題数">
+                <svg class="icon" width="48" height="48">
+                    <use href="#es"></use>
+                </svg>
                 <p class="stat-text">
                     <span class="stat-label">CAB/GAB問題数</span>
                     <span class="stat-value">300問</span>
@@ -43,7 +50,9 @@
         <p class="note">管理者メニュー</p>
 
         <div onclick="location.href='./manage/spi'" class="menu-item">
-            <img class="img" src="/img/question.svg" alt="SPI問題管理">
+            <svg class="icon" width="48" height="48">
+                <use href="#es"></use>
+            </svg>
             <div class="texts">
                 <p class="title">SPI問題管理</p>
                 <p class="desc">編集・管理</p>
@@ -51,7 +60,9 @@
         </div>
 
         <div onclick="location.href='./manage/cabgab'" class="menu-item">
-            <img class="img" src="/img/question.svg" alt="CAB/GAB問題管理">
+            <svg class="icon" width="48" height="48">
+                <use href="#es"></use>
+            </svg>
             <div class="texts">
                 <p class="title">CAB/GAB問題管理</p>
                 <p class="desc">編集・管理</p>
@@ -59,7 +70,9 @@
         </div>
 
         <div onclick="location.href='./manage/users'" class="menu-item">
-            <img class="img" src="/img/user2.svg" alt="ユーザー管理">
+            <svg class="icon" width="48" height="48">
+                <use href="#es"></use>
+            </svg>
             <div class="texts">
                 <p class="title">ユーザー管理</p>
                 <p class="desc">編集・削除</p>
@@ -70,5 +83,6 @@
     <div class="spacer" aria-hidden="true"></div>
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
+<script th:src="@{/js/style.js}"></script>
 </body>
 </html>

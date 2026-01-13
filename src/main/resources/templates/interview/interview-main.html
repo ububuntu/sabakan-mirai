@@ -8,10 +8,13 @@
 
 <body>
 <header th:replace="common/header :: siteHeader('interviewHeader')"></header>
+<div th:replace="~{common/color :: svg-sprite}"></div>
     <main>
         <section class="menu" aria-label="面接対策">
             <a href="/interview/do" class="menu-item">
-                <img class="img" src="/img/video.svg" alt="カメラ">
+                <svg class="icon" width="48" height="48">
+                    <use href="#es"></use>
+                </svg>
                 <div class="texts">
                     <p class="title">Web面接練習</p>
                     <p class="desc">本番形式の面接練習</p>
@@ -19,7 +22,9 @@
             </a>
 
             <a href="/interview/log" class="menu-item">
-                <img class="img" src="/img/file.svg" alt="ファイル">
+                <svg class="icon" width="48" height="48">
+                    <use href="#es"></use>
+                </svg>
                 <div class="texts">
                     <p class="title">面接ログ</p>
                     <p class="desc">過去の面接記録と評価を確認</p>
@@ -27,7 +32,9 @@
             </a>
 
             <a class="menu-item">
-                <img class="img" src="/img/info.svg" alt="情報マーク">
+                <svg class="icon" width="48" height="48">
+                    <use href="#es"></use>
+                </svg>
                 <div class="texts">
                     <p class="title">面接のコツ</p>
                     <p class="desc">目線の高さを調整し、明るい場所で練習しましょう。</p>
@@ -37,6 +44,7 @@
         </section>
     </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
+<script th:src="@{/js/style.js}"></script>
 </body>
 
 </html>

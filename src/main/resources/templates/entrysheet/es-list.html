@@ -7,6 +7,7 @@
 </head>
 <body>
 <header th:replace="common/header :: siteHeader('esListHeader')"></header>
+<div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
 
     <p class="note">作成済みエントリーシート</p>
@@ -96,5 +97,6 @@
     <div class="spacer" aria-hidden="true"></div>
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
+<script th:src="@{/js/style.js}"></script>
 </body>
 </html>

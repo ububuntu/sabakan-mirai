@@ -7,6 +7,7 @@
 </head>
 <body>
 <header th:replace="common/header :: siteHeader('manageHeader')"></header>
+<div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
     <!-- システム統計 -->
 
@@ -50,9 +51,9 @@
             </button>
         </div>
     </section>
-
     <div class="spacer" aria-hidden="true"></div>
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
+<script th:src="@{/js/style.js}"></script>
 </body>
 </html>
