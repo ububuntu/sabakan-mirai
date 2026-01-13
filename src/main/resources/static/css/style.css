@@ -8,15 +8,7 @@
     --muted: #6b7280;
     --card: #ffffff;
     --border: #e5e7eb;
-
-    /* ====== 共通色設定 ====== */
-    --primary: #2b73ff;
-    --question: #2B73FF0D;
-    --bg: #f7f8fb;
-    --text: #1f2a37;
-    --muted: #6b7280;
-    --card: #ffffff;
-    --border: #e5e7eb;
+    --icon-color: #ff0000;
 
     /* ====== 間隔・余白 ====== */
     --padding-section: 4%;
@@ -58,7 +50,7 @@
     --muted: #9ca3af;
     --card: #1e1e1e;
     --border: #374151;
-    --icon-color: #3D3D3D;
+    --icon-color: #ffffff;
 }
 
 /* ===== カスタムテーマ（あいうえお） ===== */
@@ -509,14 +501,6 @@ footer nav.bottom {
     z-index: 100;
 }
 
-/* ダークテーマ */
-/* アイコンの基本色 */
-.icon {
-    color: #3498db;  /* 青色 */
-    transition: color 0.3s ease;
-}
-
-/* ダークテーマのアイコン色 */
 /* テーマ切り替えプルダウン */
 .theme-toggle {
     position: fixed;
@@ -535,11 +519,7 @@ footer nav.bottom {
     min-width: 150px;
 }
 
-/* アイコンの基本設定 */
-.icon {
-    color: var(--icon-color, #2b73ff);
-    transition: color 0.3s ease;
-}
+
 
 /* ====== スペーサー ====== */
 .spacer {
