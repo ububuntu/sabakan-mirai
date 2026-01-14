@@ -496,6 +496,8 @@ footer nav.bottom {
     border-radius: var(--radius-sm);
     padding: 0.5rem;
     transition: background-color 0.3s ease;
+    min-width: 48px;
+    min-height: 48px;
 }
 
 .footer-text {
