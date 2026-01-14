@@ -1,88 +1,42 @@
-:root {
-    /* ====== 共通色設定 ====== */
-    --primary: #2b73ff;
-    --muted: #6b7280;
+/* color.css と style.css を先に読み込む前提 */
 
-    /* ====== 間隔・余白 ====== */
-    --padding-section: 4%;
-    --padding-card: 4%;
-    --gap-menu: 1.2rem;
-    --gap-item: 4%;
-    --gap-icon-text: 0.3rem;
-
-    /* ====== フォントサイズ ====== */
-    font-size: 16px;
-    --font-xs: 0.75rem;     /* 12px - 補助テキスト */
-    --font-sm: 0.875rem;    /* 14px - 説明文・フッター */
-    --font-md: 1.75rem;        /* 16px - 標準 */
-    --font-lg: 2.5rem;     /* 20px - desc */
-    --font-xl: 3rem;      /* 24px - タイトル */
-
-    /* ====== 角丸 ====== */
-    --radius-sm: 0.5rem;    /* アイコン・ボタン */
-    --radius-md: 1rem;      /* カード　*/
-    --radius-lg: 1.5rem;    /* 大きなカード */
-    /* ====== アイコンサイズ ====== */
-    --button-icon-size: 8%;
-    --icon-size: 4rem;      /* メニューアイコン */
-}
-
-img{
-    width: var(--icon-size);
-    height: auto;
-    aspect-ratio: 1/1;
-    border-radius: var(--radius-sm);
-    display: block;
-    margin: 4% auto;
-}
-
-.menu {
-    min-height: 100vh;
+.error-menu {
+    min-height: 80vh; /* ヘッダー・フッター分を考慮 */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: var(--gap-item);
+    padding: var(--padding-section);
 }
 
-.title {
+.error-title {
     margin: 0 0 4%;
     font-size: var(--font-md);
     text-align: center;
 }
 
-.text {
+.error-text {
     color: var(--muted);
     margin: 0 0 10%;
     font-size: var(--font-sm);
     text-align: center;
 }
 
-.note {
-    color: var(--muted);
-    margin: 5% 0 0;
-    font-size: var(--font-xs);
-    text-align: center;
-}
-
-.button {
+.error-button {
     border-radius: var(--radius-sm);
     padding: var(--padding-card);
     display: flex;
+    align-items: center;
     justify-content: center;
+    gap: 1rem;
     font-size: var(--font-sm);
     font-weight: bold;
     text-decoration: none;
     width: 80vw;
+    max-width: 400px;
     margin: 3% auto;
-}
-
-.button img {
-    width: var(--button-icon-size);
-    height: auto;
-    aspect-ratio: 1/1;
-    border-radius: var(--radius-sm);
-    display: flex;
+    box-sizing: border-box;
 }
 
 .button-primary {
@@ -90,22 +44,8 @@ img{
     border: 2px solid var(--primary);
     color: white;
 }
-
 .button-white {
-    background: white;
+    background: var(--card);
     border: 2px solid var(--primary);
     color: var(--primary);
-}
-
-/* ====== スペーサー ====== */
-.spacer {
-    height: 12vh;
-}
-
-/* ====== レスポンシブ ====== */
-@media (min-width: 600px) {
-    main {
-        max-width: 90%;
-        margin: 0 auto;
-    }
 }

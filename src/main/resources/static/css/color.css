@@ -1,0 +1,74 @@
+:root,
+[data-theme="default"] {
+    /* ====== 色設定 (全ファイル共通) ====== */
+    --primary: #2b73ff;
+    --question: #2B73FF0D;
+    --bg: #f7f8fb;
+    --text: #1f2a37;
+    --muted: #6b7280;
+    --card: #ffffff;
+    --border: #e5e7eb;
+    --icon-color: #6b7280;
+
+    /* フォーム要素用 (admin/style共通) */
+    --select-bg: #ffffff;
+    --select-text: #1f2a37;
+
+    /* ====== フォントサイズ (基準) ====== */
+    --base-font-size: 16px;
+
+    --font-xs: 0.75rem;     /* 12px */
+    --font-sm: 0.875rem;    /* 14px */
+    --font-md: 1.75rem;     /* 16px (元のCSSの値に準拠) */
+    --font-lg: 2.5rem;      /* 20px */
+    --font-xl: 3rem;        /* 24px */
+
+    /* ====== 間隔・余白 ====== */
+    --padding-section: 4%;
+    --padding-card: 4%;
+    --padding-sort: 1.5% 6%;
+    --gap-menu: 1.2rem;
+    --gap-item: 4%;
+    --gap-icon-text: 0.3rem;
+
+    /* ====== 角丸 ====== */
+    --radius-sm: 0.5rem;
+    --radius-md: 1rem;
+    --radius-lg: 1.5rem;
+
+    /* ====== アイコンサイズ ====== */
+    --icon-size-sm: 8%;    /* menu-icon, button-icon */
+    --icon-size-md: 4rem;  /* header/footer/generic icon */
+
+    /* ====== シャドウ ====== */
+    --shadow-card: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.05);
+    --shadow-button: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== ダークモード ===== */
+[data-theme="dark"] {
+    --primary: #64b5f6;
+    --question: #64b5f61a;
+    --bg: #121212;
+    --text: #e0e0e0;
+    --muted: #9ca3af;
+    --card: #1e1e1e;
+    --border: #374151;
+    --icon-color: #ffffff;
+    --select-bg: #2d2d2d;
+    --select-text: #e0e0e0;
+}
+
+/* ===== カスタムテーマ（あいうえお） ===== */
+[data-theme="qwer"] {
+    --primary: #ff9800;
+    --question: #ff98001a;
+    --bg: #fff8e1;
+    --text: #5d4037;
+    --muted: #8d6e63;
+    --card: #ffffff;
+    --border: #ffcc80;
+    --icon-color: #fb8c00;
+    --select-bg: #ffffff;
+    --select-text: #5d4037;
+}
