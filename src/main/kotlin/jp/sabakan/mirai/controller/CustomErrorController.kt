@@ -36,7 +36,7 @@ class CustomErrorController: ErrorController {
         return "/error"
     }
 
-    @GetMapping("/error/back")
+    @GetMapping("/back")
     fun goBackToPreviousPage(request: HttpServletRequest): String {
         // Refererヘッダーから前のページのURLを取得
         val referer = request.getHeader(HttpHeaders.REFERER)
