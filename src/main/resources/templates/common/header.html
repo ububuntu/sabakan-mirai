@@ -8,11 +8,14 @@
     <header class="site-header" th:fragment="siteHeader(fragmentName)">
         <th:block th:replace="this :: ${fragmentName}"></th:block>
     </header>
+    <div th:replace="~{common/color :: svg-sprite}"></div>
 
     <!-- ホーム画面 -->
     <th:block th:fragment="indexHeader">
         <div class="header-center">
-            <img src="/img/home.svg" alt="aaa">
+            <svg class="icon" width="48" height="48">
+                <use href="#user"/>
+            </svg>
             <div class="title">ホーム</div>
         </div>
     </th:block>
