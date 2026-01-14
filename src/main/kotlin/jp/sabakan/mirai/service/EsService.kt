@@ -1,10 +1,12 @@
 package jp.sabakan.mirai.service
 
+import jp.sabakan.mirai.MessageConfig
 import jp.sabakan.mirai.data.EsData
 import jp.sabakan.mirai.entity.EsEntity
 import jp.sabakan.mirai.repository.EsRepository
 import jp.sabakan.mirai.request.EsRequest
 import jp.sabakan.mirai.response.EsResponse
+import org.apache.logging.log4j.message.Message
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -59,17 +61,17 @@ class EsService {
         // 登録結果を確認してレスポンスを返す
         return if (insertCount == 0) {
             EsResponse().apply {
-                message = "ESの登録に失敗しました。"
+                message = MessageConfig.ES_INSERT_FAILED
             }
         } else {
             EsResponse().apply {
-                message = "ESを正常に登録しました。"
+                message = MessageConfig.ES_INSERT_SUCCESS
             }
         }
     }
 
     /**
-     * ESを新規登録する
+     * ESを更新する
      *
      * @param request ESリクエスト
      * @return ESレスポンス
@@ -92,11 +94,11 @@ class EsService {
         // 更新結果を確認してレスポンスを返す
         return if (updateCount == 0) {
             EsResponse().apply {
-                message = "ESの更新に失敗しました。"
+                message = MessageConfig.ES_UPDATE_FAILED
             }
         } else {
             EsResponse().apply {
-                message = "ESを正常に更新しました。"
+                message = MessageConfig.ES_UPDATE_SUCCESS
             }
         }
     }
@@ -120,11 +122,11 @@ class EsService {
         // 削除結果を確認してレスポンスを返す
         return if (deleteCount == 0) {
             EsResponse().apply {
-                message = "ESの削除に失敗しました。"
+                message = MessageConfig.ES_DELETE_FAILED
             }
         } else {
             EsResponse().apply {
-                message = "ESを正常に削除しました。"
+                message = MessageConfig.ES_DELETE_SUCCESS
             }
         }
     }

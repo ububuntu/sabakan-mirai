@@ -63,18 +63,4 @@ class InterviewRepository {
         // クエリの実行
         return jdbc.update(insertInterview, paramMap)
     }
-
-    /**
-     * 指定年月の最大面接IDを取得する
-     *
-     * @return 最大面接ID
-     */
-    fun getMaxInterviewId(Ym: String): String? {
-        // キーワード抽出
-        val prefix = mapOf("prefix" to "I$Ym")
-
-        // クエリの実行
-        val result = jdbc.queryForList(getInterviews, prefix)
-        return result.firstOrNull()?.get("max_interview_id") as String?
-    }
 }

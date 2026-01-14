@@ -121,13 +121,4 @@ class EsRepository {
         // クエリの実行
         return jdbc.update(deleteEs, paramMap)
     }
-
-    fun getMaxEsId(Ym: String): String? {
-        // キーワード抽出
-        val prefix = mapOf("prefix" to "U$Ym")
-
-        // クエリの実行
-        val result = jdbc.queryForList(getMaxEsId, prefix)
-        return result.firstOrNull()?.get("max_es_id")?.toString()
-    }
 }

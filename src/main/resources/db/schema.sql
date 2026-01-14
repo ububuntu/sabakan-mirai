@@ -39,7 +39,7 @@ CREATE TABLE es_t(
 
 /* SPIテーブル */
 CREATE TABLE spi_m(
-    spi_id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
+    spi_id              CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
     spi_content         VARCHAR(255),
     spi_answer1         VARCHAR(100),
     spi_answer2         VARCHAR(100),
@@ -51,8 +51,8 @@ CREATE TABLE spi_m(
 
 /* SPI回答率テーブル */
 CREATE TABLE spi_rate_t(
-    spi_rate_id     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
-    spi_id          BIGINT NOT NULL ,
+    spi_rate_id     CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
+    spi_id          CHAR(37) NOT NULL ,
     user_id         CHAR(37) NOT NULL ,
     spi_answers     CHAR(3) NOT NULL ,
     spi_count       INT NOT NULL ,
@@ -63,8 +63,8 @@ CREATE TABLE spi_rate_t(
 
 /* SPI結果テーブル */
 CREATE TABLE spi_result_t(
-    spi_result_id   BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
-    spi_id          BIGINT NOT NULL ,
+    spi_result_id   CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
+    spi_id          CHAR(37) NOT NULL ,
     user_id         CHAR(37) NOT NULL ,
     spi_answer      INT NOT NULL ,
     spi_correct_answer  INT NOT NULL ,
@@ -77,7 +77,7 @@ CREATE TABLE spi_result_t(
 
 /* CAB/GABテーブル */
 CREATE TABLE cabgab_m(
-    cabgab_id               BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
+    cabgab_id               CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
     cabgab_content          VARCHAR(255),
     cabgab_answer1          VARCHAR(100),
     cabgab_answer2          VARCHAR(100),
@@ -90,7 +90,7 @@ CREATE TABLE cabgab_m(
 /* CAB/GAB回答率テーブル */
 CREATE TABLE cabgab_rate_t(
     cabgab_rate_id  CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
-    cabgab_id       BIGINT NOT NULL ,
+    cabgab_id       CHAR(37) NOT NULL ,
     user_id         CHAR(37) NOT NULL ,
     cabgab_answers  CHAR(3) NOT NULL ,
     cabgab_count    INT NOT NULL ,
@@ -101,8 +101,8 @@ CREATE TABLE cabgab_rate_t(
 
 /* CAB/GAB結果テーブル */
 CREATE TABLE cabgab_result_t(
-    cabgab_result_id    CHAR(38) PRIMARY KEY NOT NULL UNIQUE ,
-    cabgab_id           BIGINT NOT NULL ,
+    cabgab_result_id    CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
+    cabgab_id           CHAR(37) NOT NULL ,
     user_id             CHAR(37) NOT NULL ,
     cabgab_answer       CHAR(1) NOT NULL ,
     cabgab_correct_answer   CHAR(1) NOT NULL ,

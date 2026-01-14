@@ -29,7 +29,7 @@ class SpiService {
     fun insertSpi(request: SpiRequest): SpiResponse {
         //リクエストからデータ変換
         val data = SpiData().apply {
-            spiId = request.spiId
+            spiId = toCreateId()
             spiContent = request.spiContent
             spiAnswer1 = request.spiAnswer1
             spiAnswer2 = request.spiAnswer2
@@ -66,7 +66,7 @@ class SpiService {
     fun insertSpiAnswer(request: SpiRequest): SpiResponse {
         //リクエストからデータ変換
         val data = AnsweredSpiData()
-        data.spiResultId = toCreateSpiResultId()
+        data.spiResultId = toCreateId()
         data.spiId = request.spiId
         data.userId = request.userId
         data.userAnswer = request.userAnswer
@@ -205,25 +205,12 @@ class SpiService {
      *
      * @return 新しいSPI ID
      */
-    private fun toCreateSpiId(): String {
+    private fun toCreateId(): String {
         // UUIDを生成
         val uuid = UUID.randomUUID().toString()
 
         // 新しいSPI IDを作成
         return "S$uuid"
-    }
-
-    /**
-     * 新しいSPI_RESULT IDを生成する
-     *
-     * @return 新しいSPI ID
-     */
-    private fun toCreateSpiResultId(): String {
-        // UUIDを生成
-        val uuid = UUID.randomUUID().toString()
-
-        // 新しいSPI IDを作成
-        return "SR$uuid"
     }
 
     /**

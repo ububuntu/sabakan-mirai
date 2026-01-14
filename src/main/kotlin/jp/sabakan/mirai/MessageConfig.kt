@@ -76,6 +76,24 @@ public class MessageConfig {
 
         // M308: Cab/Gab問題の削除に失敗しました
         const val CABGAB_DELETE_FAILED = "Cab/Gab問題の削除に失敗しました"
+
+        // M401: ESの登録に成功しました
+        const val ES_INSERT_SUCCESS = "ESの登録に成功しました"
+
+        // M402: ESの登録に失敗しました
+        const val ES_INSERT_FAILED = "ESの登録に失敗しました"
+
+        // M403: ESの更新に成功しました
+        const val ES_UPDATE_SUCCESS = "ESの更新に成功しました"
+
+        // M404: ESの更新に失敗しました
+        const val ES_UPDATE_FAILED = "ESの更新に失敗しました"
+
+        // M405: ESの削除に成功しました
+        const val ES_DELETE_SUCCESS = "ESの削除に成功しました"
+
+        // M406: ESの削除に失敗しました
+        const val ES_DELETE_FAILED = "ESの削除に失敗しました"
     }
 }
 

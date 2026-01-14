@@ -26,7 +26,7 @@ class CabGabService {
     fun insertCabGab(request: CabGabRequest): CabGabResponse {
         //リクエストからデータ変換
         val data = CabGabData().apply {
-            cabGabId = request.cabGabId
+            cabGabId = toCreateId()
             cabGabContent = request.cabGabContent
             cabGabAnswer1 = request.cabGabAnswer1
             cabGabAnswer2 = request.cabGabAnswer2
@@ -63,7 +63,7 @@ class CabGabService {
     fun insertCabGabAnswer(request: CabGabRequest): CabGabResponse {
         //リクエストからデータ変換
         val data = AnsweredCabGabData()
-        data.cabgabResultId = toCreateCabGabResultId()
+        data.cabgabResultId = toCreateId()
         data.cabGabId = request.cabGabId
         data.userId = request.userId
         data.userAnswer = request.userAnswer
@@ -202,25 +202,12 @@ class CabGabService {
      *
      * @return 新しいCabGabID
      */
-    private fun toCreateCabGabId(): String{
+    private fun toCreateId(): String{
         // UUIDを生成
         val uuid = UUID.randomUUID().toString()
 
         // 新しいCabGabIDの生成
         return "C$uuid"
-    }
-
-    /**
-     * 新しいCabGabResultIDを生成する
-     *
-     * @return 新しいCabGabResultID
-     */
-    private fun toCreateCabGabResultId(): String{
-        // UUIDを生成
-        val uuid = UUID.randomUUID().toString()
-
-        // 新しいCabGabResultIDの生成
-        return "CR$uuid"
     }
 
     /**
