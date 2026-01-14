@@ -43,9 +43,15 @@
     /* ====== シャドウ ====== */
     --shadow-card: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.05);
     --shadow-button: 0 4px 8px rgba(0, 0, 0, 0.08);
+
+    /* ====== 固定カラー ====== */
+    --csv-interview: #FF8085;
+    --csv-question: #30C851;
+    --csv-es: #FF9853;
+    --csv-manage: #99999C;
 }
 
-/* ===== ダークモード ===== */
+/* ====== ダークモード ====== */
 [data-theme="dark"] {
     --primary: #64b5f6;
     --question: #64b5f61a;
@@ -59,7 +65,7 @@
     --select-text: #e0e0e0;
 }
 
-/* ===== カスタムテーマ（あいうえお） ===== */
+/* ====== カスタムテーマ（あいうえお） ====== */
 [data-theme="qwer"] {
     --primary: #ff9800;
     --question: #ff98001a;

@@ -1,6 +1,6 @@
 :root,
- [data-theme="default"]{
-    /* ===== デフォルト色 ===== */
+[data-theme="default"] {
+    /* ====== デフォルト色 ====== */
     --primary: #2b73ff;
     --question: #2B73FF0D;
     --bg: #f7f8fb;
@@ -24,9 +24,9 @@
     font-size: 16px;
     --font-xs: 0.75rem;     /* 12px - 補助テキスト */
     --font-sm: 0.875rem;    /* 14px - 説明文・フッター */
-    --font-md: 1.75rem;        /* 16px - 標準 */
-    --font-lg: 2.5rem;     /* 20px - desc */
-    --font-xl: 3rem;      /* 24px - タイトル */
+    --font-md: 1.75rem;     /* 16px - 標準 */
+    --font-lg: 2.5rem;      /* 20px - desc */
+    --font-xl: 3rem;        /* 24px - タイトル */
 
     /* ====== 角丸 ====== */
     --radius-sm: 0.5rem;    /* アイコン・ボタン */
@@ -35,15 +35,15 @@
 
     /* ====== アイコンサイズ ====== */
     --icon-size: 8%;            /* メニューアイコン */
-    --header-icon-size: 4rem; /* ヘッダーアイコン */
-    --footer-icon-size: 4rem; /* フッターアイコン */
+    --header-icon-size: 4rem;   /* ヘッダーアイコン */
+    --footer-icon-size: 4rem;   /* フッターアイコン */
 
     /* ====== シャドウ ====== */
     --shadow-card: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.05);
     --shadow-button: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* ===== ダークモード ===== */
+/* ====== ダークモード ====== */
 [data-theme="dark"] {
     --primary: #64b5f6;
     --question: #64b5f61a;
@@ -57,7 +57,7 @@
     --select-text: #e0e0e0;
 }
 
-/* ===== カスタムテーマ（あいうえお） ===== */
+/* ====== カスタムテーマ（あいうえお） ====== */
 [data-theme="qwer"] {
     --primary: #ff9800;
     --question: #ff98001a;
@@ -110,11 +110,13 @@ header img{
     aspect-ratio: 1/1;
     border-radius: var(--radius-sm);
 }
+
 /* ====== メイン ====== */
 main {
     padding: var(--padding-section);
     max-width: 100%;
 }
+
 /* ====== メニュー ====== */
 .menu {
     display: flex;
@@ -127,7 +129,7 @@ main {
 .menu-item {
     background: var(--card);
     border-radius: var(--radius-md);
-    /* 枠わくさん */
+    /* デバッグ用ボーダー */
     /*border: 2px solid #ccc;*/
     padding: var(--padding-card);
     display: flex;
@@ -205,6 +207,8 @@ main {
     font-weight: 600;
     margin: 0.3em 0;
 }
+
+/* ====== フォーム要素 ====== */
 .form-row {
     font-weight: 600;
     width: 180%;
@@ -232,11 +236,12 @@ main {
     background: var(--select-bg);
     color: var(--select-text);
 }
-/* 制作中アイコン */
+
+/* ステータス: 制作中 */
 .menu-item .status.draft{
     background: #ff9853;
 }
-/* 完成アイコン */
+/* ステータス: 完成 */
 .menu-item .status.complite{
     background: #30C851;
 }
@@ -251,7 +256,8 @@ main {
     color: var(--muted);
     font-size: var(--font-lg);
 }
-/* ====== ソート条件ボタン ====== */
+
+/* ====== ソート機能 ====== */
 .sort {
     padding: var(--padding-card);
     display: flex;
@@ -281,6 +287,7 @@ main {
 .sort .radio input:not(:checked) + label{
     border: 1px solid #9f9f9f;
 }
+
 /* ====== 適性試験 ====== */
 .choice-label {
     align-items: center;
@@ -309,7 +316,8 @@ main {
 .progress {
     width: 100%;
 }
-/* ====== 面接 ====== */
+
+/* ====== 面接機能 ====== */
 .video {
     width: 100%;
     height: 100%;
@@ -338,7 +346,8 @@ main {
     object-position: center;
     transform: scaleX(-1);
 }
-/* ====== ユーザー ====== */
+
+/* ====== ユーザー設定 ====== */
 .color-select {
     padding: 8px;
     font-size: 16px;
@@ -350,7 +359,8 @@ main {
 .color-select option {
     padding: 8px;
 }
-/* ====== レーダーチャート ====== */
+
+/* ====== チャート：レーダー ====== */
 .radar-chart-1 {
     display: flex;
     justify-content: center;
@@ -410,7 +420,8 @@ main {
 .radar-chart-1 dd {
     margin: 0;
 }
-/* ====== 棒グラフ全体のリサイズ ====== */
+
+/* ====== チャート：棒グラフ ====== */
 .bar-chart-wrap {
     display: flex;
     align-items: flex-end;
@@ -422,7 +433,7 @@ main {
     /* 下から50%の位置に薄い黒線を引く設定 */
     background-image: linear-gradient(to top, transparent 49.7%, #ccc 49.7%, #ccc 50.3%, transparent 50.3%);
     background-size: 100% 100%;
-    /* --- 棒グラフの下部分に黒線を引く --- */
+    /* 棒グラフの下部分に黒線を引く */
     border-bottom: 3px solid #333;
 }
 /* 各グラフのコンテナ（dl） */
@@ -449,6 +460,7 @@ main {
     font-size: var(--font-sm);
     margin-top: auto;
 }
+
 /* ====== フッター ====== */
 footer {
     background: var(--card);
@@ -526,7 +538,7 @@ footer nav.bottom {
     min-width: 150px;
 }
 
-/* ====== アイコン ====== */
+/* ====== 共通アイコン設定 ====== */
 .icon {
     color: var(--icon-color);
     transition: color 0.3s ease;
@@ -543,4 +555,25 @@ footer nav.bottom {
         max-width: 90%;
         margin: 0 auto;
     }
+}
+
+/* ====== アイコン色の上書き ====== */
+.icon-interview{
+    --bg: var(--csv-interview);
+    --icon-color: #FFFFFF;
+}
+
+.icon-question{
+    --bg: var(--csv-question);
+    --icon-color: #FFFFFF;
+}
+
+.icon-es{
+    --bg: var(--csv-es);
+    --icon-color: #FFFFFF;
+}
+
+.icon-manage{
+    --bg: var(--csv-manage);
+    --icon-color: #FFFFFF;
 }

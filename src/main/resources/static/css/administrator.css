@@ -1,5 +1,6 @@
-/* theme.css と style.css を先に読み込む前提 */
+/* color.css と style.css を先に読み込む前提 */
 
+/* ====== 管理画面メニュー ====== */
 /* メニュー内包コンテンツ用（管理画面特有） */
 .menu-item:has(.menu-content) {
     flex-direction: column;
@@ -19,7 +20,7 @@
     border-bottom: none;
 }
 
-/* 統計情報ボックス */
+/* ====== 統計情報ボックス ====== */
 .statistics {
     background: var(--card);
     border-radius: var(--radius-md);
@@ -36,7 +37,7 @@
     color: var(--primary);
 }
 
-/* ステータスバッジ類 */
+/* ====== ステータスバッジ類 ====== */
 .role, .status, .category {
     background: var(--primary);
     border-radius: var(--radius-lg);
@@ -51,7 +52,7 @@
 .role.normal, .category { background: #30C851; }
 .status.inactive { background: #99999C; }
 
-/* 新規登録フローティングボタン */
+/* ====== 新規登録フローティングボタン ====== */
 .fab-register {
     position: fixed;
     right: 2rem;
@@ -66,7 +67,7 @@
     box-shadow: var(--shadow-button);
 }
 
-/* アイコン選択ボックス */
+/* ====== アイコン選択ボックス ====== */
 .selectIcon {
     width: 5rem;
     border: 2px solid var(--border);

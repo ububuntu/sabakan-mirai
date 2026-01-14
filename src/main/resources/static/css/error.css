@@ -1,5 +1,6 @@
 /* color.css と style.css を先に読み込む前提 */
 
+/* ====== エラーページレイアウト ====== */
 .error-menu {
     min-height: 80vh; /* ヘッダー・フッター分を考慮 */
     display: flex;
@@ -23,6 +24,7 @@
     text-align: center;
 }
 
+/* ====== ボタン ====== */
 .error-button {
     border-radius: var(--radius-sm);
     padding: var(--padding-card);
