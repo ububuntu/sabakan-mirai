@@ -3,12 +3,13 @@ package jp.sabakan.mirai.repository
 import jp.sabakan.mirai.data.EsData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 
 @Repository
 class EsRepository {
     @Autowired
-    lateinit var jdbc: JdbcTemplate
+    lateinit var jdbc: NamedParameterJdbcTemplate
 
     // ES一覧を取得するSQLクエリ
     val getEsList = """
@@ -46,6 +47,12 @@ class EsRepository {
         WHERE es_id LIKE :prefix
         """.trimIndent()
 
+    // ESをIDで取得するSQLクエリ
+    val getEsById = """
+        SELECT * FROM es_t
+        WHERE es_id = :esId AND user_id = :userId
+    """.trimIndent()
+
     /**
      * 指定ユーザのES一覧を取得する
      *
@@ -60,6 +67,24 @@ class EsRepository {
 
         // クエリの実行
         return jdbc.queryForList(getEsList, paramMap)
+    }
+
+    /**
+     * ESをIDで取得する
+     *
+     * @param esId ESID
+     * @param userId ユーザID
+     * @return ESデータ (存在しない場合はnull)
+     */
+    fun getEsById(esId: String, userId: String): Map<String, Any?>? {
+        val paramMap = mapOf(
+            "esId" to esId,
+            "userId" to userId
+        )
+
+        // 1件取得 (存在しない場合は空のリストが返るので考慮)
+        val list = jdbc.queryForList(getEsById, paramMap)
+        return if (list.isEmpty()) null else list[0]
     }
 
     /**

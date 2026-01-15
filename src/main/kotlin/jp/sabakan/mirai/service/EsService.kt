@@ -38,68 +38,50 @@ class EsService {
     }
 
     /**
-     * ESを新規登録する
+     * 指定ESIDのES詳細を取得する
      *
-     * @param request ESリクエスト
-     * @return ESレスポンス
+     * @param esId ESID
+     * @param userId ユーザID
+     * @return ESリクエスト
      */
-    fun insertEs(request: EsRequest): EsResponse {
-        // リクエストからデータ変換
-        val data = EsData().apply {
-            esId = toCreateEsId()
-            userId = request.userId
-            esContentReason = request.esContentReason
-            esContentSelfpr = request.esContentSelfpr
-            esContentActivities = request.esContentActivities
-            esContentStwe = request.esContentStwe
-            esOccupation = request.esOccupation
-        }
+    fun getEsDetail(esId: String, userId: String): EsRequest {
+        val row = esRepository.getEsById(esId, userId) ?: return EsRequest() // なければ空を返す
 
-        // リポジトリへ登録処理
-        val insertCount = esRepository.insertEs(data)
-
-        // 登録結果を確認してレスポンスを返す
-        return if (insertCount == 0) {
-            EsResponse().apply {
-                message = MessageConfig.ES_INSERT_FAILED
-            }
-        } else {
-            EsResponse().apply {
-                message = MessageConfig.ES_INSERT_SUCCESS
-            }
+        // MapからEsRequestへ詰め替え
+        return EsRequest().apply {
+            this.esId = row["es_id"] as String? // カラム名はDB定義に合わせてください(スネークケースの場合あり)
+            this.userId = row["user_id"] as String?
+            this.esOccupation = row["es_occupation"] as String?
+            this.esContentReason = row["es_content_reason"] as String?
+            this.esContentSelfpr = row["es_content_selfpr"] as String?
+            this.esContentActivities = row["es_content_activities"] as String?
+            this.esContentStwe = row["es_content_stwe"] as String?
         }
     }
 
     /**
-     * ESを更新する
+     * ESを保存する（新規作成または更新）
      *
      * @param request ESリクエスト
-     * @return ESレスポンス
      */
-    fun updateEs(request: EsRequest): EsResponse {
-        // リクエストからデータ変換
+    fun saveEs(request: EsRequest) {
         val data = EsData().apply {
-            esId = request.esId
             userId = request.userId
+            esOccupation = request.esOccupation
             esContentReason = request.esContentReason
             esContentSelfpr = request.esContentSelfpr
             esContentActivities = request.esContentActivities
             esContentStwe = request.esContentStwe
-            esOccupation = request.esOccupation
         }
 
-        // リポジトリへ更新処理
-        val updateCount = esRepository.updateEs(data)
-
-        // 更新結果を確認してレスポンスを返す
-        return if (updateCount == 0) {
-            EsResponse().apply {
-                message = MessageConfig.ES_UPDATE_FAILED
-            }
+        if (request.esId.isNullOrEmpty()) {
+            // 新規作成
+            data.esId = toCreateEsId() // UUID生成など
+            esRepository.insertEs(data)
         } else {
-            EsResponse().apply {
-                message = MessageConfig.ES_UPDATE_SUCCESS
-            }
+            // 更新
+            data.esId = request.esId
+            esRepository.updateEs(data)
         }
     }
 

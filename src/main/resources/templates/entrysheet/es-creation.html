@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ES新規作成 | Mirai</title>
+    <title>ES | Mirai</title>
     <link rel="stylesheet" th:href="@{/css/color.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
@@ -11,42 +11,43 @@
 <header th:replace="common/header :: siteHeader('esCreationHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
     <main>
-        <form action="/es-submit" method="post" class="menu">
+        <form action="#" th:action="@{/es/creation}" method="post" class="menu">
             <div class="menu-item">
                 <div class="texts">
                     <label class="title" for="company-name">企業名</label>
-                    <textarea id="company-name" name="companyName" placeholder="企業名を入力"></textarea>
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="texts">
-                    <label class="title" for="motivation">志望動機</label>
-                    <textarea id="motivation" name="motivation" placeholder="志望動機を入力"></textarea>
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="texts">
-                    <label class="title" for="self-pr">自己PR</label>
-                    <textarea id="self-pr" name="selfPr" placeholder="自己PRを入力"></textarea>
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="texts">
-                    <label class="title" for="effort">学生時代に力を入れたこと</label>
-                    <textarea id="effort" name="effort" placeholder="学生時代に力を入れたことを入力"></textarea>
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="texts">
-                    <label class="title" for="strengths">長所短所</label>
-                    <textarea id="strengths" name="strengths" placeholder="長所短所を入力"></textarea>
+                    <textarea id="company-name" name="esOccupation" placeholder="企業名を入力" th:text="${esRequest.esOccupation}"></textarea>
                 </div>
             </div>
 
-            <!-- 送信ボタン -->
-            <button class="button-center" type="submit">
-                送信
-            </button>
+            <div class="menu-item">
+                <div class="texts">
+                    <label class="title" for="motivation">志望動機</label>
+                    <textarea id="motivation" name="esContentReason" placeholder="志望動機を入力" th:text="${esRequest.esContentReason}"></textarea>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="texts">
+                    <label class="title" for="self-pr">自己PR</label>
+                    <textarea id="self-pr" name="esContentSelfpr" placeholder="自己PRを入力"></textarea>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="texts">
+                    <label class="title" for="effort">学生時代に力を入れたこと</label>
+                    <textarea id="effort" name="esContentActivities" placeholder="学生時代に力を入れたことを入力"></textarea>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="texts">
+                    <label class="title" for="strengths">長所短所</label>
+                    <textarea id="strengths" name="esContentStwe" placeholder="長所短所を入力"></textarea>
+                </div>
+            </div>
+
+            <button class="button-center" type="submit">送信</button>
         </form>
         <div class="spacer" aria-hidden="true"></div>
     </main>

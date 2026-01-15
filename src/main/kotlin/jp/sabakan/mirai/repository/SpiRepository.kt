@@ -4,18 +4,19 @@ import jp.sabakan.mirai.data.AnsweredSpiData
 import jp.sabakan.mirai.data.SpiData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 
 @Repository
 class SpiRepository {
     @Autowired
-    lateinit var jdbc: JdbcTemplate
+    lateinit var jdbc: NamedParameterJdbcTemplate
 
     // カテゴリーごとにSPI質問を取得するSQLクエリ
     val getSpiByCategory = """
-        SELECT * FROM spi_t
-        WHERE spi_category = :spiCategory
-        ORDER BY RANDOM() LIMIT 1
+    SELECT * FROM spi_m 
+    WHERE spi_category = :spiCategory
+    ORDER BY RAND() LIMIT 1
     """.trimIndent()
 
     // 直近3回分の回答を得るSQLクエリ
@@ -28,7 +29,7 @@ class SpiRepository {
     // 問題と回答率を取得するSQLクエリ
     val getSpiList = """
         SELECT s.spi_id, sr.spi_answers, sr.spi_count
-        FROM spi_t s
+        FROM spi_m s
         LEFT JOIN spi_rate_t sr
         ON s.spi_id = sr.spi_id AND sr.user_id = :userId
         ORDER BY s.spi_id
@@ -48,7 +49,7 @@ class SpiRepository {
 
     // 問題文を追加するSQLクエリ
     val insertSpi = """
-        INSERT INTO spi_t (spi_id, spi_content, spi_answer1, spi_answer2, spi_answer3, spi_answer4, spi_correct_answer, spi_category)
+        INSERT INTO spi_m (spi_id, spi_content, spi_answer1, spi_answer2, spi_answer3, spi_answer4, spi_correct_answer, spi_category)
         VALUES (:spiId, :spiContent, :spiAnswer1, :spiAnswer2, :spiAnswer3, :spiAnswer4, :spiCorrectAnswer, :spiCategory)
     """.trimIndent()
 
