@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>400エラー画面</title>
+    <title>500エラー画面</title>
     <link rel="stylesheet" th:href="@{/css/color.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/error.css}" />
@@ -11,17 +11,17 @@
 <body>
 <main class="auth-container">
     <section class="menu">
-        <img class="img" src="/img/error.svg" alt="400エラー画面">
+        <img class="img" src="/img/serverError.svg" alt="500エラー画面">
 
-        <p class="title">ページが見つかりません</p>
+        <p class="title">サーバーエラー</p>
 
         <p class="text">
-            お探しのページは存在しないか<br>
-            移動した可能性があります。
+            サーバーで問題が発生しました。<br>
+            しばらくしてから再度お試しください。
         </p>
 
         <!-- 再試行ボタン -->
-        <button class="button button-primary" onclick="location.href='./'" type="button">
+        <button class="button button-primary" th:onclick="|location.href='@{/error/back}'|" type="button">
             再試行
         </button>
 
