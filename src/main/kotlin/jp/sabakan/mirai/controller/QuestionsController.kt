@@ -1,6 +1,8 @@
 package jp.sabakan.mirai.controller
 
+import jp.sabakan.mirai.request.CabGabRequest
 import jp.sabakan.mirai.request.SpiRequest
+import jp.sabakan.mirai.service.CabGabService
 import jp.sabakan.mirai.service.SpiService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -15,6 +17,8 @@ class QuestionsController {
     // Serviceを使えるように注入します
     @Autowired
     lateinit var spiService: SpiService
+    @Autowired
+    lateinit var cabGabService: CabGabService
 
     // 適性試験メイン画面
     @GetMapping("/questions")
@@ -75,7 +79,35 @@ class QuestionsController {
 
     // CAB/GAB問題画面
     @GetMapping("/cabgab/study")
-    fun getQuestionCabgabStudy(): String{
+    fun getQuestionCabgabStudy(
+        @RequestParam(name = "index") index: Int, // URLの　index受け取り
+        model: Model
+    ): String{
+
+        // TODO ここのカテゴリに関してcabgabの使用が違うと思うので確認
+        // 1.カテゴリ決定 ( 1-40:言語, 41-70:非言語)
+        val targetCategory = if(index <= 40) "言語" else "非言語"
+
+        // 2.問題の取得
+        val request = CabGabRequest().apply {
+            cabGabCategory = targetCategory
+        }
+        val response = cabGabService.getCabGab(request)
+        val questionList = response.cabGabs
+
+        if (questionList.isNullOrEmpty()) {
+            return "redirect:/cabgab" // エラー時メイン画面へ戻す
+        }
+
+        // 3.画面に必要なデータを渡す
+        model.addAttribute("question", questionList[0])
+        model.addAttribute("currentIndex", index)
+        model.addAttribute("totalCount", 70)
+
+        // 進捗率計算
+        val progress = (index.toDouble() / 70 * 100).toInt()
+        model.addAttribute("progress", progress)
+
         return "questions/cabgab-study"
     }
 
