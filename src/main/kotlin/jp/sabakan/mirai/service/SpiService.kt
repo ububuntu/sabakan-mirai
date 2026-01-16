@@ -1,14 +1,11 @@
 package jp.sabakan.mirai.service
 
 import jp.sabakan.mirai.MessageConfig
-import jp.sabakan.mirai.data.AnsweredCabGabData
 import jp.sabakan.mirai.data.AnsweredSpiData
 import jp.sabakan.mirai.data.SpiData
 import jp.sabakan.mirai.entity.SpiEntity
 import jp.sabakan.mirai.repository.SpiRepository
-import jp.sabakan.mirai.request.CabGabRequest
 import jp.sabakan.mirai.request.SpiRequest
-import jp.sabakan.mirai.response.CabGabResponse
 import jp.sabakan.mirai.response.SpiResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
