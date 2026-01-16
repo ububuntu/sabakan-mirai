@@ -30,37 +30,31 @@ class QuestionsController {
 
     // SPI問題画面
     @GetMapping("/spi/study")
-    fun getQuestionSpiStudy(@RequestParam(name = "index", defaultValue = "1") index: Int, model: Model): String {
-        // 1. 問題番号(index)によってカテゴリを決定するロジック
-        // 1~40問目: 言語, 41~70問目: 非言語
-        val targetCategory = if (index <= 40) {
-            "言語"  // ※DBに入っている実際の値に合わせてください（例: "Japanese", "1" 等の可能性もあり）
-        } else {
-            "非言語"
-        }
+    fun getQuestionSpiStudy(
+        @RequestParam(name = "index") index: Int, // URLの ?index=〇〇 を受け取る
+        model: Model
+    ): String {
 
-        // 2. 決定したカテゴリで検索条件を作成
+        // 1. カテゴリ決定 (1-40:言語, 41-70:非言語)
+        val targetCategory = if (index <= 40) "言語" else "非言語"
+
+        // 2. 問題を取得
         val request = SpiRequest().apply {
             spiCategory = targetCategory
         }
-
-        // 3. Serviceを使ってDBから問題をランダムに1問取得
-        // (SpiServiceに getSpi メソッドがある前提です。なければ作成が必要です)
         val response = spiService.getSpi(request)
-
         val questionList = response.spis
+
         if (questionList.isNullOrEmpty()) {
-            // エラーハンドリング（データがない場合など）
-            model.addAttribute("errorMessage", "問題データが見つかりませんでした。")
-            return "questions/spi-study"
+            return "redirect:/spi" // エラー時はメインへ戻す
         }
 
-        // 4. 画面に必要なデータを渡す
-        model.addAttribute("question", questionList[0]) // 取得した問題
-        model.addAttribute("currentIndex", index)       // 現在の問題番号 (例: 1)
-        model.addAttribute("totalCount", 70)            // 全問題数
+        // 3. 画面に必要なデータを渡す
+        model.addAttribute("question", questionList[0])
+        model.addAttribute("currentIndex", index) // 受け取った番号をそのまま渡す
+        model.addAttribute("totalCount", 70)      // 全70問
 
-        // 進捗率の計算 (例: (1 / 70) * 100)
+        // 進捗率計算
         val progress = (index.toDouble() / 70 * 100).toInt()
         model.addAttribute("progress", progress)
 
@@ -105,7 +99,45 @@ class QuestionsController {
 
     // SPI問題画面
     @PostMapping("/spi/study")
-    fun postQuestionSpiStudy(): String{
+    fun postQuestionSpiStudy(
+        @RequestParam(name = "currentIndex") currentIndex: Int, // HTMLの隠し項目から現在の番号を受け取る
+        // @RequestParam(name = "answer") answer: String?, // ← 将来的に回答を受け取る場合はここに追加
+        model: Model
+    ): String {
+
+        // 1. 次の問題番号を計算
+        val nextIndex = currentIndex + 1
+
+        // 2. 70問を超えていたら結果画面などへ移動（とりあえずトップに戻す例）
+        if (nextIndex > 70) {
+            return "redirect:/spi/result" // 結果画面ができたらそちらへ
+        }
+
+        // 3. 次の問題のカテゴリを決定
+        val targetCategory = if (nextIndex <= 40) "言語" else "非言語"
+
+        // 4. DBから問題を検索
+        val request = SpiRequest().apply {
+            spiCategory = targetCategory
+        }
+        val response = spiService.getSpi(request)
+
+        // データ取得チェック
+        val questionList = response.spis
+        if (questionList.isNullOrEmpty()) {
+            // エラー時は一旦トップなどに戻すか、エラー表示
+            return "redirect:/spi"
+        }
+
+        // 5. 画面にデータを渡す
+        model.addAttribute("question", questionList[0])
+        model.addAttribute("currentIndex", nextIndex) // 次の番号を渡す
+        model.addAttribute("totalCount", 70)
+
+        // 進捗率
+        val progress = (nextIndex.toDouble() / 70 * 100).toInt()
+        model.addAttribute("progress", progress)
+
         return "questions/spi-study"
     }
 

@@ -34,6 +34,18 @@
             <span class="note" th:text="${question.spiAnswer2}">選択肢2</span>
         </label>
 
+        <label class="menu-item choice-label" for="3">
+            <svg class="icon icon-with-bg" width="48" height="48"><use href="#es"></use></svg>
+            <input type="radio" id="3" name="answer" value="3">
+            <span class="note" th:text="${question.spiAnswer3}">選択肢3</span>
+        </label>
+
+        <label class="menu-item choice-label" for="4">
+            <svg class="icon icon-with-bg" width="48" height="48"><use href="#es"></use></svg>
+            <input type="radio" id="4" name="answer" value="4">
+            <span class="note" th:text="${question.spiAnswer4}">選択肢4</span>
+        </label>
+
         <input type="hidden" name="spiId" th:value="${question.spiId}" />
         <input type="hidden" name="currentIndex" th:value="${currentIndex}" />
 

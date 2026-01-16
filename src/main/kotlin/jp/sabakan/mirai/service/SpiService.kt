@@ -225,11 +225,11 @@ class SpiService {
             val entity = SpiEntity().apply {
                 spiId = row["spi_id"] as String?
                 spiContent = row["spi_content"] as String?
-                spiAnswer1 = row["spi_answer_1"] as String?
-                spiAnswer2 = row["spi_answer_2"] as String?
-                spiAnswer3 = row["spi_answer_3"] as String?
-                spiAnswer4 = row["spi_answer_4"] as String?
-                spiCorrectAnswer = (row["spi_correct_answer"] as Number?)?.toInt()
+                spiAnswer1 = row["spi_answer1"] as String?
+                spiAnswer2 = row["spi_answer2"] as String?
+                spiAnswer3 = row["spi_answer3"] as String?
+                spiAnswer4 = row["spi_answer4"] as String?
+                spiCorrectAnswer = row["spi_correct_answer"] as Int?
                 spiCategory = row["spi_category"] as String?
             }
             list.add(entity)

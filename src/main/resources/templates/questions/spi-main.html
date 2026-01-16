@@ -11,13 +11,22 @@
 <header th:replace="common/header :: siteHeader('spiMainHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
     <main>
-        <section class="menu" aria-label="SPIメイン">
-            <a href="/spi/study" class="menu-item">
+        <p class="note">言語問題</p>
+        <div class="menu" aria-label="SPIメイン">
+            <a th:each="i : ${#numbers.sequence(1, 40)}" th:href="@{/spi/study(index=${i})}" class="menu-item">
                 <div class="texts">
-                    <p class="title">問題1</p>
+                    <p class="title" th:text="'問題 ' + ${i}"></p>
                 </div>
             </a>
-        </section>
+        </div>
+        <p class="note">非言語問題</p>
+        <div class="menu" aria-label="SPIメイン">
+            <a th:each="i : ${#numbers.sequence(41, 70)}" th:href="@{/spi/study(index=${i})}" class="menu-item">
+                <div class="texts">
+                    <p class="title" th:text="'問題 ' + ${i}"></p>
+                </div>
+            </a>
+        </div>
     </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>
