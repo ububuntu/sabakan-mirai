@@ -211,7 +211,7 @@ main {
 /* ====== フォーム要素 ====== */
 .form-row {
     font-weight: 600;
-    width: 180%;
+    width: 100%;
     font-size: var(--font-xl);
     display: flex;
     flex-direction: column;
