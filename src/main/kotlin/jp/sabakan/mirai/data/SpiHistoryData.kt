@@ -23,4 +23,7 @@ class SpiHistoryData {
 
     // 実施日時
     var spiHsDate: LocalDateTime? = null
+
+    // 試験完了フラグ
+    var isFinished: Boolean = false
 }

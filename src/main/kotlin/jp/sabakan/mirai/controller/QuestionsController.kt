@@ -1,5 +1,6 @@
 package jp.sabakan.mirai.controller
 
+import jakarta.servlet.http.HttpSession
 import jp.sabakan.mirai.request.CabGabRequest
 import jp.sabakan.mirai.request.SpiRequest
 import jp.sabakan.mirai.service.CabGabService
@@ -19,6 +20,11 @@ class QuestionsController {
     lateinit var spiService: SpiService
     @Autowired
     lateinit var cabGabService: CabGabService
+    @Autowired
+    lateinit var session: HttpSession
+
+    // テスト用
+    val TEST_USER_ID = "test-user-id"
 
     // 適性試験メイン画面
     @GetMapping("/questions")
@@ -28,9 +34,19 @@ class QuestionsController {
 
     //　SPIメイン画面
     @GetMapping("/spi")
-    fun getQuestionSpiMain(): String{
+    fun getQuestionSpiMain(model: Model): String{
+        val inProgressId = spiService.getInProgressExamId(TEST_USER_ID)
+
+        if (inProgressId != null) {
+            model.addAttribute("hasInProgress", true)
+        } else {
+            model.addAttribute("hasInProgress", false)
+        }
+
         return "questions/spi-main"
     }
+
+
 
     // SPI問題画面
     @GetMapping("/spi/study")
@@ -38,6 +54,11 @@ class QuestionsController {
         @RequestParam(name = "index") index: Int, // URLの ?index=〇〇 を受け取る
         model: Model
     ): String {
+        // セッションチェック (不正アクセス防止)
+        val examId = session.getAttribute("currentSpiExamId") as? String
+        if (examId == null) {
+            return "redirect:/spi" // セッション切れならトップへ
+        }
 
         // 1. カテゴリ決定 (1-40:言語, 41-70:非言語)
         val targetCategory = if (index <= 40) "言語" else "非言語"
@@ -129,48 +150,65 @@ class QuestionsController {
         return "questions/spi-main"
     }
 
+    @PostMapping("/spi/start")
+    fun startSpiExam(
+        @RequestParam(required = false) mode: String?, // "new" or "resume"
+        model: Model
+    ): String {
+        var examId: String? = null
+        var startIndex = 1
+
+        if (mode == "resume") {
+            // 続きから：既存のIDを探す
+            examId = spiService.getInProgressExamId(TEST_USER_ID)
+            if (examId != null) {
+                // 解いた問題数 + 1 からスタート
+                startIndex = spiService.getCurrentQuestionIndex(examId)
+            }
+        }
+
+        // 新規の場合、または続きが見つからなかった場合
+        if (examId == null) {
+            examId = spiService.startNewExam(TEST_USER_ID)
+            startIndex = 1
+        }
+
+        // セッションに試験IDを保存 (これでページ遷移してもIDを忘れない)
+        session.setAttribute("currentSpiExamId", examId)
+
+        return "redirect:/spi/study?index=$startIndex"
+    }
+
     // SPI問題画面
     @PostMapping("/spi/study")
     fun postQuestionSpiStudy(
-        @RequestParam(name = "currentIndex") currentIndex: Int, // HTMLの隠し項目から現在の番号を受け取る
-        // @RequestParam(name = "answer") answer: String?, // ← 将来的に回答を受け取る場合はここに追加
+        @RequestParam(name = "currentIndex") currentIndex: Int,
+        @RequestParam(name = "spiId") spiId: String,
+        @RequestParam(name = "answer") answer: Int,
         model: Model
-    ): String {
-
-        // 1. 次の問題番号を計算
-        val nextIndex = currentIndex + 1
-
-        // 2. 70問を超えていたら結果画面などへ移動（とりあえずトップに戻す例）
-        if (nextIndex > 70) {
-            return "redirect:/spi/result" // 結果画面ができたらそちらへ
-        }
-
-        // 3. 次の問題のカテゴリを決定
-        val targetCategory = if (nextIndex <= 40) "言語" else "非言語"
-
-        // 4. DBから問題を検索
-        val request = SpiRequest().apply {
-            spiCategory = targetCategory
-        }
-        val response = spiService.getSpi(request)
-
-        // データ取得チェック
-        val questionList = response.spis
-        if (questionList.isNullOrEmpty()) {
-            // エラー時は一旦トップなどに戻すか、エラー表示
+    ): String {// セッションから試験ID取得
+        val examId = session.getAttribute("currentSpiExamId") as? String
+        if (examId == null) {
             return "redirect:/spi"
         }
 
-        // 5. 画面にデータを渡す
-        model.addAttribute("question", questionList[0])
-        model.addAttribute("currentIndex", nextIndex) // 次の番号を渡す
-        model.addAttribute("totalCount", 70)
+        // 1. 次の問題番号を計算
+        spiService.saveOneAnswer(examId, spiId, answer)// 2. 次の問題番号へ
+        val nextIndex = currentIndex + 1
 
-        // 進捗率
-        val progress = (nextIndex.toDouble() / 70 * 100).toInt()
-        model.addAttribute("progress", progress)
+        // 3. 終了判定 (70問超えたら終了)
+        if (nextIndex > 70) {
+            // 集計＆完了処理
+            spiService.finishExam(examId)
 
-        return "questions/spi-study"
+            // セッション情報をクリア
+            session.removeAttribute("currentSpiExamId")
+
+            return "redirect:/spi/result"
+        }
+
+        // 次の問題へリダイレクト
+        return "redirect:/spi/study?index=$nextIndex"
     }
 
     // SPI結果画面

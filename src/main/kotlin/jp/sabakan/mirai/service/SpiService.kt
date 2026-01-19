@@ -11,12 +11,42 @@ import jp.sabakan.mirai.response.SpiResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.UUID
 
 @Service
 class SpiService {
     @Autowired
     lateinit var spiRepository: SpiRepository
+
+    /**
+     * 新しいSPI試験を開始する
+     *
+     * @param userId ユーザーID
+     * @return 新しいSPI試験ID
+     */
+    @Transactional
+    fun startNewExam(userId: String): String {
+        // 新しいSPI試験IDを生成
+        val historyId = UUID.randomUUID().toString()
+
+        // SPI履歴データを作成
+        val historyData = SpiHistoryData().apply {
+            spiHsId = historyId
+            this.userId = userId
+            totalQuestions = 70
+            correctCount = 0
+            accuracyRate = BigDecimal.ZERO
+            spiHsDate = java.time.LocalDateTime.now()
+        }
+
+        // Repositoryを使って履歴を保存
+        spiRepository.insertHistory(historyData)
+
+        // 新しいSPI試験IDを返す
+        return historyId
+    }
 
     /**
      * SPI質問を登録する
@@ -75,9 +105,89 @@ class SpiService {
         }
     }
 
-    @Transactional // データの整合性を保つためトランザクションをかける
+    /**
+     * 進行中のSPI試験IDを取得する
+     *
+     * @param userId ユーザーID
+     * @return 進行中のSPI試験ID、存在しない場合はnull
+     */
+    fun getInProgressExamId(userId: String): String? {
+        return spiRepository.getUnfinishedSpiHsId(userId)
+    }
+
+    /**
+     * 現在の質問インデックスを取得する
+     *
+     * @param examId SPI試験ID
+     * @return 現在の質問インデックス
+     */
+    fun getCurrentQuestionIndex(examId: String): Int {
+        val answeredCount = spiRepository.countDetailsByHistoryId(examId)
+        return answeredCount + 1 // (例: 5問解いていたら次は6問目)
+    }
+
+    /**
+     * SPIの1つの回答を保存する
+     *
+     * @param examId SPI試験ID
+     * @param spiId SPI質問ID
+     * @param userAnswer ユーザーの回答
+     */
+    @Transactional
+    fun saveOneAnswer(examId: String, spiId: String, userAnswer: Int) {
+        // 正解を取得
+        val correctAnswer = spiRepository.getCorrectAnswer(spiId)
+        // 正誤判定
+        val isCorrect = (correctAnswer != null && correctAnswer == userAnswer)
+
+        // 明細データの作成
+        val detailData = SpiDetailData().apply {
+            spiDlId = UUID.randomUUID().toString()
+            spiHsId = examId
+            this.spiId = spiId
+            this.userAnswer = userAnswer
+            this.isCorrect = isCorrect
+        }
+
+        // DBへ保存
+        spiRepository.insertDetail(detailData)
+    }
+
+    /**
+     * SPI試験を完了する
+     *
+     * @param examId SPI試験ID
+     */
+    @Transactional
+    fun finishExam(examId: String){
+        // 全明細から正解数を集計
+        val details = spiRepository.findDetailsByHistoryId(examId)
+
+        val correctCount = details.count { it } // trueの数をカウント
+        val total = details.size // 通常は70
+
+        // 正答率の計算 (BigDecimalを使用)
+        val rate = if (total > 0) {
+            BigDecimal(correctCount)
+                .divide(BigDecimal(total), 2, RoundingMode.HALF_UP)
+                .multiply(BigDecimal("100"))
+        } else {
+            BigDecimal.ZERO
+        }
+
+        // SPI履歴データの更新
+        spiRepository.updateExamResult(examId, correctCount, rate.toDouble())
+    }
+
+    /**
+     * SPI試験結果を登録する
+     *
+     * @param request SPI試験リクエスト
+     * @return SPI履歴データ
+     */
+    @Transactional
     fun registerExamResult(request: SpiRequest.SpiExamRequest): SpiHistoryData {
-        // 1. 履歴データの準備
+        // 履歴データの作成
         val historyId = UUID.randomUUID().toString() // 親ID生成
         val historyData = SpiHistoryData().apply {
             spiHsId = historyId
@@ -87,10 +197,7 @@ class SpiService {
             spiHsDate = java.time.LocalDateTime.now()
         }
 
-        // 明細リスト（後でまとめてInsertするための保持用など、必要なら使う）
-        // val detailsToSave = mutableListOf<SpiDetailData>()
-
-        // 2. ループで採点処理
+        // 各回答の処理
         request.answers?.forEach { answerItem ->
             val currentSpiId = answerItem.spiId ?: return@forEach
             val userAns = answerItem.userAnswer
@@ -119,7 +226,7 @@ class SpiService {
             spiRepository.insertDetail(detailData)
         }
 
-        // 3. 正答率の計算 (BigDecimalで計算)
+        // 正答率の計算
         if (historyData.totalQuestions > 0) {
             val rate = historyData.correctCount.toBigDecimal()
                 .divide(historyData.totalQuestions.toBigDecimal(), 2, java.math.RoundingMode.HALF_UP)
@@ -130,7 +237,7 @@ class SpiService {
             historyData.accuracyRate = java.math.BigDecimal.ZERO
         }
 
-        // 4. 履歴（親）データの保存
+        // Repositoryを使って履歴を保存
         spiRepository.insertHistory(historyData)
 
         // 必要に応じて結果を返す
