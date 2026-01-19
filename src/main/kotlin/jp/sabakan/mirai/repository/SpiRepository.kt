@@ -1,7 +1,8 @@
 package jp.sabakan.mirai.repository
 
-import jp.sabakan.mirai.data.AnsweredSpiData
 import jp.sabakan.mirai.data.SpiData
+import jp.sabakan.mirai.data.SpiDetailData
+import jp.sabakan.mirai.data.SpiHistoryData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -19,32 +20,9 @@ class SpiRepository {
     ORDER BY RAND() LIMIT 1
     """.trimIndent()
 
-    // 直近3回分の回答を得るSQLクエリ
-    val getSpiAnswers = """
-        SELECT spi_answer, spi_correct_answer FROM spi_result_t
-        WHERE spi_id = :spiId AND user_id = :userId
-        ORDER BY spi_answer_at DESC LIMIT 3
-    """.trimIndent()
-
-    // 問題と回答率を取得するSQLクエリ
-    val getSpiList = """
-        SELECT s.spi_id, sr.spi_answers, sr.spi_count
-        FROM spi_m s
-        LEFT JOIN spi_rate_t sr
-        ON s.spi_id = sr.spi_id AND sr.user_id = :userId
-        ORDER BY s.spi_id
-    """.trimIndent()
-
-    // 回答結果を保存するSQLクエリ
-    val insertSpiAnswer = """
-        INSERT INTO spi_result_t (spi_result_id, spi_id, user_id, spi_user_answer, spi_correct_answer, spi_answer_at)
-        VALUES (:spiResultId, :spiId, :userId, :spiUserAnswer, :spiCorrectAnswer, CURRENT_TIMESTAMP)
-    """.trimIndent()
-
-    // 回答率テーブルに新規登録するSQLクエリ
-    val insertSpiAnswerRate = """
-        INSERT INTO spi_rate_t (spi_id, user_id, spi_answers, api_count)
-        VALUES (:spiId, :userId, :spiAnswers, :spiCount)
+    // 正解を取得するSQLクエリ
+    val getCorrectAnswerSql = """
+        SELECT spi_correct_answer FROM spi_m WHERE spi_id = :spiId
     """.trimIndent()
 
     // 問題文を追加するSQLクエリ
@@ -53,22 +31,17 @@ class SpiRepository {
         VALUES (:spiId, :spiContent, :spiAnswer1, :spiAnswer2, :spiAnswer3, :spiAnswer4, :spiCorrectAnswer, :spiCategory)
     """.trimIndent()
 
-    // 回答内容に基づき回答率を更新するSQLクエリ
-    val updateSpiAnswerRate = """
-        UPDATE spi_rate_t
-        SET spi_answers = :spiAnswers,
-            spi_count = :spiCount
-        WHERE spi_id = :spiId AND user_id = :userId
+    // SPI履歴を追加するSQLクエリ
+    val insertSpiHistorySql = """
+        INSERT INTO spi_history_t (spi_hs_id, user_id, total_questions, correct_count, accuracy_rate, spi_hs_date)
+        VALUES (:spiHsId, :userId, :totalQuestions, :correctCount, :accuracyRate, CURRENT_TIMESTAMP)
     """.trimIndent()
 
-    //問題文を削除するSQLクエリ
-    val deleteSpi = "DELETE FROM spi_t WHERE spi_id = :spiId"
-    val deleteSpiRate = "DELETE FROM spi_rate_t WHERE spi_id = :spiId"
-    val deleteSpiResult = "DELETE FROM spi_result_t WHERE spi_id = :spiId"
-
-    //ユーザの回答履歴を削除するSQLクエリ
-    val deleteSpiRateByUser = "DELETE FROM spi_rate_t WHERE user_id = :userId"
-    val deleteSpiResultByUser = "DELETE FROM spi_result_t WHERE user_id = :userId"
+    // SPI明細を追加するSQLクエリ
+    val insertSpiDetailSql = """
+        INSERT INTO spi_detail_t (spi_dl_id, spi_hs_id, spi_id, user_answer, is_correct)
+        VALUES (:spiDlId, :spiHsId, :spiId, :userAnswer, :isCorrect)
+    """.trimIndent()
 
     /**
      * SPIの問題文を追加する
@@ -94,43 +67,37 @@ class SpiRepository {
     }
 
     /**
-     * SPIの回答結果を保存する
+     * SPI履歴を追加する
      *
-     * @param data 回答データ
+     * @param historyData SPI履歴データ
      * @return 更新件数
      */
-    fun insertSpiAnswer(data: AnsweredSpiData): Int {
-        // パラメータマップの作成
-        val paramMap = mapOf<String, Any?>(
-            "spiResultId" to data.spiResultId,
-            "spiId" to data.spiId,
-            "userId" to data.userId,
-            "spiUserAnswer" to data.userAnswer,
-            "spiCorrectAnswer" to data.correctAnswer
+    fun insertHistory(historyData: SpiHistoryData): Int {
+        val paramMap = mapOf(
+            "spiHsId" to historyData.spiHsId,
+            "userId" to historyData.userId,
+            "totalQuestions" to historyData.totalQuestions,
+            "correctCount" to historyData.correctCount,
+            "accuracyRate" to historyData.accuracyRate
         )
-
-        // クエリの実行
-        return jdbc.update(insertSpiAnswer, paramMap)
+        return jdbc.update(insertSpiHistorySql, paramMap)
     }
 
     /**
-     * Spiの回答率を新規登録する
+     * SPI明細を追加する
      *
-     * @param data 回答データ
+     * @param detailData SPI明細データ
      * @return 更新件数
      */
-    fun insertSpiAnswerRate(data: AnsweredSpiData): Int {
-        // パラメータマップの作成
-        val temp = createAnswer(data)
-        val paramMap = mapOf<String, Any?>(
-            "spiId" to data.spiId ,
-            "userId" to data.userId ,
-            "spiAnswers" to temp ,
-            "spiCount" to temp.count{ it == 'T' }
+    fun insertDetail(detailData: SpiDetailData): Int {
+        val paramMap = mapOf(
+            "spiDlId" to detailData.spiDlId,
+            "spiHsId" to detailData.spiHsId, // 親のID
+            "spiId" to detailData.spiId,
+            "userAnswer" to detailData.userAnswer,
+            "isCorrect" to detailData.isCorrect
         )
-
-        // クエリの実行
-        return jdbc.update(insertSpiAnswerRate, paramMap)
+        return jdbc.update(insertSpiDetailSql, paramMap)
     }
 
     /**
@@ -150,108 +117,18 @@ class SpiRepository {
     }
 
     /**
-     * ユーザのSPI質問リストを取得する
+     * 指定SPI IDの正解を取得する
      *
-     * @param data 回答データ
-     * @return SPI質問リスト
+     * @param spiId SPI受検ID
+     * @return 正解番号 (1~4) または null
      */
-    fun getSpiList(data: AnsweredSpiData): List<Map<String, Any?>>{
-        // パラメータマップの作成
-        val paramMap = mapOf<String, Any?>(
-            "userId" to data.userId
-        )
-
-        // クエリの実行
-        return jdbc.queryForList(getSpiList, paramMap)
-    }
-
-    /**
-     * SPIの回答率を更新する
-     *
-     * @param data 回答データ
-     * @return 更新件数
-     */
-    fun updateSpiAnswerRate(data: AnsweredSpiData): Int {
-        // パラメータマップの作成
-        val temp = createAnswer(data)
-        val paramMap = mapOf<String, Any?>(
-            "spiAnswers" to temp ,
-            "spiCount" to temp.count{ it == 'T' } ,
-            "spiId" to data.spiId ,
-            "userId" to data.userId
-        )
-
-        // クエリの実行
-        return jdbc.update(updateSpiAnswerRate, paramMap)
-    }
-
-    /**
-     * SPIの問題文を削除する
-     *
-     * @param data SPIデータ
-     * @return 更新件数
-     */
-    fun deleteSpi(data: AnsweredSpiData): Int {
-        // パラメータマップの作成
-        val paramMap = mapOf<String, Any?>(
-            "spiId" to data.spiId
-        )
-
-        // クエリの実行
-        jdbc.update(deleteSpiRate, paramMap)
-        jdbc.update(deleteSpiResult, paramMap)
-        return jdbc.update(deleteSpi, paramMap)
-    }
-
-    /**
-     * ユーザのSPI回答履歴を削除する
-     *
-     * @param data 回答データ
-     * @return 更新件数
-     */
-    fun deleteSpiByUser(data: AnsweredSpiData): Int {
-        // パラメータマップの作成
-        val paramMap = mapOf<String, Any?>(
-            "userId" to data.userId
-        )
-
-        // クエリの実行
-        jdbc.update(deleteSpiRateByUser, paramMap)
-        return jdbc.update(deleteSpiResultByUser, paramMap)
-    }
-
-    /**
-     * 回答履歴文字列を作成する
-     *
-     * @param data 回答データ
-     * @return 回答履歴文字列
-     */
-    fun createAnswer(data: AnsweredSpiData): String {
-        // パラメータマップの作成
-        val paramMap = mapOf<String, Any?>(
-            "spiId" to data.spiId,
-            "userId" to data.userId
-        )
-
-        // クエリの実行
-        val answers = jdbc.queryForList(getSpiAnswers, paramMap)
-
-        // 回答の正誤を判定
-        val correctResult = if (data.userAnswer == data.correctAnswer) "T" else "F"
-
-        // 回答の正当性を評価
-        val history = answers.map {
-            val userAnswer = it["spi_answer"] as? String
-            val correctAnswer = it["spi_correct_answer"] as? String
-            when {
-                userAnswer == null || correctAnswer == null -> "N"
-                userAnswer == correctAnswer -> "T"
-                else -> "F"
-            }
+    fun getCorrectAnswer(spiId: String): Int? {
+        val paramMap = mapOf("spiId" to spiId)
+        return try {
+            // queryForObjectは結果が0件だと例外を投げるためtry-catchするか、queryを使用
+            jdbc.queryForObject(getCorrectAnswerSql, paramMap, Int::class.java)
+        } catch (e: Exception) {
+            null
         }
-
-        // 新しい順に連結して返す
-        val newHistory = listOf(correctResult) + history
-        return newHistory.take(3).joinToString("")
     }
 }

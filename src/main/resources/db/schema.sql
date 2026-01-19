@@ -49,31 +49,28 @@ CREATE TABLE spi_m(
     spi_category        VARCHAR(50)
 );
 
-/* SPI回答率テーブル */
-CREATE TABLE spi_rate_t(
-    spi_rate_id     CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
-    spi_id          CHAR(37) NOT NULL ,
-    user_id         CHAR(37) NOT NULL ,
-    spi_answers     CHAR(3) NOT NULL ,
-    spi_count       INT NOT NULL ,
-    UNIQUE(spi_id, user_id) ,
-    FOREIGN KEY (spi_id) REFERENCES spi_m(spi_id),
-    FOREIGN KEY (user_id) REFERENCES user_m(user_id)
-);
-
 /* SPI結果テーブル */
-CREATE TABLE spi_result_t(
-    spi_result_id   CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
-    spi_id          CHAR(37) NOT NULL ,
-    user_id         CHAR(37) NOT NULL ,
-    spi_answer      INT NOT NULL ,
-    spi_correct_answer  INT NOT NULL ,
-    spi_answer_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
-    FOREIGN KEY (spi_id) REFERENCES spi_m(spi_id),
+CREATE TABLE spi_history_t(
+    spi_hs_id             CHAR(37) PRIMARY KEY NOT NULL UNIQUE,
+    user_id             CHAR(37) NOT NULL,
+    total_questions     INT NOT NULL,
+    correct_count       INT NOT NULL,
+    accuracy_rate       DECIMAL(5, 2),
+    spi_hs_date           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_finished         BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES user_m(user_id)
 );
 
-
+/* SPI回答テーブル */
+CREATE TABLE spi_detail_t(
+    spi_dl_id      CHAR(37) PRIMARY KEY NOT NULL UNIQUE,
+    spi_hs_id             CHAR(37) NOT NULL,
+    spi_id              CHAR(37) NOT NULL,
+    user_answer         INT,
+    is_correct          BOOLEAN NOT NULL,
+    FOREIGN KEY (spi_hs_id) REFERENCES spi_history_t(spi_hs_id),
+    FOREIGN KEY (spi_id) REFERENCES spi_m(spi_id)
+);
 
 /* CAB/GABテーブル */
 CREATE TABLE cabgab_m(
@@ -85,28 +82,4 @@ CREATE TABLE cabgab_m(
     cabgab_answer4          VARCHAR(100),
     cabgab_correct_answer   CHAR(1) DEFAULT NULL ,
     cabgab_category         VARCHAR(50)
-);
-
-/* CAB/GAB回答率テーブル */
-CREATE TABLE cabgab_rate_t(
-    cabgab_rate_id  CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
-    cabgab_id       CHAR(37) NOT NULL ,
-    user_id         CHAR(37) NOT NULL ,
-    cabgab_answers  CHAR(3) NOT NULL ,
-    cabgab_count    INT NOT NULL ,
-    UNIQUE(cabgab_id, user_id) ,
-    FOREIGN KEY (cabgab_id) REFERENCES cabgab_m(cabgab_id),
-    FOREIGN KEY (user_id) REFERENCES user_m(user_id)
-);
-
-/* CAB/GAB結果テーブル */
-CREATE TABLE cabgab_result_t(
-    cabgab_result_id    CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
-    cabgab_id           CHAR(37) NOT NULL ,
-    user_id             CHAR(37) NOT NULL ,
-    cabgab_answer       CHAR(1) NOT NULL ,
-    cabgab_correct_answer   CHAR(1) NOT NULL ,
-    cabgab_answer_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
-    FOREIGN KEY (cabgab_id) REFERENCES cabgab_m(cabgab_id),
-    FOREIGN KEY (user_id) REFERENCES user_m(user_id)
 );

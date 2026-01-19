@@ -10,23 +10,23 @@
 </head>
 <body>
 <main class="auth-container">
-    <section class="menu">
+    <section class="error-menu">
         <img class="img" src="/img/serverError.svg" alt="500エラー画面">
 
-        <p class="title">サーバーエラー</p>
+        <p class="error-title">サーバーエラー</p>
 
-        <p class="text">
+        <p class="error-text">
             サーバーで問題が発生しました。<br>
             しばらくしてから再度お試しください。
         </p>
 
         <!-- 再試行ボタン -->
-        <button class="button button-primary" th:onclick="|location.href='@{/error/back}'|" type="button">
+        <button class="error-button button-primary" th:onclick="|location.href='@{/error/back}'|" type="button">
             再試行
         </button>
 
         <!-- ホームボタン -->
-        <button class="button button-white" onclick="location.href='/index'" type="button">
+        <button class="error-button button-white" onclick="location.href='/index'" type="button">
             ホームに戻る
         </button>
 

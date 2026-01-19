@@ -1,8 +1,9 @@
 package jp.sabakan.mirai.service
 
 import jp.sabakan.mirai.MessageConfig
-import jp.sabakan.mirai.data.AnsweredSpiData
 import jp.sabakan.mirai.data.SpiData
+import jp.sabakan.mirai.data.SpiDetailData
+import jp.sabakan.mirai.data.SpiHistoryData
 import jp.sabakan.mirai.entity.SpiEntity
 import jp.sabakan.mirai.repository.SpiRepository
 import jp.sabakan.mirai.request.SpiRequest
@@ -52,54 +53,6 @@ class SpiService {
         }
     }
 
-    // #TODO rateとresultを分割する必要がある
-    /**
-     * SPI回答を登録する
-     *
-     * @param request SPIリクエスト
-     * @return SPIレスポンス
-     */
-    @Transactional
-    fun insertSpiAnswer(request: SpiRequest): SpiResponse {
-        //リクエストからデータ変換
-        val data = AnsweredSpiData()
-        data.spiResultId = toCreateId()
-        data.spiId = request.spiId
-        data.userId = request.userId
-        data.userAnswer = request.userAnswer
-        data.correctAnswer = request.correctAnswer
-
-        //リポジトリへ登録処理
-        val update = spiRepository.insertSpiAnswer(data)
-
-        // 登録結果を確認
-        if (update == 0) {
-            return SpiResponse().apply {
-                message = null
-            }
-        }
-
-        // パラメータマップの作成
-        val rateUpdate = spiRepository.updateSpiAnswerRate(data)
-
-        // 登録結果を確認
-        if (rateUpdate == 0) {
-            val rateInsertCount  = spiRepository.insertSpiAnswerRate(data)
-
-            if (rateInsertCount == 0) {
-                throw RuntimeException("Failed to insert SPI answer.")
-            }
-        } else if (rateUpdate == 1) {
-            // 多分ありえないエラー
-            throw IllegalStateException("Failed to update SPI answer.")
-        }
-
-        //結果を返す
-        return SpiResponse().apply {
-            message = null
-        }
-    }
-
     /**
      * 指定カテゴリーのSPI質問を取得する
      *
@@ -122,79 +75,66 @@ class SpiService {
         }
     }
 
-    /**
-     * SPI質問リストを取得する
-     *
-     * @param request SPIリクエスト
-     * @return SPIレスポンス
-     */
-    fun getSpiList(request: SpiRequest): SpiResponse {
-        //リクエストからデータ変換
-        val data = AnsweredSpiData()
-        data.userId = request.userId
-
-        //リポジトリへ問い合わせ
-        val table: List<Map<String, Any?>> = spiRepository.getSpiList(data)
-        val list: List<SpiEntity> = tableToListEntity(table)
-
-        //結果を返す
-        return SpiResponse().apply {
-            spis = list
-            message = null
+    @Transactional // データの整合性を保つためトランザクションをかける
+    fun registerExamResult(request: SpiRequest.SpiExamRequest): SpiHistoryData {
+        // 1. 履歴データの準備
+        val historyId = UUID.randomUUID().toString() // 親ID生成
+        val historyData = SpiHistoryData().apply {
+            spiHsId = historyId
+            userId = request.userId
+            totalQuestions = request.answers?.size ?: 0
+            correctCount = 0
+            spiHsDate = java.time.LocalDateTime.now()
         }
-    }
 
-    /**
-     * SPI質問を削除する
-     *
-     * @param request SPIリクエスト
-     * @return SPIレスポンス
-     */
-    fun deleteSpi(request: SpiRequest): SpiResponse {
-        //リクエストからデータ変換
-        val data = AnsweredSpiData()
-        data.spiId = request.spiId
-        data.userId = request.userId
+        // 明細リスト（後でまとめてInsertするための保持用など、必要なら使う）
+        // val detailsToSave = mutableListOf<SpiDetailData>()
 
-        //リポジトリへ削除処理
-        val deleteCount = spiRepository.deleteSpi(data)
+        // 2. ループで採点処理
+        request.answers?.forEach { answerItem ->
+            val currentSpiId = answerItem.spiId ?: return@forEach
+            val userAns = answerItem.userAnswer
 
-        // 結果を返す
-        return if (deleteCount == 0) {
-            SpiResponse().apply {
-                message = MessageConfig.SPI_DELETE_FAILED
+            // DBから正解を取得
+            val correctAnswer = spiRepository.getCorrectAnswer(currentSpiId)
+
+            // 正誤判定 (正解が存在し、かつユーザーの回答と一致すれば正解)
+            val isCorrect = (correctAnswer != null && correctAnswer == userAns)
+
+            // 正解数をカウントアップ
+            if (isCorrect) {
+                historyData.correctCount++
             }
+
+            // 明細データの作成と保存
+            val detailData = SpiDetailData().apply {
+                spiDlId = UUID.randomUUID().toString()
+                spiHsId = historyId
+                spiId = currentSpiId
+                userAnswer = userAns
+                this.isCorrect = isCorrect
+            }
+
+            // Repositoryを使って明細を1件保存
+            spiRepository.insertDetail(detailData)
+        }
+
+        // 3. 正答率の計算 (BigDecimalで計算)
+        if (historyData.totalQuestions > 0) {
+            val rate = historyData.correctCount.toBigDecimal()
+                .divide(historyData.totalQuestions.toBigDecimal(), 2, java.math.RoundingMode.HALF_UP)
+                .multiply(java.math.BigDecimal("100"))
+
+            historyData.accuracyRate = rate
         } else {
-            SpiResponse().apply {
-                message = MessageConfig.SPI_DELETE_SUCCESS
-            }
+            historyData.accuracyRate = java.math.BigDecimal.ZERO
         }
-    }
 
-    /**
-     * ユーザのSPI回答を削除する
-     *
-     * @param request SPIリクエスト
-     * @return SPIレスポンス
-     */
-    fun deleteSpiByUser(request: SpiRequest): SpiResponse {
-        //リクエストからデータ変換
-        val data = AnsweredSpiData()
-        data.userId = request.userId
+        // 4. 履歴（親）データの保存
+        spiRepository.insertHistory(historyData)
 
-        //リポジトリへ削除処理
-        val deleteCount = spiRepository.deleteSpiByUser(data)
-
-        // 結果を返す
-        return if (deleteCount == 0) {
-            SpiResponse().apply {
-                message = MessageConfig.SPI_DELETE_FAILED
-            }
-        } else {
-            SpiResponse().apply {
-                message = MessageConfig.SPI_DELETE_SUCCESS
-            }
-        }
+        // 必要に応じて結果を返す
+        return historyData
     }
 
     /**

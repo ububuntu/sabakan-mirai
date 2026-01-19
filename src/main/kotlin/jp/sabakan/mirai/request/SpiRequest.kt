@@ -42,4 +42,18 @@ class SpiRequest {
 
     // 回答日時
     var answerDate: String? = null
+
+    // 70問分の回答を一括送信するためのリクエスト
+    @Data
+    class SpiExamRequest {
+        var userId: String? = null
+        var answers: List<SpiAnswerItem>? = null
+    }
+
+    // 1問ごとの回答内容
+    @Data
+    class SpiAnswerItem {
+        var spiId: String? = null
+        var userAnswer: Int? = null
+    }
 }
