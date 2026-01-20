@@ -464,7 +464,7 @@ main {
 .question-table {
   border-collapse: collapse;
   width: 100%;
-  background-color: var(--card);
+  background-color: var(--bg);
   table-layout: fixed;
 }
 
@@ -478,7 +478,6 @@ main {
 
 /* th は全て同じ文字サイズ */
 .question-table th {
-  background-color: var(--primary);
   font-weight: bold;
   font-size: var(--xl);
 }
@@ -536,12 +535,23 @@ main {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-/* 表内の縦線を消す */
+/* 表内の線を消す */
 .question-table th,
 .question-table td {
-  border-left: none;
-  border-right: none;
+  border: none;
 }
+.question-table thead th {
+    background-color: var(--question);
+}
+/* 奇数列の背景色変更 */
+.question-table tbody tr:nth-child(odd) {
+    background-color: color-mix(
+            in srgb,
+            var(--card) 60%,
+            var(--bg) 40%
+        );
+}
+
 /* ====== フッター ====== */
 footer {
     background: var(--card);
