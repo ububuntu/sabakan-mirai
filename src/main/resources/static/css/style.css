@@ -147,6 +147,7 @@ main {
     text-decoration: none;
 }
 .menu .button-center {
+    width: 100%;
     background: var(--card);
     border: none;
     border-radius: var(--radius-lg);
@@ -169,6 +170,7 @@ main {
     display: flex;
 }
 .menu-item .texts {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
