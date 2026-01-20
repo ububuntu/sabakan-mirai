@@ -159,24 +159,23 @@ class SpiService {
      * @param examId SPI試験ID
      */
     @Transactional
-    fun finishExam(examId: String){
+    fun finishExam(spiHsId: String){
         // 全明細から正解数を集計
-        val details = spiRepository.findDetailsByHistoryId(examId)
+        val results: List<Boolean> = spiRepository.findDetailsByHistoryId(spiHsId)
 
-        val correctCount = details.count { it } // trueの数をカウント
-        val total = details.size // 通常は70
+        val totalAnswered = results.size
+        val correctCount = results.count { it }
 
         // 正答率の計算 (BigDecimalを使用)
-        val rate = if (total > 0) {
+        val accuracyRate = if (totalAnswered > 0) {
             BigDecimal(correctCount)
-                .divide(BigDecimal(total), 2, RoundingMode.HALF_UP)
+                .divide(BigDecimal(totalAnswered), 2, RoundingMode.HALF_UP)
                 .multiply(BigDecimal("100"))
         } else {
             BigDecimal.ZERO
         }
-
         // SPI履歴データの更新
-        spiRepository.updateExamResult(examId, correctCount, rate.toDouble())
+        spiRepository.updateExamResult(spiHsId, correctCount, accuracyRate)
     }
 
     /**

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
+import java.math.BigDecimal
 
 @Repository
 class SpiRepository {
@@ -56,6 +57,7 @@ class SpiRepository {
         VALUES (:spiDlId, :spiHsId, :spiId, :userAnswer, :isCorrect)
     """.trimIndent()
 
+    // SPI履歴を更新するSQLクエリ（試験終了時）
     val updateFinishSql = """
         UPDATE spi_history_t 
         SET correct_count = :correctCount, accuracy_rate = :accuracyRate, is_finished = TRUE 
@@ -131,7 +133,7 @@ class SpiRepository {
         return jdbc.update(insertSpiDetailSql, paramMap)
     }
 
-    fun updateExamResult(spiHsId: String, correctCount: Int, accuracyRate: Double): Int {
+    fun updateExamResult(spiHsId: String, correctCount: Int, accuracyRate: BigDecimal): Int {
         // パラメータマップの作成
         val paramMap = mapOf(
             "spiHsId" to spiHsId,

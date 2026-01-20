@@ -184,31 +184,50 @@ class QuestionsController {
     fun postQuestionSpiStudy(
         @RequestParam(name = "currentIndex") currentIndex: Int,
         @RequestParam(name = "spiId") spiId: String,
-        @RequestParam(name = "answer") answer: Int,
+        @RequestParam(name = "answer", required = false) answer: Int?, // 中断時はnullの可能性があるので nullable に変更
+        @RequestParam(name = "action") action: String, // 追加: どのボタンが押されたか
         model: Model
-    ): String {// セッションから試験ID取得
+    ): String {
+
+        // セッションから現在の試験IDを取得
         val examId = session.getAttribute("currentSpiExamId") as? String
-        if (examId == null) {
-            return "redirect:/spi"
+            ?: return "redirect:/spi" // セッション切れ対策
+
+        // 分岐処理
+        when (action) {
+            "suspend" -> {
+                // 中断
+                session.removeAttribute("currentSpiExamId")
+                return "redirect:/spi"
+            }
+
+            "finish" -> {
+                // 途中終了
+                spiService.finishExam(examId)
+                session.removeAttribute("currentSpiExamId")
+                return "redirect:/spi/result"
+            }
+
+            "next" -> {
+                // 次へ
+                if (answer != null) {
+                    spiService.saveOneAnswer(examId, spiId, answer)
+                }
+
+                // 次の問題へ
+                val nextIndex = currentIndex + 1
+                if (nextIndex > 70) {
+                    // 70問終わったら自動的に終了処理
+                    spiService.finishExam(examId)
+                    session.removeAttribute("currentSpiExamId")
+                    return "redirect:/spi/result"
+                }
+
+                return "redirect:/spi/study?index=$nextIndex"
+            }
         }
 
-        // 1. 次の問題番号を計算
-        spiService.saveOneAnswer(examId, spiId, answer)// 2. 次の問題番号へ
-        val nextIndex = currentIndex + 1
-
-        // 3. 終了判定 (70問超えたら終了)
-        if (nextIndex > 70) {
-            // 集計＆完了処理
-            spiService.finishExam(examId)
-
-            // セッション情報をクリア
-            session.removeAttribute("currentSpiExamId")
-
-            return "redirect:/spi/result"
-        }
-
-        // 次の問題へリダイレクト
-        return "redirect:/spi/study?index=$nextIndex"
+        return "redirect:/spi"
     }
 
     // SPI結果画面
