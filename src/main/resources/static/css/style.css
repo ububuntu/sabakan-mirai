@@ -540,6 +540,7 @@ main {
 .question-table td {
   border: none;
 }
+/* 表ヘッダの背景色変更 */
 .question-table thead th {
     background-color: var(--question);
 }
