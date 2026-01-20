@@ -37,6 +37,12 @@
     align-items: center;
 }
 
+.meta{
+    display: flex;
+    flex-flow: column;
+    margin-left: auto;
+}
+
 /* ====== 統計情報ボックス ====== */
 .statistics {
     background: var(--card);
@@ -44,14 +50,18 @@
     padding: var(--padding-card);
     box-shadow: var(--shadow-card);
 }
+
 .stat-text {
     display: flex;
     justify-content: space-between;
     font-size: var(--font-xl);
     font-weight: 600;
+    flex: 1;
 }
-.stat-value {
+
+.stat-text .stat-value {
     color: var(--primary);
+    text-align: right;
 }
 
 /* ====== ステータスバッジ類 ====== */
