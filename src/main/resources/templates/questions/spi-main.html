@@ -16,20 +16,42 @@
         <h2 style="color: white; margin-bottom: 30px;">SPI 模擬試験 (全70問)</h2>
 
         <form action="/spi/start" method="post">
+            <span class="title">始めからスタート</span>
             <button type="submit" name="mode" value="new" class="button" style="padding: 15px 30px; font-size: 1.2rem; cursor: pointer;">
-                はじめからスタート
+                開始
             </button>
 
-            <br><br>
+            <span class="title">途中からスタート</span>
+            <div style="display: flex; justify-content: center; gap: 10px;">
+                <select name="middleIndex" style="padding: 10px; border-radius: 5px; font-size: 1rem;">
+                    <option th:each="i : ${#numbers.sequence(1, 70)}"
+                            th:value="${i}"
+                            th:text="'問 ' + ${i}"></option>
+                </select>
+                <button type="submit" name="mode" value="new_middle"
+                        class="button" style="padding: 10px 20px; background-color: #2196F3; cursor: pointer;">
+                    開始
+                </button>
+            </div>
 
             <th:block th:if="${hasInProgress}">
+                <span class="title">続きから再開</span>
                 <button type="submit" name="mode" value="resume" class="button" style="padding: 15px 30px; font-size: 1.2rem; cursor: pointer; background-color: #4CAF50;">
-                    前回の続きから再開
+                    開始
                 </button>
             </th:block>
+
+            <div>
+                <span class="title">過去の結果</span>
+                <button type="submit" onclick="location.href='/spi/history'">
+                    過去の結果一覧へ
+                </button>
+            </div>
         </form>
     </div>
 </main>
+
+<footer th:replace="~{common/footer :: siteFooter}"></footer>
 
 <script th:src="@{/js/style.js}"></script>
 </body>

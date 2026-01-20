@@ -92,6 +92,11 @@ class QuestionsController {
         return "questions/spi-result"
     }
 
+    @GetMapping("/spi/history")
+    fun getSpiHistory(): String {
+        return "questions/spi-history"
+    }
+
     // CAB/GABメイン画面
     @GetMapping("/cabgab")
     fun getQuestionCabgabMain(): String{
@@ -152,30 +157,40 @@ class QuestionsController {
 
     @PostMapping("/spi/start")
     fun startSpiExam(
-        @RequestParam(required = false) mode: String?, // "new" or "resume"
+        @RequestParam mode: String,
+        @RequestParam(required = false) middleIndex: Int?,
         model: Model
     ): String {
         var examId: String? = null
         var startIndex = 1
 
-        if (mode == "resume") {
-            // 続きから：既存のIDを探す
-            examId = spiService.getInProgressExamId(TEST_USER_ID)
-            if (examId != null) {
-                // 解いた問題数 + 1 からスタート
-                startIndex = spiService.getCurrentQuestionIndex(examId)
+        when (mode) {
+            //  新規最初から
+            "new_start" -> {
+                examId = spiService.startNewExam(TEST_USER_ID)
+                startIndex = 1
+            }
+
+            // 新規途中から
+            "new_middle" -> {
+                examId = spiService.startNewExam(TEST_USER_ID)
+                startIndex = middleIndex ?: 1
+            }
+
+            // 再開
+            "resume" -> {
+                examId = spiService.getInProgressExamId(TEST_USER_ID)
+                if (examId != null) {
+                    // 解いた問題数 + 1 からスタート
+                    startIndex = spiService.getCurrentQuestionIndex(examId)
+                } else {
+                    return "redirect:/spi"
+                }
             }
         }
 
-        // 新規の場合、または続きが見つからなかった場合
-        if (examId == null) {
-            examId = spiService.startNewExam(TEST_USER_ID)
-            startIndex = 1
-        }
-
-        // セッションに試験IDを保存 (これでページ遷移してもIDを忘れない)
+        // セッションに試験IDを保存
         session.setAttribute("currentSpiExamId", examId)
-
         return "redirect:/spi/study?index=$startIndex"
     }
 
@@ -234,6 +249,11 @@ class QuestionsController {
     @PostMapping("/spi/result")
     fun postQuestionSpiResult(): String{
         return "questions/spi-result"
+    }
+
+    @PostMapping("/spi/history")
+    fun postSpiHistory(): String {
+        return "questions/spi-history"
     }
 
     // CAB/GABメイン画面
