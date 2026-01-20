@@ -63,8 +63,8 @@
     color: #ffffff;
     padding: 0.3em 0.8em;
     margin: 0.3em 0;
-    display: inline-block;
     text-align: center;
+    white-space: nowrap;
 }
 .role.normal, .category { background: #30C851; }
 .status.inactive { background: #99999C; }
