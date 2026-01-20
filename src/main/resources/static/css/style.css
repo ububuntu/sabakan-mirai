@@ -460,7 +460,88 @@ main {
     font-size: var(--font-sm);
     margin-top: auto;
 }
+/* 正答率テーブル全体 */
+.question-table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: var(--card);
+  table-layout: fixed;
+}
 
+/* th / td 共通 */
+.question-table th,
+.question-table td {
+  border: 1px solid #999;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* th は全て同じ文字サイズ */
+.question-table th {
+  background-color: var(--primary);
+  font-weight: bold;
+  font-size: var(--xl);
+}
+
+/* td の文字サイズは共通で th より小さく */
+.question-table td {
+  font-size: var(--md);
+}
+
+/* 問題番号・正誤セル */
+.question-table .no,
+.question-table .judge {
+  width: 100px;
+  height: 100px;
+  line-height: 1;
+}
+
+/* ○ */
+.judge.is-ok {
+  position: relative;
+}
+
+.judge.is-ok::before {
+  content: "";
+  width: 48px;
+  height: 48px;
+  border: 6px solid #ff4d4d;
+  border-radius: 50%;
+  display: block;
+  margin: auto;
+}
+
+/* × */
+.judge.is-ng {
+  position: relative;
+}
+
+.judge.is-ng::before,
+.judge.is-ng::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 6px;
+  background: #3b82f6;
+  transform-origin: center;
+}
+
+.judge.is-ng::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.judge.is-ng::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* 表内の縦線を消す */
+.question-table th,
+.question-table td {
+  border-left: none;
+  border-right: none;
+}
 /* ====== フッター ====== */
 footer {
     background: var(--card);
