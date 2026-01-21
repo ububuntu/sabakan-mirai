@@ -487,17 +487,148 @@ function cleanup() {
     }
 }
 
-// ========================================
-// イベントリスナー
-// ========================================
+// グローバル変数
+let currentIndex = 0;
+let totalQuestions = 3;
 
-// ページ読み込み時の初期化
-window.addEventListener('DOMContentLoaded', async () => {
-    setupMicrophoneEvents();
-    await startCameraAndMicrophone();
-});
+/**
+ * 質問を表示する
+ * @param {string} text - 表示する質問文
+ */
+function showQuestion(text) {
+    const questionElement = document.querySelector(".center-texts");
+    if (questionElement) {
+        questionElement.textContent = text;
+    }
+}
 
-// ページを離れる時のクリーンアップ
-window.addEventListener('beforeunload', () => {
-    cleanup();
-});
+/**
+ * 進捗バーを更新する
+ * @param {number} value - 進捗率（0〜100）
+ */
+function updateProgress(value) {
+    const progressElement = document.querySelector(".progress");
+    if (progressElement) {
+        progressElement.value = value;
+    }
+}
+
+/**
+ * 現在の質問を取得して表示
+ */
+async function loadCurrentQuestion() {
+    try {
+        const response = await fetch('/api/interview/current-question');
+        const data = await response.json();
+
+        showQuestion(data.question);
+        updateProgress(data.progress);
+
+        console.log(`質問 ${data.questionNumber} / ${data.totalQuestions}`);
+    } catch (error) {
+        console.error('質問の取得に失敗しました:', error);
+        showQuestion('質問の読み込みに失敗しました');
+    }
+}
+
+/**
+ * 次の質問に進む
+ */
+async function nextQuestion() {
+    try {
+        const response = await fetch('/api/interview/next-question', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.isFinished) {
+            // 全ての質問が終了した場合
+            showQuestion('面接が終了しました。お疲れ様でした。');
+            updateProgress(100);
+
+            // 次へボタンを無効化（存在する場合）
+            const nextButton = document.querySelector('.button-next');
+            if (nextButton) {
+                nextButton.disabled = true;
+                nextButton.textContent = '面接終了';
+            }
+        } else {
+            // 次の質問を表示
+            showQuestion(data.question);
+            updateProgress(data.progress);
+
+            console.log(`質問 ${data.questionNumber} / ${data.totalQuestions}`);
+        }
+    } catch (error) {
+        console.error('次の質問の取得に失敗しました:', error);
+        showQuestion('質問の読み込みに失敗しました');
+    }
+}
+
+/**
+ * 質問をリセットして最初から開始
+ */
+async function resetInterview() {
+    try {
+        const response = await fetch('/api/interview/reset-questions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+        console.log(data.message);
+
+        // 最初の質問を読み込む
+        await loadCurrentQuestion();
+
+        // ボタンを有効化（存在する場合）
+        const nextButton = document.querySelector('.button-next');
+        if (nextButton) {
+            nextButton.disabled = false;
+            nextButton.textContent = '次の質問へ';
+            }
+        } catch (error) {
+            console.error('質問のリセットに失敗しました:', error);
+        }
+    }
+
+    /**
+     * ページ読み込み時の初期化
+     */
+    document.addEventListener('DOMContentLoaded', function() {
+        // 最初の質問を読み込む
+        loadCurrentQuestion();
+
+        // 次へボタンのイベントリスナーを設定（ボタンが存在する場合）
+        const nextButton = document.querySelector('.button-next');
+        if (nextButton) {
+            nextButton.addEventListener('click', nextQuestion);
+        }
+    });
+
+    // エラーハンドリング用のヘルパー関数
+    function handleError(error, defaultMessage) {
+        console.error(error);
+        showQuestion(defaultMessage || 'エラーが発生しました');
+    }
+
+    // ========================================
+    // イベントリスナー
+    // ========================================
+
+    // ページ読み込み時の初期化
+    window.addEventListener('DOMContentLoaded', async () => {
+        setupMicrophoneEvents();
+        await startCameraAndMicrophone();
+    });
+
+    // ページを離れる時のクリーンアップ
+    window.addEventListener('beforeunload', () => {
+        cleanup();
+    });
