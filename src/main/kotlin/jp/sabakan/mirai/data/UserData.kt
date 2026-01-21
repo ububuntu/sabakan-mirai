@@ -31,4 +31,7 @@ class UserData {
 
     // 最終ログイン日時
     var lastedAt: Date? = null
+
+    // キーワード（検索用）
+    var keyword : String? = null
 }

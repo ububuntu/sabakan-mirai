@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
 @Controller
@@ -28,10 +29,17 @@ class ManageController {
 
     // ユーザー管理画面
     @GetMapping("/manage/users")
-    fun getManageUsers(model: Model): String {
+    fun getManageUsers(
+        @RequestParam(name = "keyword", required = false) keyword: String?,
+        model: Model
+    ): String {
         // ユーザ一覧を取得してモデルにセット
-        val users = userService.getUserList()
+        val request = UserRequest().apply {
+            this.keyword = keyword
+        }
+        val users = userService.getUserListByName(request)
         model.addAttribute("users", users)
+        model.addAttribute("keyword", keyword)
         return "/manage/users/manage-users-main"
     }
 

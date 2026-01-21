@@ -49,6 +49,29 @@ class UserService {
     }
 
     /**
+     * ユーザ一覧を名前で検索する
+     *
+     * @param request ユーザ情報リクエスト
+     * @return ユーザのリスト
+     */
+    fun getUserListByName(request: UserRequest): List<UserEntity> {
+        val table: List<Map<String, Any?>>
+
+        if (request.keyword.isNullOrBlank()) {
+            // 空白またはnullの場合は全件取得
+            table = userRepository.getUserList()
+        } else {
+            // 入力がある場合は部分一致検索 (%で囲む)
+            val data = UserData().apply {
+                this.keyword = "%"+request.keyword+"%"
+            }
+            table = userRepository.getUserListByName(data)
+        }
+
+        return tableToListEntity(table)
+    }
+
+    /**
      * ユーザ情報を登録する
      *
      * @param request ユーザ情報リクエスト

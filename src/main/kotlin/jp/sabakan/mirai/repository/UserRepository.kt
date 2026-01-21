@@ -35,6 +35,14 @@ class UserRepository {
         WHERE user_id = :userId
     """.trimIndent()
 
+    // ユーザ一覧取得（名前検索）
+    val getUserListByName = """
+        SELECT user_id, user_name, user_address, password, user_role, user_valid, created_at, updated_at, lasted_at
+        FROM user_m
+        WHERE user_name LIKE :keyword
+        ORDER BY created_at DESC
+    """.trimIndent()
+
     // ユーザ情報登録
     val insertUser = """
         INSERT INTO user_m (
@@ -84,6 +92,22 @@ class UserRepository {
         // クエリの実行
         val result = njdbc.queryForList(getOneUserList, params)
         return if (result.isNotEmpty()) result[0] else null
+    }
+
+    /**
+     * ユーザ一覧を名前で検索する
+     *
+     * @param keyword 検索キーワード
+     * @return ユーザのリスト
+     */
+    fun getUserListByName(data: UserData): List<Map<String, Any?>> {
+        // パラメータマップの作成
+        val params = mapOf<String, Any?>(
+            "keyword" to data.keyword
+        )
+
+        // クエリの実行
+        return njdbc.queryForList(getUserListByName, params)
     }
 
     /**
