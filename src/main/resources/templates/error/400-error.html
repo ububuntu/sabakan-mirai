@@ -5,33 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>400エラー画面</title>
     <link rel="stylesheet" th:href="@{/css/color.css}">
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/error.css}" />
 </head>
 <body>
-<main class="auth-container">
-    <section class="error-menu">
-        <img class="img" src="/img/error.svg" alt="400エラー画面">
+<div th:replace="~{common/color :: svg-sprite}"></div>
+<main class="menu">
+    <svg class="icon icon-with-bg icon-four" width="75" height="75">
+        <use href="#interview"></use>
+    </svg>
 
-        <p class="error-title">ページが見つかりません</p>
+    <p class="title">ページが見つかりません</p>
 
-        <p class="error-text">
-            お探しのページは存在しないか<br>
-            移動した可能性があります。
-        </p>
+    <p class="text">
+        お探しのページは存在しないか<br>
+        移動した可能性があります。
+    </p>
 
-        <!-- 再試行ボタン -->
-        <button class="error-button button-primary" onclick="location.href='./'" type="button">
-            再試行
-        </button>
+    <!-- 再試行ボタン -->
+    <button class="button button-primary" onclick="location.href='./'" type="button">
+        再試行
+    </button>
 
-        <!-- ホームボタン -->
-        <button class="error-button button-white" onclick="location.href='/index'" type="button">
-            ホームに戻る
-        </button>
+    <!-- ホームボタン -->
+    <button class="button button-white" onclick="location.href='/index'" type="button">
+        ホームに戻る
+    </button>
 
-        <p class="note">問題が解決しない場合は、サポートまでご連絡ください。</p>
-    </section>
+    <p class="note">問題が解決しない場合は、サポートまでご連絡ください。</p>
 </main>
 </body>
 </html>

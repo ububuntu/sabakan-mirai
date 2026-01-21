@@ -1,7 +1,7 @@
-/* color.css と style.css を先に読み込む前提 */
+/* color.css を先に読み込む前提 */
 
 /* ====== エラーページレイアウト ====== */
-.error-menu {
+.menu {
     min-height: 80vh; /* ヘッダー・フッター分を考慮 */
     display: flex;
     flex-direction: column;
@@ -11,21 +11,39 @@
     padding: var(--padding-section);
 }
 
-.error-title {
+.title {
     margin: 0 0 4%;
-    font-size: var(--font-md);
-    text-align: center;
-}
-
-.error-text {
-    color: var(--muted);
-    margin: 0 0 10%;
     font-size: var(--font-sm);
     text-align: center;
 }
 
+.text {
+    color: var(--muted);
+    margin: 0 0 6%;
+    font-size: var(--font-sm);
+    text-align: center;
+}
+.note{
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.6rem;
+    text-align: center;
+}
+.icon {
+    color: var(--icon-color);
+    transition: color 0.3s ease;
+}
+.icon-with-bg {
+    background-color: var(--bg);
+    border-radius: var(--radius-lg);
+    padding: 0.5rem;
+    margin: 2%;
+    transition: background-color 0.3s ease;
+    min-width: 48px;
+    min-height: 48px;
+}
 /* ====== ボタン ====== */
-.error-button {
+.button {
     border-radius: var(--radius-sm);
     padding: var(--padding-card);
     display: flex;
@@ -50,4 +68,19 @@
     background: var(--card);
     border: 2px solid var(--primary);
     color: var(--primary);
+}
+
+.icon-four{
+    --bg: #FF3C44;
+    --icon-color: #FFFFFF;
+}
+
+.icon-five{
+    --bg: #FF9853;
+    --icon-color: #FFFFFF;
+}
+
+.icon-else{
+    --bg: #C94DFA;
+    --icon-color: #FFFFFF;
 }

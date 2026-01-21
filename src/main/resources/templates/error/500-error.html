@@ -5,33 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>500エラー画面</title>
     <link rel="stylesheet" th:href="@{/css/color.css}">
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/error.css}" />
 </head>
 <body>
-<main class="auth-container">
-    <section class="error-menu">
-        <img class="img" src="/img/serverError.svg" alt="500エラー画面">
+<div th:replace="~{common/color :: svg-sprite}"></div>
+<main class="menu">
+    <svg class="icon icon-with-bg icon-five" width="75" height="75">
+        <use href="#es"></use>
+    </svg>
 
-        <p class="error-title">サーバーエラー</p>
+    <p class="title">サーバーエラー</p>
 
-        <p class="error-text">
-            サーバーで問題が発生しました。<br>
-            しばらくしてから再度お試しください。
-        </p>
+    <p class="text">
+        サーバーで問題が発生しました。<br>
+        しばらくしてから再度お試しください。
+    </p>
+    <!-- 再試行ボタン -->
+    <button class="button button-primary" th:onclick="|location.href='@{/error/back}'|" type="button">
+        再試行
+    </button>
 
-        <!-- 再試行ボタン -->
-        <button class="error-button button-primary" th:onclick="|location.href='@{/error/back}'|" type="button">
-            再試行
-        </button>
+    <!-- ホームボタン -->
+    <button class="button button-white" onclick="location.href='/index'" type="button">
+        ホームに戻る
+    </button>
 
-        <!-- ホームボタン -->
-        <button class="error-button button-white" onclick="location.href='/index'" type="button">
-            ホームに戻る
-        </button>
-
-        <p class="note">問題が解決しない場合は、サポートまでご連絡ください。</p>
-    </section>
+    <p class="note">問題が解決しない場合は、サポートまでご連絡ください。</p>
 </main>
 </body>
 </html>
