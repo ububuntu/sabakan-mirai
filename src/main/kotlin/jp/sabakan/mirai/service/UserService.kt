@@ -8,9 +8,11 @@ import jp.sabakan.mirai.request.UserRequest
 import jp.sabakan.mirai.response.UserResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.UUID
 
 @Service
@@ -19,160 +21,121 @@ class UserService {
     lateinit var userRepository: UserRepository
 
     /**
-     * 指定ユーザの情報を取得する
+     * ユーザ一覧を取得する
      *
-     * @param data ユーザデータ
-     * @return ユーザレスポンス
-     * @throws UserNameNotFoundException ユーザが見つからない場合
+     * @return ユーザのリスト
      */
-    fun getUserDetail(data: UserData): UserResponse {
-        // リポジトリへ問い合わせ
-        val table: List<Map<String, Any?>> = userRepository.getUserDetail(data)
-        val list: List<UserEntity> = tableToListEntity(table)
-
-        // 結果を返す
-        val user = list.singleOrNull()
-            //?: throw UserNameNotFoundException(MessageConfig.USER_NOT_FOUND)
-            ?: throw Exception(MessageConfig.USER_NOT_FOUND)
-
-        return UserResponse().apply {
-            users = listOf(user)
-            message = null
-            userRole = user.userRole
-        }
+    fun getUserList(): List<UserEntity> {
+        val table = userRepository.getUserList()
+        return tableToListEntity(table)
     }
 
     /**
-     * ユーザ登録処理
+     * ユーザ情報を1件取得する
      *
-     * @param request ユーザ登録リクエスト
-     * @return ユーザ登録レスポンス
+     * @param userId ユーザID
+     * @return ユーザ情報エンティティ
+     */
+    fun getOneUserList(request: UserRequest): UserEntity? {
+        // ユーザ情報取得
+        val data = UserData().apply {
+            this.userId = request.userId
+        }
+        val map = userRepository.getOneUserList(data) ?: return null
+
+        // エンティティに変換して返す
+        val entityList = tableToListEntity(listOf(map))
+        return entityList.firstOrNull()
+    }
+
+    /**
+     * ユーザ情報を登録する
+     *
+     * @param request ユーザ情報リクエスト
+     * @return ユーザ情報レスポンス
      */
     fun insertUser(request: UserRequest): UserResponse {
-        var lastException: Exception? = null
+        val response = UserResponse()
 
-        // ID重複対応のためリトライ処理
-        val maxRetry = 5
-        repeat(maxRetry) { attempt ->
-            try {
-                // リクエストからデータ変換
-                val data = UserData()
-                data.userId = toCreateUserId()
-                data.userName = request.userName
-                data.userAddress = request.userAddress
-                data.password = request.password
-                data.userRole = request.userRole
-                data.isValid = request.isValid
+        // ユーザIDを生成
+        val userId = toCreateUserId()
 
-                // リポジトリへ登録処理依頼
-                userRepository.insertUser(data)
-                lastException = null
+        // ユーザ情報登録
+        val data = UserData().apply {
+            this.userId = userId
+            this.userName = request.userName
+            this.userAddress = request.userAddress
+            this.password = request.password
+            this.userRole = request.userRole
+            this.isValid = request.isValid
+        }
 
-                // レスポンス生成
-                val response = UserResponse()
-                response.message = MessageConfig.USER_REGISTERED
-                return response // 正常終了
-            } catch (e: DataIntegrityViolationException) {
-                // ID重複の場合はリトライ
-                println("ユーザID重複: リトライ ${attempt + 1}/$maxRetry")
-                lastException = e
-            } catch (e: Exception) {
-                throw Exception(MessageConfig.USER_REGISTER_FAILED)
+        try {
+            userRepository.insertUser(data)
+            response.message = MessageConfig.USER_REGISTERED
+        } catch (e: DataIntegrityViolationException) {
+            response.message = MessageConfig.USER_REGISTER_FAILED
+        }
+
+        return response
+    }
+
+    /**
+     * ユーザ情報を更新する
+     *
+     * @param request ユーザ情報リクエスト
+     * @return ユーザ情報レスポンス
+     */
+    fun updateUser(request: UserRequest): Boolean {
+        // ユーザIDがnullの場合は処理を中断
+        val userId = request.userId ?: return false
+
+        // 現在のパスワードを取得
+        val currentPassword = duplicatePassword(userId) ?: return false
+
+        val response = UserResponse()
+
+        // ユーザ情報更新
+        val data = UserData().apply {
+            this.userId = request.userId
+            this.userName = request.userName
+            this.userAddress = request.userAddress
+            this.userRole = request.userRole
+            this.isValid = request.isValid
+
+            this.password = if (request.password.isNullOrEmpty()) {
+                currentPassword
+            } else {
+                request.password
+                //passwordEncoder.encode(request.password)
             }
         }
-        // レスポンス生成
-        val response = UserResponse()
-        response.message = MessageConfig.USER_REGISTERED
-        return response
-    }
 
-    /**
-     * ユーザ更新処理
-     *
-     * @param request ユーザ更新リクエスト
-     * @return ユーザ更新レスポンス
-     */
-    var updateUser = fun(request: UserRequest): UserResponse {
-        try{
-            // リクエストからデータ変換
-            val data = UserData()
-            data.userId = request.userId
-            data.userName = request.userName
-            data.userAddress = request.userAddress
-            data.password = request.password
-            data.userRole = request.userRole
-            data.isValid = request.isValid
-
-            // リポジトリへ更新処理依頼
-            userRepository.updateUser(data)
-        } catch (e: Exception) {
-            throw Exception(MessageConfig.USER_UPDATE_FAILED)
-        }
-
-        // レスポンス生成
-        val response = UserResponse()
-        response.message = MessageConfig.USER_UPDATE_SUCCESS
-        return response
-    }
-
-    /**
-     * ユーザ削除処理
-     *
-     * @param request ユーザ削除リクエスト
-     * @return ユーザ削除レスポンス
-     */
-    var deleteUser = fun(request: UserRequest): UserResponse {
+        // ユーザ情報更新処理を実行
         try {
-            // リクエストからデータ変換
-            val data = UserData()
-            data.userId = request.userId
-
-            // リポジトリへ削除処理依頼
-            userRepository.deleteUser(data)
-        } catch (e: Exception) {
-            throw Exception(MessageConfig.USER_DELETE_FAILED)
+            userRepository.updateUser(data)
+            response.message = MessageConfig.USER_UPDATE_SUCCESS
+        } catch (e: DataIntegrityViolationException) {
+            response.message = MessageConfig.USER_UPDATE_FAILED
         }
 
-        // レスポンス生成
-        val response = UserResponse()
-        response.message = MessageConfig.USER_DELETE_SUCCESS
-        return response
+        // 3. 更新実行
+        val count = userRepository.updateUser(data)
+        return count > 0
     }
 
     /**
-     * ユーザ一覧取得処理
+     * パスワードの重複チェックを行う
      *
-     * @param request ユーザ一覧取得リクエスト
-     * @return ユーザ一覧取得レスポンス
+     * @param userId ユーザID
+     * @return パスワード
      */
-    val getUserList = fun(request: UserRequest): UserResponse {
-        // リポジトリへ問い合わせ
-        val table: List<Map<String, Any?>> = userRepository.getUserList()
-        val list: List<UserEntity> = tableToListEntity(table)
-
-        // レスポンス生成
-        val response = UserResponse()
-        response.users = list
-        response.message = "ユーザ一覧の取得が完了しました"
-        return response
-    }
-
-    /**
-     * ユーザ検索処理
-     *
-     * @param request ユーザ検索リクエスト
-     * @return ユーザ検索レスポンス
-     */
-    val searchUser = fun(request: UserRequest): UserResponse {
-        // リポジトリへ問い合わせ
-        val table: List<Map<String, Any?>> = userRepository.searchUser(request)
-        val list: List<UserEntity> = tableToListEntity(table)
-
-        // レスポンス生成
-        val response = UserResponse()
-        response.users = list
-        response.message = "ユーザ検索の取得が完了しました"
-        return response
+    private fun duplicatePassword(userId: String): String? {
+        val request = UserRequest().apply {
+            this.userId = userId
+        }
+        val userEntity = getOneUserList(request)
+        return userEntity?.password
     }
 
     /**
@@ -203,7 +166,7 @@ class UserService {
             entity.userAddress = row["user_address"] as String?
             entity.password = row["password"] as String?
             entity.userRole = row["user_role"] as String?
-            entity.isValid = row["is_valid"] as Boolean?
+            entity.isValid = row["user_valid"] as Boolean?
             entity.createdAt = row["created_at"] as java.util.Date?
             entity.lastedAt = row["lasted_at"] as java.util.Date?
             list.add(entity)

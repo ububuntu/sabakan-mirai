@@ -14,24 +14,6 @@ class LoginsService {
     lateinit var userRepository: UserRepository
 
     /**
-     * ユーザログイン処理
-     *
-     * @param data ユーザデータ
-     * @return ユーザエンティティ
-     * @throws UserNameNotFoundException ユーザ名またはパスワードが違う場合
-     */
-    fun getUserLogin(data: UserData):  UserEntity {
-        // リポジトリへ問い合わせ
-        val table: List<Map<String, Any?>> = userRepository.getUserLogin(data)
-        val list: List<UserEntity> = tableToListEntity(table)
-
-        // 結果を返す
-        return list.singleOrNull()
-        //?: throw UserNameNotFoundException(MessageConfig.LOGIN_FAILED)
-            ?: throw Exception(MessageConfig.LOGIN_FAILED)
-    }
-
-    /**
      * テーブルデータをエンティティリストに変換する
      *
      * @param table テーブルデータ

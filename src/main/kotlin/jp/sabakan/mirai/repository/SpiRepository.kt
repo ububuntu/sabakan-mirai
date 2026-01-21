@@ -133,6 +133,14 @@ class SpiRepository {
         return jdbc.update(insertSpiDetailSql, paramMap)
     }
 
+    /**
+     * SPI履歴を更新する（試験終了時）
+     *
+     * @param spiHsId SPI履歴ID
+     * @param correctCount 正解数
+     * @param accuracyRate 正答率
+     * @return 更新件数
+     */
     fun updateExamResult(spiHsId: String, correctCount: Int, accuracyRate: BigDecimal): Int {
         // パラメータマップの作成
         val paramMap = mapOf(
@@ -209,6 +217,12 @@ class SpiRepository {
         }
     }
 
+    /**
+     * 指定SPI履歴IDの明細件数を取得する
+     *
+     * @param spiHsId SPI履歴ID
+     * @return 明細件数
+     */
     fun countDetailsByHistoryId(spiHsId: String): Int {
         val paramMap = mapOf("spiHsId" to spiHsId)
         // クエリの実行

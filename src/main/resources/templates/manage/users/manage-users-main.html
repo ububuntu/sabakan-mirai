@@ -11,36 +11,35 @@
 <header th:replace="common/header :: siteHeader('manageHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
-    <!-- 管理者メニュー -->
+
     <section class="menu" aria-label="ユーザリスト">
-        <div class="sort">
-            <div class="form-row">
-                <label class="form-label" for="user-name">ユーザ名で絞り込む</label>
-                <input type="text" id="user-name" name="userName" placeholder="ユーザ名を入力">
-            </div>
-            <div class="radio">
-                <!-- ラジオボタンのcssがボタン選択によって変化する事を確かめるために仮でnameやidをつけています -->
-                <input type="radio" name="status" id="all" checked>
-                <label for="all">すべて</label>
-
-                <input type="radio" name="status" id="active">
-                <label for="active">利用中</label>
-
-                <input type="radio" name="status" id="stop">
-                <label for="stop">停止中</label>
-            </div>
+        <div th:if="${message}" >
+            <p th:text="${message}"></p>
         </div>
+        <form method="get" th:action="@{/manage/users}">
+            <div class="sort">
+                <div class="form-row">
+                    <label class="form-label" for="user-name">ユーザ名で絞り込む</label>
+                    <input type="text" id="user-name" name="keyword" th:value="${userRequest?.keyword}" placeholder="ユーザ名を入力">
+                    <button type="submit" class="button" style="margin-left: 10px;">検索</button>
+                </div>
+            </div>
+        </form>
 
-        <div onclick="location.href='./users/edit'" class="menu-item">
+        <div th:each="user : ${users}" class="menu-item"
+             th:onclick="|location.href='@{/manage/users/edit/__${user.userId}__}'|">
             <div class="texts">
-                <p class="title">たまーにラッキー</p>
-                <p class="desc">最終ログイン：1時間前</p>
-                <p class="desc">作成日：2025/12/03</p>
+                <p class="title" th:text="${user.userName}">ユーザ名</p>
+                <p class="desc" th:text="|最終ログイン：${#dates.format(user.lastedAt, 'yyyy/MM/dd HH:mm')}|">最終ログイン日時</p>
+                <p class="desc" th:text="|作成日：${#dates.format(user.createdAt, 'yyyy/MM/dd')}|">作成日</p>
             </div>
 
             <div class="meta">
-                <span class="role admin">管理者</span>
-                <span class="status active">利用中</span>
+                <span class="role admin" th:if="${user.userRole == '管理者'}">管理者</span>
+                <span class="role user" th:if="${user.userRole == '利用者'}">利用者</span>
+
+                <span class="status active" th:if="${user.isValid}">利用中</span>
+                <span class="status stop" th:unless="${user.isValid}">停止中</span>
             </div>
         </div>
     </section>

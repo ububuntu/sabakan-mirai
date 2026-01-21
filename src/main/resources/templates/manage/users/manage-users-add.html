@@ -11,47 +11,55 @@
 <header th:replace="common/header :: siteHeader('manageHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
-    <!-- システム統計 -->
-
     <section class="menu" aria-label="システム統計">
         <p class="note">ユーザ追加</p>
-        <div class="statistics">
-            <div class="form-row">
-                <label class="form-label" for="user-name">ユーザ名</label>
-                <input type="text" id="user-name" name="userName" placeholder="ユーザ名を入力">
-            </div>
-
-            <div class="form-row">
-                <label class="form-label" for="user-role">権限</label>
-                <select id="user-role" name="userRole">
-                    <option>利用者</option>
-                    <option>管理者</option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <label class="form-label" for="user_valid">状態</label>
-                <select id="user_valid" name="userValid">
-                    <option>利用中</option>
-                    <option>停止中</option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <label class="form-label" for="password">新しいパスワード</label>
-                <input type="text" id="password" name="password" placeholder="パスワードを入力">
-            </div>
-
-            <div class="form-row">
-                <label class="form-label" for="password-confirm">新しいパスワード（確認）</label>
-                <input type="text" id="password-confirm" name="passwordConfirm" placeholder="パスワードを入力">
-            </div>
-
-            <!-- 送信ボタン -->
-            <button onclick="location.href='/manage/users'" class="button" type="submit">
-                追加
-            </button>
+        <div th:if="${message}" >
+            <p th:text="${message}"></p>
         </div>
+        <form method="post" th:action="@{/manage/users/add}" th:object="${userRequest}">
+
+            <div class="statistics">
+                <div class="form-row">
+                    <label class="form-label" for="user-name">ユーザ名</label>
+                    <input type="text" id="user-name" name="userName" placeholder="ユーザ名を入力" required>
+                </div>
+
+                <div class="form-row">
+                    <label class="form-label" for="user-address">メールアドレス</label>
+                    <input type="email" id="user-address" name="userAddress" placeholder="メールアドレスを入力" required>
+                </div>
+
+                <div class="form-row">
+                    <label class="form-label" for="user-role">権限</label>
+                    <select id="user-role" name="userRole">
+                        <option value="user">利用者</option>
+                        <option value="admin">管理者</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label class="form-label" for="user_valid">状態</label>
+                    <select id="user_valid" name="isValid">
+                        <option value="true">利用中</option>
+                        <option value="false">停止中</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label class="form-label" for="password">新しいパスワード</label>
+                    <input type="password" id="password" name="password" placeholder="パスワードを入力" required>
+                </div>
+
+                <div class="form-row">
+                    <label class="form-label" for="password-confirm">新しいパスワード（確認）</label>
+                    <input type="password" id="password-confirm" name="passwordConfirm" placeholder="パスワードを入力">
+                </div>
+
+                <button class="button" type="submit">
+                    追加
+                </button>
+            </div>
+        </form>
     </section>
 
     <div class="spacer" aria-hidden="true"></div>

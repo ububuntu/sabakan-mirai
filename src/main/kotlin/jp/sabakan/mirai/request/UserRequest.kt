@@ -1,5 +1,9 @@
 package jp.sabakan.mirai.request
 
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
+import jp.sabakan.mirai.MessageConfig
 import lombok.Data
 import java.util.Date
 
@@ -9,12 +13,18 @@ class UserRequest {
     var userId: String? = null
 
     // ユーザネーム
+    @field:NotBlank(message = MessageConfig.USERNAME_NOT_BLANK_ERROR)
+    @field:Size(max = 50, message = MessageConfig.LENGTH_MAXIMUM_ERROR)
     var userName: String? = null
 
     // ユーザアドレス
+    @field:NotBlank(message = MessageConfig.EMAIL_NOT_BLANK_ERROR)
+    @field:Email(message = MessageConfig.EMAIL_INVALID_FORMAT_ERROR)
+    @field:Size(max = 100, message = MessageConfig.LENGTH_MAXIMUM_ERROR)
     var userAddress: String? = null
 
     // パスワード
+    @field:Size(max = 100, message = MessageConfig.LENGTH_MAXIMUM_ERROR)
     var password: String? = null
 
     // 権限

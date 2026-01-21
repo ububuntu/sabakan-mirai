@@ -41,8 +41,20 @@ public class MessageConfig {
         // M011: パスワードの変更が完了しました
         const val PASSWORD_CHANGE_SUCCESS = "パスワードの変更が完了しました"
 
-        // M012: 文字数制限エラー
-        const val LENGTH_LIMIT_ERROR = "入力が長すぎます"
+        // M012: 文字数制限不足エラー
+        const val LENGTH_MINIMUM_ERROR = "入力が短すぎます"
+
+        // M013: 文字数制限超過エラー
+        const val LENGTH_MAXIMUM_ERROR = "入力が長すぎます"
+
+        // M014: 必須入力エラー(ユーザ名)
+        const val USERNAME_NOT_BLANK_ERROR = "ユーザ名は必須です"
+
+        // M015: 必須入力エラー(メールアドレス)
+        const val EMAIL_NOT_BLANK_ERROR = "メールアドレスは必須です"
+
+        // M016: 入力形式エラー(メールアドレス)
+        const val EMAIL_INVALID_FORMAT_ERROR = "メールアドレスの形式が不正です"
 
         // M201: 面接履歴の取得に失敗しました
         const val INTERVIEW_NOT_FOUND = "面接履歴が見つかりません"
