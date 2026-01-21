@@ -125,4 +125,60 @@ class InterviewService {
         }
         return list
     }
+
+    /**
+     * 現在の質問を取得
+     */
+    fun getCurrentQuestion(): String {
+        return interviewRepository.getCurrentQuestion()
+    }
+
+    /**
+     * 次の質問を取得
+     */
+    fun getNextQuestion(): String? {
+        return interviewRepository.getNextQuestion()
+    }
+
+    /**
+     * 質問をリセット
+     */
+    fun resetQuestions() {
+        interviewRepository.resetQuestions()
+    }
+
+    /**
+     * 進捗率を取得
+     */
+    fun getProgress(): Int {
+        return interviewRepository.getProgress()
+    }
+
+    /**
+     * 次の質問があるかチェック
+     */
+    fun hasNextQuestion(): Boolean {
+        return interviewRepository.hasNextQuestion()
+    }
+
+    /**
+     * 質問の総数を取得
+     */
+    fun getTotalQuestions(): Int {
+        return interviewRepository.getTotalQuestions()
+    }
+
+    /**
+     * 現在の質問番号を取得
+     */
+    fun getCurrentQuestionNumber(): Int {
+        return interviewRepository.getCurrentQuestionNumber()
+    }
+
+    /**
+     * 全質問リストを取得
+     */
+    fun getAllQuestions(): List<String> {
+        return interviewRepository.getAllQuestions()
+    }
 }
