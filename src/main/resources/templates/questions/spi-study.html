@@ -14,7 +14,7 @@
 
         <progress class="progress" max="100" th:value="${progress}"></progress>
 
-        <p style="text-align: center; color: white;">
+        <p class="progress-text">
             問題 <span th:text="${currentIndex}">1</span> / <span th:text="${totalCount}">70</span>
         </p>
 
@@ -49,34 +49,21 @@
         <input type="hidden" name="spiId" th:value="${question.spiId}" />
         <input type="hidden" name="currentIndex" th:value="${currentIndex}" />
 
-
-
         <input type="hidden" name="spiId" th:value="${question.spiId}" />
         <input type="hidden" name="currentIndex" th:value="${currentIndex}" />
 
-        <div style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px;">
+        <button class="button-center" type="submit" name="action" value="next">
+            <span th:text="${currentIndex == 70} ? '結果を見る' : '次の問題'">次の問題</span>
+        </button>
 
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-
-                <button type="submit" name="action" value="suspend" formnovalidate
-                        style="background-color: #888; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
-                    中断して戻る
-                </button>
-
-                <button class="button-center" type="submit" name="action" value="next">
-                    <span th:text="${currentIndex == 70} ? '結果を見る' : '次の問題'">次の問題</span>
-                </button>
-            </div>
-
-            <div style="text-align: right; margin-top: 15px;">
-                <button type="submit" name="action" value="finish" formnovalidate
-                        style="background-color: #d32f2f; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9em;">
-                    ここで終了して採点する
-                </button>
-            </div>
-
-        </div>
+        <button class="button-center" type="submit" name="action" value="suspend" formnovalidate>
+            中断して戻る
+        </button>
+        <button class="button-center" type="submit" name="action" value="finish" formnovalidate>
+            ここで終了して採点する
+        </button>
     </form>
+    <div class="spacer" aria-hidden="true"></div>
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>

@@ -258,7 +258,19 @@ main {
     color: var(--muted);
     font-size: var(--font-lg);
 }
-
+/* 初期状態（未選択） */
+button[name="action"][value="next"] {
+    background-color: var(--question);
+    color: var(--text);
+    cursor: not-allowed;
+}
+/* ラジオが1つでも選択されている場合 */
+form:has(input[name="answer"]:checked)
+button[name="action"][value="next"] {
+    background-color: var(--primary);
+    color: var(--card);
+    cursor: pointer;
+}
 /* ====== ソート機能 ====== */
 .sort {
     padding: var(--padding-card);
@@ -318,7 +330,10 @@ main {
 .progress {
     width: 100%;
 }
-
+.progress-text {
+    text-align: center;
+    color: var(--text);
+}
 /* ====== 面接機能 ====== */
 .video {
     width: 100%;
