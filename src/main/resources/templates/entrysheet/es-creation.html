@@ -13,41 +13,67 @@
     <main>
         <form action="#" th:action="@{/es/creation}" method="post" class="menu">
             <div class="menu-item">
-                <div class="texts">
+                <div class="stretch">
                     <label class="title" for="company-name">企業名</label>
-                    <textarea id="company-name" name="esOccupation" placeholder="企業名を入力" th:text="${esRequest.esOccupation}"></textarea>
+                    <input id="company-name" name="esOccupation" placeholder="企業名を入力" th:text="${esRequest.esOccupation}">
                 </div>
             </div>
 
             <div class="menu-item">
-                <div class="texts">
+                <div class="stretch content-spacing">
                     <label class="title" for="motivation">志望動機</label>
                     <textarea id="motivation" name="esContentReason" placeholder="志望動機を入力" th:text="${esRequest.esContentReason}"></textarea>
+                    <button class="button-center" type="submit" name="" value="">
+                        添削を始める
+                    </button>
+                    <p class="title">AIによる回答</p>
+                    <p class="desc">私が御社を志望した理由は非常に早く出勤できるからです。緊急事態の場合でもすぐに出社し、仕事に取り組むことができます。また、御社の志望動機にも激しく共感しました。なので、御社に貢献したいと考えています。</p>
                 </div>
             </div>
 
             <div class="menu-item">
-                <div class="texts">
+                <div class="stretch content-spacing">
                     <label class="title" for="self-pr">自己PR</label>
                     <textarea id="self-pr" name="esContentSelfpr" placeholder="自己PRを入力"></textarea>
+                    <button class="button-center" type="submit" name="" value="">
+                        添削を始める
+                    </button>
+                    <th:block th:if="${isEffortAnswer}">
+                        <p class="title">AIによる回答</p>
+                        <p class="desc">文章を入力してみよう</p>
+                    </th:block>
                 </div>
             </div>
 
             <div class="menu-item">
-                <div class="texts">
+                <div class="stretch content-spacing">
                     <label class="title" for="effort">学生時代に力を入れたこと</label>
                     <textarea id="effort" name="esContentActivities" placeholder="学生時代に力を入れたことを入力"></textarea>
+                    <button class="button-center" type="submit" name="" value="">
+                        添削を始める
+                    </button>
+                    <th:block th:if="${isEffortAnswer}">
+                        <p class="title">AIによる回答</p>
+                        <p class="desc">文章を入力してみよう</p>
+                    </th:block>
                 </div>
             </div>
 
             <div class="menu-item">
-                <div class="texts">
+                <div class="stretch content-spacing">
                     <label class="title" for="strengths">長所短所</label>
                     <textarea id="strengths" name="esContentStwe" placeholder="長所短所を入力"></textarea>
+                    <button class="button-center" type="submit" name="" value="">
+                        添削を始める
+                    </button>
+                    <th:block th:if="${isEffortAnswer}">
+                        <p class="title">AIによる回答</p>
+                        <p class="desc">文章を入力してみよう</p>
+                    </th:block>
                 </div>
             </div>
 
-            <button class="button-center" type="submit">送信</button>
+            <button class="button-center" type="submit">保存する</button>
         </form>
         <div class="spacer" aria-hidden="true"></div>
     </main>
