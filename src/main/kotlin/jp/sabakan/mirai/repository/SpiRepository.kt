@@ -14,6 +14,15 @@ class SpiRepository {
     @Autowired
     lateinit var jdbc: NamedParameterJdbcTemplate
 
+    // すべてのSPI質問を取得するSQLクエリ
+    val getAllSpiSql = """
+        SELECT * FROM spi_m ORDER BY spi_category, spi_id
+    """.trimIndent()
+
+    val getSpiByIdSql = """
+        SELECT * FROM spi_m WHERE spi_id = :spiId
+    """.trimIndent()
+
     // カテゴリーごとにSPI質問を取得するSQLクエリ
     val getSpiByCategory = """
     SELECT * FROM spi_m 
@@ -57,6 +66,18 @@ class SpiRepository {
         VALUES (:spiDlId, :spiHsId, :spiId, :userAnswer, :isCorrect)
     """.trimIndent()
 
+    val updateSpiSql = """
+        UPDATE spi_m 
+        SET spi_content = :spiContent, 
+            spi_answer1 = :spiAnswer1, 
+            spi_answer2 = :spiAnswer2, 
+            spi_answer3 = :spiAnswer3, 
+            spi_answer4 = :spiAnswer4, 
+            spi_correct_answer = :spiCorrectAnswer, 
+            spi_category = :spiCategory
+        WHERE spi_id = :spiId
+    """.trimIndent()
+
     // SPI履歴を更新するSQLクエリ（試験終了時）
     val updateFinishSql = """
         UPDATE spi_history_t 
@@ -69,6 +90,41 @@ class SpiRepository {
         SELECT COUNT(*) FROM spi_detail_t 
         WHERE spi_hs_id = :spiHsId
     """.trimIndent()
+    
+    // SPIを削除するSQLクエリ
+    val deleteSpiSql = """
+        DELETE FROM spi_m WHERE spi_id = :spiId
+    """.trimIndent()
+    
+    // SPI明細を削除するSQLクエリ
+    val deleteSpiDetailSql = """
+        DELETE FROM spi_detail_t WHERE spi_id = :spiId
+    """.trimIndent()
+
+    /**
+     * すべてのSPI問題文を取得する
+     *
+     * @return SPI問題文リスト
+     */
+    fun getAllSpi(): List<Map<String, Any?>> {
+        return jdbc.queryForList(getAllSpiSql, emptyMap<String, Any?>())
+    }
+
+    /**
+     * 指定IDのSPI問題文を取得する
+     *
+     * @param spiId SPI ID
+     * @return SPI問題文データ
+     */
+    fun getSpiById(data: SpiData): List<Map<String, Any?>> {
+        // パラメータマップの作成
+        val paramMap = mapOf<String, Any?>(
+            "spiId" to data.spiId
+        )
+
+        // クエリの実行
+        return jdbc.queryForList(getSpiByIdSql, paramMap)
+    }
 
     /**
      * SPIの問題文を追加する
@@ -227,5 +283,40 @@ class SpiRepository {
         val paramMap = mapOf("spiHsId" to spiHsId)
         // クエリの実行
         return jdbc.queryForObject(countDetailsSql, paramMap, Int::class.java) ?: 0
+    }
+
+    /**
+     * 指定SPI IDの問題文を更新する
+     *
+     * @param data SPIデータ
+     * @return 更新件数
+     */
+    fun updateSpi(data: SpiData): Int {
+        // パラメータマップの作成
+        val paramMap = mapOf<String, Any?>(
+            "spiId" to data.spiId,
+            "spiContent" to data.spiContent,
+            "spiAnswer1" to data.spiAnswer1,
+            "spiAnswer2" to data.spiAnswer2,
+            "spiAnswer3" to data.spiAnswer3,
+            "spiAnswer4" to data.spiAnswer4,
+            "spiCorrectAnswer" to data.spiCorrectAnswer,
+            "spiCategory" to data.spiCategory
+        )
+
+        // クエリの実行
+        return jdbc.update(updateSpiSql, paramMap)
+    }
+
+    /**
+     * 指定SPI IDの問題文と関連明細を削除する
+     *
+     * @param spiId SPI ID
+     * @return 削除件数
+     */
+    fun deleteSpi(spiId: String): Int {
+        val paramMap = mapOf("spiId" to spiId)
+        jdbc.update(deleteSpiDetailSql, paramMap)
+        return jdbc.update(deleteSpiSql, paramMap)
     }
 }

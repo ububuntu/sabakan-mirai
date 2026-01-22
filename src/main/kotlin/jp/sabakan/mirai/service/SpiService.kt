@@ -49,6 +49,53 @@ class SpiService {
     }
 
     /**
+     * すべてのSPI質問を取得する
+     *
+     * @return SPI質問リスト
+     */
+    fun getAllSpi(): List<SpiEntity> {
+        val table: List<Map<String, Any?>> = spiRepository.getAllSpi()
+        return tableToListEntity(table)
+    }
+
+
+    /**
+     * 指定SPI IDのSPI質問を取得する
+     *
+     * @param spiId SPI ID
+     * @return SPIレスポンス
+     */
+    fun getSpiById(spiId: String): SpiRequest {
+        // 検索用データ作成（Repositoryの引数に合わせる）
+        val data = SpiData().apply {
+            this.spiId = spiId
+        }
+
+        // リポジトリへ問い合わせ (List<Map>が返ってくる)
+        val table: List<Map<String, Any?>> = spiRepository.getSpiById(data)
+
+        // データが見つからない場合のチェック
+        if (table.isEmpty()) {
+            throw IllegalArgumentException("指定されたIDの問題が見つかりません: $spiId")
+        }
+
+        // 1件目を取得 (ID指定なので必ず1件以下のなず)
+        val row = table[0]
+
+        // Mapの中身をSpiRequestに詰め替えて返す
+        return SpiRequest().apply {
+            this.spiId = row["spi_id"] as? String
+            spiContent = row["spi_content"] as? String
+            spiAnswer1 = row["spi_answer1"] as? String
+            spiAnswer2 = row["spi_answer2"] as? String
+            spiAnswer3 = row["spi_answer3"] as? String
+            spiAnswer4 = row["spi_answer4"] as? String
+            spiCorrectAnswer = row["spi_correct_answer"] as? Int
+            spiCategory = row["spi_category"] as? String
+        }
+    }
+
+    /**
      * SPI質問を登録する
      *
      * @param request SPIリクエスト
@@ -241,6 +288,64 @@ class SpiService {
 
         // 必要に応じて結果を返す
         return historyData
+    }
+
+    /**
+     * SPI質問を更新する
+     *
+     * @param request SPIリクエスト
+     * @return SPIレスポンス
+     */
+    fun updateSpi(request: SpiRequest): SpiResponse {
+        //リクエストからデータ変換
+        val data = SpiData().apply {
+            spiId = request.spiId
+            spiContent = request.spiContent
+            spiAnswer1 = request.spiAnswer1
+            spiAnswer2 = request.spiAnswer2
+            spiAnswer3 = request.spiAnswer3
+            spiAnswer4 = request.spiAnswer4
+            spiCorrectAnswer = request.spiCorrectAnswer
+            spiCategory = request.spiCategory
+        }
+
+        //リポジトリへ更新処理
+        val updateCount = spiRepository.updateSpi(data)
+
+        // 更新結果を確認
+        if (updateCount == 0) {
+            return SpiResponse().apply {
+                message = MessageConfig.SPI_UPDATE_FAILED
+            }
+        }
+
+        //結果を返す
+        return SpiResponse().apply {
+            message = MessageConfig.SPI_UPDATE_SUCCESS
+        }
+    }
+
+    /**
+     * SPI質問を削除する
+     *
+     * @param spiId SPI質問ID
+     * @return SPIレスポンス
+     */
+    fun deleteSpi(spiId: String): SpiResponse {
+        //リポジトリへ削除処理
+        val deleteCount = spiRepository.deleteSpi(spiId)
+
+        // 削除結果を確認
+        if (deleteCount == 0) {
+            return SpiResponse().apply {
+                message = MessageConfig.SPI_DELETE_FAILED
+            }
+        }
+
+        //結果を返す
+        return SpiResponse().apply {
+            message = MessageConfig.SPI_DELETE_SUCCESS
+        }
     }
 
     /**

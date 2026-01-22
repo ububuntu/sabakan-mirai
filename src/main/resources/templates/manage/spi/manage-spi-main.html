@@ -12,11 +12,17 @@
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
     <!-- SPIメイン画面 -->
-    <section class="menu" aria-label="SPI問題リスト">
+    <section class="menu" aria-label="SPI管理メニュー">
         <p class="note">SPI問題管理</p>
+
+        <div class="add-btn-area">
+            <a th:href="@{/manage/spi/add}" class="button button-primary">
+                ＋ 新規問題を追加
+            </a>
+        </div>
+
         <div class="sort">
             <div class="radio">
-                <!-- ラジオボタンのcssがボタン選択によって変化する事を確かめるために仮でnameやidをつけています -->
                 <input type="radio" name="status" id="all" checked>
                 <label for="all">すべて</label>
 
@@ -29,87 +35,36 @@
         </div>
     </section>
 
-    <section class="menu" aria-label="SPI問題管理">
-        <div class="statistics box" onclick="location.href='./spi/edit'">
-            <label class="category">言語</label>
-            <p class="note">「鳥：飛ぶ」と同じ関係にあるものを、次の選択肢から選びなさい。</p>
-            <div class="menu-item">
-                <div class="img selectIcon">A</div>
-                <div class="texts">
-                    <p class="title">魚：泳ぐ</p>
+    <section class="menu" aria-label="問題一覧">
+
+        <div th:if="${spiList == null or spiList.isEmpty()}" style="text-align:center; padding:20px;">
+            <p>登録されている問題はありません。</p>
+        </div>
+
+        <div class="statistics box" th:unless="${spiList == null or spiList.isEmpty()}">
+
+            <div th:each="spi : ${spiList}" class="spi-list-item">
+
+                <div class="spi-info">
+                    <span class="spi-category" th:text="${spi.spiCategory}">言語</span>
+
+                    <p class="spi-text" th:text="${spi.spiContent}">
+                        ここに問題文が表示されます...
+                    </p>
+
+                    <small style="color:#666;">
+                        正解: <span th:text="${spi.spiCorrectAnswer}">1</span>
+                    </small>
                 </div>
-            </div>
-            <div class="menu-item">
-                <div class="img selectIcon">B</div>
-                <div class="texts">
-                    <p class="title">犬：吠える</p>
+
+                <div class="action-btn">
+                    <a th:href="@{/manage/spi/edit(spiId=${spi.spiId})}" class="button button-small">
+                        編集
+                    </a>
                 </div>
-            </div>
-            <div class="menu-item">
-                <div class="img selectIcon">C</div>
-                <div class="texts">
-                    <p class="title">猫：毛</p>
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="img selectIcon">D</div>
-                <div class="texts">
-                    <p class="title">象：大きい</p>
-                </div>
-            </div>
-            <div class="meta">
-                <p class="note">解答：A</p>
             </div>
         </div>
     </section>
-
-    <section class="menu" aria-label="SPI問題管理2">
-        <div class="statistics box" onclick="location.href='./spi/edit'">
-            <label class="category">非言語</label>
-            <p class="note">P、Q、R、Sの4人が1冊の本を順番に読んだ。
-
-                4人の読んだ順番について、次のことがわかっている。
-
-                Sの次にPが読んだ
-                最初に読んだのはRではない
-                最も少ない情報で4人の読んだ順番が全てわかるためには、ⅠとⅡのほかに、次のカ、キ、クのうちどれが加われば良いか。
-
-                AからHまでの中から1つ選びなさい。
-
-                カ：Qより先にPが読んだ
-                キ：Qより先にRが読んだ
-                ク：Rより先にSが読んだ</p>
-            <div class="menu-item">
-                <div class="img selectIcon">A</div>
-                <div class="texts">
-                    <p class="title">カだけ</p>
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="img selectIcon">B</div>
-                <div class="texts">
-                    <p class="title">キとクの両方</p>
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="img selectIcon">C</div>
-                <div class="texts">
-                    <p class="title">カとキとクの全て</p>
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="img selectIcon">D</div>
-                <div class="texts">
-                    <p class="title">すべてが加わってもわからない</p>
-                </div>
-            </div>
-            <div class="meta">
-                <p class="note">解答：?</p>
-            </div>
-        </div>
-    </section>
-
-
     <div class="spacer" aria-hidden="true"></div>
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>

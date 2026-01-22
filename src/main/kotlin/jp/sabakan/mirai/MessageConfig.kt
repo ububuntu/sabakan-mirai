@@ -80,16 +80,22 @@ public class MessageConfig {
         // M304: SPI問題の削除に失敗しました
         const val SPI_DELETE_FAILED = "SPI問題の削除に失敗しました"
 
-        // M305: Cab/Gab問題の登録に成功しました
+        // M305: SPI問題の更新に成功しました
+        const val SPI_UPDATE_SUCCESS = "SPI問題の更新に成功しました"
+
+        // M306: SPI問題の更新に失敗しました
+        const val SPI_UPDATE_FAILED = "SPI問題の更新に失敗しました"
+
+        // M307: Cab/Gab問題の登録に成功しました
         const val CABGAB_INSERT_SUCCESS = "Cab/Gab問題の登録に成功しました"
 
-        // M306: Cab/Gab問題の登録に失敗しました
+        // M308: Cab/Gab問題の登録に失敗しました
         const val CABGAB_INSERT_FAILED = "Cab/Gab問題の登録に失敗しました"
 
-        // M307: Cab/Gab問題の削除に成功しました
+        // M309: Cab/Gab問題の削除に成功しました
         const val CABGAB_DELETE_SUCCESS = "Cab/Gab問題の削除に成功しました"
 
-        // M308: Cab/Gab問題の削除に失敗しました
+        // M310: Cab/Gab問題の削除に失敗しました
         const val CABGAB_DELETE_FAILED = "Cab/Gab問題の削除に失敗しました"
 
         // M401: ESの登録に成功しました

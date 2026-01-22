@@ -14,55 +14,52 @@
     <!-- システム統計 -->
     <section class="menu" aria-label="システム統計">
         <p class="note">SPI追加</p>
-        <div class="statistics">
+
+        <form class="statistics" th:action="@{/manage/spi/add}" method="post" th:object="${spiRequest}">
+
             <div class="form-row">
                 <label class="form-label" for="spi_content">問題文</label>
-                <input type="text" id="spi_content" name="spiContent" placeholder="問題文を入力">
+                <input type="text" id="spi_content" name="spiContent" placeholder="問題文を入力" required>
             </div>
 
             <div class="form-row">
                 <label class="form-label" for="spi_answer1">選択肢：A</label>
-                <input type="text" id="spi_answer1" name="spiAnswer1" placeholder="選択肢Aを入力">
+                <input type="text" id="spi_answer1" name="spiAnswer1" placeholder="選択肢Aを入力" required>
             </div>
-
             <div class="form-row">
                 <label class="form-label" for="spi_answer2">選択肢：B</label>
-                <input type="text" id="spi_answer2" name="spiAnswer2" placeholder="選択肢Bを入力">
+                <input type="text" id="spi_answer2" name="spiAnswer2" placeholder="選択肢Bを入力" required>
             </div>
-
             <div class="form-row">
                 <label class="form-label" for="spi_answer3">選択肢：C</label>
-                <input type="text" id="spi_answer3" name="spiAnswer3" placeholder="選択肢Cを入力">
+                <input type="text" id="spi_answer3" name="spiAnswer3" placeholder="選択肢Cを入力" required>
             </div>
-
             <div class="form-row">
                 <label class="form-label" for="spi_answer4">選択肢：D</label>
-                <input type="text" id="spi_answer4" name="spiAnswer4" placeholder="選択肢Dを入力">
+                <input type="text" id="spi_answer4" name="spiAnswer4" placeholder="選択肢Dを入力" required>
             </div>
 
             <div class="form-row">
                 <label class="form-label" for="spi_correct_answer">解答</label>
                 <select id="spi_correct_answer" name="spiCorrectAnswer">
-                    <option>A</option>
-                    <option>B</option>
-                    <option>C</option>
-                    <option>D</option>
+                    <option value="1">A</option>
+                    <option value="2">B</option>
+                    <option value="3">C</option>
+                    <option value="4">D</option>
                 </select>
             </div>
 
             <div class="form-row">
                 <label class="form-label" for="spi_category">分野</label>
-                <select id="spi_category" name="spiCorrectCategory">
-                    <option>言語</option>
-                    <option>非言語</option>
+                <select id="spi_category" name="spiCategory"> <option value="言語">言語</option>
+                    <option value="非言語">非言語</option>
                 </select>
             </div>
 
-            <!-- 送信ボタン -->
-            <button onclick="location.href='/manage/spi'" class="button-center button-primary" type="submit">
+            <button class="button button-primary" type="submit">
                 追加
             </button>
-        </div>
+        </form>
     </section>
 
     <div class="spacer" aria-hidden="true"></div>
