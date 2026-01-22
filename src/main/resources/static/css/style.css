@@ -162,10 +162,14 @@ main {
     color: inherit;
 }
 /* ====== ボタン色の上書き ====== */
-.button-center .button-primary {
+.button-center.button-primary {
     background: var(--primary);
-    border: 2px solid var(--primary);
     color: white;
+}
+.check-button:disabled {
+    background-color: var(--question);
+    color: #000000;
+    cursor: not-allowed;
 }
 .menu-item .img {
     width: var(--icon-size);
