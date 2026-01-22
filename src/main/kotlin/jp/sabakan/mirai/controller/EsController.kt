@@ -117,12 +117,4 @@ class EsController {
         model.addAttribute("esRequest", esRequest)
         return "entrysheet/es-creation"
     }
-
-//    @PostMapping("/es/creation")
-//    fun postEsCreation(esRequest: EsRequest, principal: Principal?): String {
-//        esRequest.userId = principal?.name ?: "test-user"
-//        esService.saveEs(esRequest)
-//        return "redirect:/es/list"
-//    }
-
 }
