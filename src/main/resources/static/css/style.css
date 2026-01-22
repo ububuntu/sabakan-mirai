@@ -161,7 +161,12 @@ main {
     text-decoration: none;
     color: inherit;
 }
-
+/* ====== ボタン色の上書き ====== */
+.button-center .button-primary {
+    background: var(--primary);
+    border: 2px solid var(--primary);
+    color: white;
+}
 .menu-item .img {
     width: var(--icon-size);
     height: auto;

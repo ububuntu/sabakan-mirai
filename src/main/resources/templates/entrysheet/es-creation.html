@@ -23,7 +23,7 @@
             <div class="stretch content-spacing">
                 <label class="title" for="motivation">志望動機</label>
                 <textarea id="motivation" name="esContentReason" th:text="${esRequest.esContentReason}"></textarea>
-                <button type="submit" name="action" value="checkReason">添削を始める</button>
+                <button class="button-center" type="submit" name="action" value="checkReason">添削を始める</button>
                 <input type="hidden" name="reasonResult" th:value="${reasonResult}">
                 <p class="title">AIによる回答</p>
                 <p class="desc" style="white-space: pre-wrap;" th:text="${reasonResult ?: '添削結果が表示されます'}"></p>
@@ -34,7 +34,7 @@
             <div class="stretch content-spacing">
                 <label class="title" for="self-pr">自己PR</label>
                 <textarea id="self-pr" name="esContentSelfpr" th:text="${esRequest.esContentSelfpr}"></textarea>
-                <button type="submit" name="action" value="checkSelfpr">添削を始める</button>
+                <button class="button-center" type="submit" name="action" value="checkSelfpr">添削を始める</button>
                 <input type="hidden" name="selfprResult" th:value="${selfprResult}">
                 <p class="title">AIによる回答</p>
                 <p class="desc" style="white-space: pre-wrap;" th:text="${selfprResult ?: '添削結果が表示されます'}"></p>
@@ -45,7 +45,7 @@
             <div class="stretch content-spacing">
                 <label class="title" for="effort">学生時代に力を入れたこと</label>
                 <textarea id="effort" name="esContentActivities" th:text="${esRequest.esContentActivities}"></textarea>
-                <button type="submit" name="action" value="checkActivities">添削を始める</button>
+                <button class="button-center" type="submit" name="action" value="checkActivities">添削を始める</button>
                 <input type="hidden" name="activitiesResult" th:value="${activitiesResult}">
                 <p class="title">AIによる回答</p>
                 <p class="desc" style="white-space: pre-wrap;" th:text="${activitiesResult ?: '添削結果が表示されます'}"></p>
@@ -56,15 +56,16 @@
             <div class="stretch content-spacing">
                 <label class="title" for="strengths">長所短所</label>
                 <textarea id="strengths" name="esContentStwe" th:text="${esRequest.esContentStwe}"></textarea>
-                <button type="submit" name="action" value="checkStwe">添削を始める</button>
+                <button class="button-center" type="submit" name="action" value="checkStwe">添削を始める</button>
                 <input type="hidden" name="stweResult" th:value="${stweResult}">
                 <p class="title">AIによる回答</p>
                 <p class="desc" style="white-space: pre-wrap;" th:text="${stweResult ?: '添削結果が表示されます'}"></p>
             </div>
         </div>
 
-        <button class="button-center" type="submit" name="action" value="save">保存する</button>
+        <button class="button-center button-primary" type="submit" name="action" value="save">保存する</button>
     </form>
+    <div class="spacer" aria-hidden="true"></div>
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>
