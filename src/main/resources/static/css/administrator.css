@@ -20,23 +20,6 @@
     border-bottom: none;
 }
 
-.menu .button {
-    background: var(--card);
-    border: none;
-    border-radius: var(--radius-lg);
-    padding: var(--padding-card);
-    box-shadow: var(--shadow-card);
-    gap: var(--gap-item);
-    font-size: var(--font-xl);
-    font-weight: bold;
-    text-decoration: none;
-    color: inherit;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .meta{
     display: flex;
     flex-flow: column;

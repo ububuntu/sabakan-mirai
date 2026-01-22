@@ -168,7 +168,7 @@ main {
 }
 .check-button:disabled {
     background-color: var(--question);
-    color: #000000;
+    color: var(--text);
     cursor: not-allowed;
 }
 .menu-item .img {
