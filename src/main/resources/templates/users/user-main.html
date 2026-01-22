@@ -11,6 +11,9 @@
 <header th:replace="common/header :: siteHeader('userMainHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
     <main>
+        <div th:if="${message}" >
+            <p th:text="${message}"></p>
+        </div>
         <section class="menu" aria-label="ユーザ画面">
             <!-- ユーザーネーム -->
             <div class="menu-item">
@@ -28,8 +31,8 @@
                 </svg>
                 <div class="texts">
                     <p class="title">現在の目標</p>
-                    <p class="note">株式会社〇〇 最終面接</p>
-                    <p class="note">残り〇日</p>
+                    <p class="note" th:text="${goalContent}">目標の内容がここに入ります</p>
+                    <p class="note">残り <span th:text="${remainingDays}">0</span> 日</p>
                 </div>
             </div>
 

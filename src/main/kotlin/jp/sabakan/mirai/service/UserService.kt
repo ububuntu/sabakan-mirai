@@ -1,18 +1,19 @@
 package jp.sabakan.mirai.service
 
 import jp.sabakan.mirai.MessageConfig
+import jp.sabakan.mirai.data.GoalData
 import jp.sabakan.mirai.data.UserData
+import jp.sabakan.mirai.entity.GoalEntity
 import jp.sabakan.mirai.entity.UserEntity
 import jp.sabakan.mirai.repository.UserRepository
+import jp.sabakan.mirai.request.GoalRequest
 import jp.sabakan.mirai.request.UserRequest
 import jp.sabakan.mirai.response.UserResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Calendar
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @Service
@@ -147,6 +148,40 @@ class UserService {
         return count > 0
     }
 
+    fun updatePassword(request: UserRequest): Boolean {
+        val response = UserResponse()
+        val newPassword = request.password ?: return false
+
+        val data = UserData().apply {
+            this.userId = request.userId
+        }
+        val map = userRepository.getOneUserList(data) ?: return false
+
+
+        // ユーザ情報更新
+        val inputdata = UserData().apply {
+            this.userId =  request.userId
+            this.userName = map["user_name"] as String?
+            this.userAddress = map["user_address"] as String?
+            this.password = newPassword
+            this.userRole = map["user_role"] as String?
+            this.isValid = map["user_valid"] as Boolean?
+
+        }
+
+        // ユーザ情報更新処理を実行
+        try {
+            userRepository.updateUser(data)
+            response.message = MessageConfig.USER_UPDATE_SUCCESS
+        } catch (e: DataIntegrityViolationException) {
+            response.message = MessageConfig.USER_UPDATE_FAILED
+        }
+
+        // 3. 更新実行
+        val count = userRepository.updateUser(data)
+        return count > 0
+    }
+
     /**
      * パスワードの重複チェックを行う
      *
@@ -172,6 +207,77 @@ class UserService {
 
         // 新しいユーザIDを返す
         return "U$uuid"
+    }
+
+    /**
+     * 目標情報を取得する
+     *
+     * @param request 目標情報リクエスト
+     * @return 目標情報エンティティリスト
+     */
+    fun getGoal(request: GoalRequest): List<GoalEntity> {
+        val data = GoalData().apply {
+            this.userId = request.userId
+        }
+        // repositoryはListを返す
+        val tableList = userRepository.getGoal(data)
+
+        if (tableList.isEmpty()) {
+            return emptyList()
+        }
+
+        // 1件目を取得すると仮定（複数ある場合はループ処理が必要）
+        val row = tableList[0]
+
+        val entity = GoalEntity().apply {
+            this.goalId = row["goal_id"] as String?
+            this.userId = row["user_id"] as String?
+            this.goalContent = row["goal_content"] as String?
+            this.goalDate = row["goal_date"] as java.util.Date?
+        }
+
+        if (entity.goalDate != null) {
+            val today = LocalDate.now()
+            val target = java.sql.Date(entity.goalDate!!.time).toLocalDate()
+            val diff = ChronoUnit.DAYS.between(today, target)
+            entity.remainingDays = if (diff < 0) 0 else diff
+        }
+
+        return listOf(entity)
+    }
+
+    /**
+     * 目標情報を保存する（新規登録または更新）
+     *
+     * @param request 目標情報リクエスト
+     */
+    fun saveGoal(request: GoalRequest){
+        val searchData = GoalData().apply {
+            this.userId = request.userId
+        }
+        // DBから検索
+        val currentGoalList = userRepository.getGoal(searchData)
+
+        if (currentGoalList.isEmpty()) {
+            // 新規登録
+            val newId = "G" + UUID.randomUUID().toString()
+            val newData = GoalData().apply {
+                this.goalId = newId
+                this.userId = request.userId
+                this.goalContent = request.goalContent
+                this.goalDate = request.goalDate
+            }
+            userRepository.insertGoal(newData)
+        } else {
+            // 更新 (リストの最初の要素のIDを使う)
+            val existingGoalId = currentGoalList[0]["goal_id"] as String
+            val updateData = GoalData().apply {
+                this.goalId = existingGoalId
+                this.goalContent = request.goalContent
+                this.goalDate = request.goalDate
+            }
+            userRepository.updateGoal(updateData)
+        }
     }
 
     /**

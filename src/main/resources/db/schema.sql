@@ -11,6 +11,15 @@ CREATE TABLE user_m(
     lasted_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+/* 目標テーブル */
+CREATE TABLE goal_m(
+    goal_id         CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
+    user_id         CHAR(37) NOT NULL ,
+    goal_content    VARCHAR(255) NOT NULL ,
+    goal_date       DATE NOT NULL ,
+    FOREIGN KEY (user_id) REFERENCES user_m(user_id)
+);
+
 /* 面接テーブル */
 CREATE TABLE interview_t(
     interview_id            CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,

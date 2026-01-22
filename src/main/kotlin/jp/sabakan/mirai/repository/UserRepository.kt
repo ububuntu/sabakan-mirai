@@ -1,5 +1,6 @@
 package jp.sabakan.mirai.repository
 
+import jp.sabakan.mirai.data.GoalData
 import jp.sabakan.mirai.data.UserData
 import jp.sabakan.mirai.request.UserRequest
 import org.h2.command.dml.Insert
@@ -62,6 +63,26 @@ class UserRepository {
             user_valid = :isValid,
             updated_at = CURRENT_TIMESTAMP
         WHERE user_id = :userId
+    """.trimIndent()
+
+    // 目標情報取得
+    val getGoal = """
+        SELECT goal_id, user_id, goal_content, goal_date
+        FROM goal_m
+        WHERE user_id = :userId
+    """.trimIndent()
+
+    // 目標情報登録
+    val insertGoal = """
+        INSERT INTO goal_m (goal_id, user_id, goal_content, goal_date)
+        VALUES (:goalId, :userId, :goalContent, :goalDate)
+    """.trimIndent()
+
+    // 目標情報更新
+    val updateGoal = """
+        UPDATE goal_m
+        SET goal_content = :goalContent, goal_date = :goalDate
+        WHERE goal_id = :goalId
     """.trimIndent()
 
     /**
@@ -160,5 +181,54 @@ class UserRepository {
 
         // クエリの実行
         return njdbc.update(updateUser, params)
+    }
+
+    /**
+     * 目標情報を取得する
+     *
+     * @param userId ユーザID
+     * @return 目標情報のリスト
+     */
+    fun getGoal(data: GoalData): List<Map<String, Any?>> {
+        val params = mapOf<String, Any?>(
+            "userId" to data.userId
+        )
+        return njdbc.queryForList(getGoal, params)
+    }
+
+    /**
+     * 目標情報を登録する
+     *
+     * @param goalId 目標ID
+     * @param userId ユーザID
+     * @param goalContent 目標内容
+     * @param goalDate 目標日付
+     * @return 登録件数
+     */
+    fun insertGoal(data: GoalData): Int {
+        val params = mapOf<String, Any?>(
+            "goalId" to data.goalId,
+            "userId" to data.userId,
+            "goalContent" to data.goalContent,
+            "goalDate" to data.goalDate
+        )
+        return njdbc.update(insertGoal, params)
+    }
+
+    /**
+     * 目標情報を更新する
+     *
+     * @param goalId 目標ID
+     * @param goalContent 目標内容
+     * @param goalDate 目標日付
+     * @return 更新件数
+     */
+    fun updateGoal(data: GoalData): Int {
+        val params = mapOf<String, Any?>(
+            "goalId" to data.goalId,
+            "goalContent" to data.goalContent,
+            "goalDate" to data.goalDate
+        )
+        return njdbc.update(updateGoal, params)
     }
 }
