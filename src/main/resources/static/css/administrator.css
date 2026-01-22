@@ -87,3 +87,11 @@
     font-size: var(--font-xl);
     border-radius: var(--radius-sm);
 }
+
+/* ====== 削除ボタン (Danger) ====== */
+.menu .button-center.button-danger {
+    background: #FF8085; /* color.cssの --csv-interview (赤系) を流用 */
+    color: white;
+    border: none;
+    margin-top: 1rem; /* 上のボタンとの間隔 */
+}

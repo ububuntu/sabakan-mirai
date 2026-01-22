@@ -14,13 +14,6 @@
     <!-- SPIメイン画面 -->
     <section class="menu" aria-label="SPI管理メニュー">
         <p class="note">SPI問題管理</p>
-
-        <div class="add-btn-area">
-            <a th:href="@{/manage/spi/add}" class="button button-primary">
-                ＋ 新規問題を追加
-            </a>
-        </div>
-
         <div class="sort">
             <div class="radio">
                 <input type="radio" name="status" id="all" checked>
@@ -37,33 +30,29 @@
 
     <section class="menu" aria-label="問題一覧">
 
-        <div th:if="${spiList == null or spiList.isEmpty()}" style="text-align:center; padding:20px;">
+        <div th:if="${spiList == null or spiList.isEmpty()}" class="note">
             <p>登録されている問題はありません。</p>
         </div>
 
-        <div class="statistics box" th:unless="${spiList == null or spiList.isEmpty()}">
+        <th:block th:unless="${spiList == null or spiList.isEmpty()}">
 
-            <div th:each="spi : ${spiList}" class="spi-list-item">
+            <div th:each="spi : ${spiList}"
+                 class="statistics box"
+                 style="cursor: pointer;"
+                 th:onclick="|location.href='@{/manage/spi/edit(spiId=${spi.spiId})}'|">
 
-                <div class="spi-info">
-                    <span class="spi-category" th:text="${spi.spiCategory}">言語</span>
+                <span class="category" th:text="${spi.spiCategory}">言語</span>
 
-                    <p class="spi-text" th:text="${spi.spiContent}">
-                        ここに問題文が表示されます...
-                    </p>
+                <p class="note" th:text="${spi.spiContent}">
+                    ここに問題文が表示されます...
+                </p>
 
-                    <small style="color:#666;">
-                        正解: <span th:text="${spi.spiCorrectAnswer}">1</span>
-                    </small>
-                </div>
-
-                <div class="action-btn">
-                    <a th:href="@{/manage/spi/edit(spiId=${spi.spiId})}" class="button button-small">
-                        編集
-                    </a>
+                <div class="meta">
+                    <div>正解:<span th:text="${spi.spiCorrectAnswer}">1</span></div>
                 </div>
             </div>
-        </div>
+
+        </th:block>
     </section>
     <div class="spacer" aria-hidden="true"></div>
 </main>
