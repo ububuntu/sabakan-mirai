@@ -31,7 +31,7 @@ class EsController {
     @GetMapping("/es/list")
     fun getEsList(principal: Principal?, model: Model): String { // principalはnullableにしておくのが安全
         // ログインユーザーIDの取得 (認証がない場合は仮のIDを設定)
-        val userId = principal?.name ?: "test-user"
+        val userId = principal?.name ?: "test-user-id"
 
         // 検索用リクエストオブジェクトの作成
         val request = EsRequest().apply {
@@ -55,7 +55,7 @@ class EsController {
         model: Model
     ): String {
 
-        val userId = principal?.name ?: "test-user"
+        val userId = principal?.name ?: "test-user-id"
         val esRequest = if (esId != null) {
             // IDがあるならDBから取得
             esService.getEsDetail(esId, userId)
@@ -81,7 +81,7 @@ class EsController {
         principal: Principal?,
         model: Model
     ): String {
-        val userId = principal?.name ?: "test-user"
+        val userId = principal?.name ?: "test-user-id"
         esRequest.userId = userId
 
         // まず、受け取った「前回の結果」をすべて一旦モデルに戻す
