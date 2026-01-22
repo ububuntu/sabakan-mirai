@@ -11,11 +11,12 @@
 <header th:replace="common/header :: siteHeader('manageHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
-
     <section class="menu" aria-label="ユーザリスト">
-        <div th:if="${message}" >
-            <p th:text="${message}"></p>
+        <!-- ポップアップメッセージ用のコンテナ（JavaScriptで表示） -->
+        <div th:if="${message}" style="display: none;"
+             data-message th:text="${message}">
         </div>
+
         <form method="get" th:action="@{/manage/users}">
             <div class="sort">
                 <div class="form-row">
@@ -25,19 +26,16 @@
                 </div>
             </div>
         </form>
-
         <div th:each="user : ${users}" class="menu-item"
              th:onclick="|location.href='@{/manage/users/edit/__${user.userId}__}'|">
             <div class="texts">
                 <p class="title" th:text="${user.userName}">ユーザ名</p>
-                <p class="desc" th:text="|最終ログイン：${#dates.format(user.lastedAt, 'yyyy/MM/dd HH:mm')}|">最終ログイン日時</p>
-                <p class="desc" th:text="|作成日：${#dates.format(user.createdAt, 'yyyy/MM/dd')}|">作成日</p>
+                <p class="desc" th:text="|最終ログイン:${#dates.format(user.lastedAt, 'yyyy/MM/dd HH:mm')}|">最終ログイン日時</p>
+                <p class="desc" th:text="|作成日:${#dates.format(user.createdAt, 'yyyy/MM/dd')}|">作成日</p>
             </div>
-
             <div class="meta">
                 <span class="role admin" th:if="${user.userRole == '管理者'}">管理者</span>
                 <span class="role user" th:if="${user.userRole == '利用者'}">利用者</span>
-
                 <span class="status active" th:if="${user.isValid}">利用中</span>
                 <span class="status stop" th:unless="${user.isValid}">停止中</span>
             </div>
@@ -47,6 +45,7 @@
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>
+<script th:src="@{/js/notice.js}"></script>
 <button onclick="location.href='./users/add'" class="fab-register">新規登録 ＋</button>
 </body>
 </html>
