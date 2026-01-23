@@ -252,7 +252,7 @@ class MicrophoneManager {
                     try {
                         const base64Audio = reader.result.split(',')[1];
 
-                        const response = await fetch(`${this.apiBase}/analyze-audio`, {
+                        const response = await fetch(`${this.apiBase}/analysis/audio`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ audio: base64Audio })
@@ -313,7 +313,7 @@ class AnalysisAPIClient {
     }
 
     async startAnalysis() {
-        const response = await fetch(`${this.apiBase}/start`, { method: 'POST' });
+        const response = await fetch(`${this.apiBase}/analysis/start`, { method: 'POST' });
         return await response.json();
     }
 
@@ -416,8 +416,8 @@ async function startCameraAndMicrophone() {
         }
 
         // マイクマネージャーを初期化
-        microphoneManager = new MicrophoneManager('/api');
-        apiClient = new AnalysisAPIClient('/api');
+        microphoneManager = new MicrophoneManager('/interview/api');
+        apiClient = new AnalysisAPIClient('/interview/api');
 
         // マイクを自動的に開始
         const micStarted = await microphoneManager.start();
