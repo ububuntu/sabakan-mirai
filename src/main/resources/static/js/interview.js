@@ -338,99 +338,52 @@ class AnalysisAPIClient {
 // ========================================
 
 // 音声検出の設定
-let voiceAnalyser = null;
-let voiceAnimationFrame = null;
+let recognizer;
 let silenceTimer = null;
 let isSpeaking = false;
-const SILENCE_THRESHOLD = 30; // 音量のしきい値（0-100）
-const SILENCE_DURATION = 3000; // 無音と判定する時間（ミリ秒）3秒
+let isInterviewFinished = false;
+const SILENCE_THRESHOLD = 5000;
 
-/**
- * 音声レベルの監視を開始
- */
-function startVoiceMonitoring(stream) {
-    try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        voiceAnalyser = audioContext.createAnalyser();
-        const source = audioContext.createMediaStreamSource(stream);
-
-        voiceAnalyser.smoothingTimeConstant = 0.8;
-        voiceAnalyser.fftSize = 1024;
-
-        source.connect(voiceAnalyser);
-
-        // 音声レベルの監視を開始
-        monitorVoiceLevel();
-        console.log('✅ 音声レベル監視を開始しました');
-    } catch (error) {
-        console.error('❌ 音声監視の開始に失敗:', error);
-    }
+// 面接開始時
+function startInterview() {
+    setupVoiceRecognition();
+    startVoiceMonitoring();
 }
 
-/**
- * 音声レベルを継続的に監視
- */
-function monitorVoiceLevel() {
-    if (!voiceAnalyser) return;
+function setupVoiceRecognition() {
+    recognizer = new webkitSpeechRecognition();
+    recognizer.continuous = true;
+    recognizer.interimResults = true;
 
-    const bufferLength = voiceAnalyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-    voiceAnalyser.getByteFrequencyData(dataArray);
+    recognizer.onresult = function(event) {
+        console.log('🗣️ 音声検出');
+        resetSilenceTimer();
+        // 音声処理...
+    };
 
-    // 平均音量を計算
-    let sum = 0;
-    for (let i = 0; i < bufferLength; i++) {
-        sum += dataArray[i];
-    }
-    const average = sum / bufferLength;
-
-    // 音量が閾値を超えているか判定
-    if (average > SILENCE_THRESHOLD) {
-        // 音声検出
-        if (!isSpeaking) {
-            console.log('🎤 音声検出: 話し始めました');
-            isSpeaking = true;
+    recognizer.onend = function() {
+        if (!isInterviewFinished) {
+            console.log('音声認識終了、タイマー開始');
+            startSilenceTimer();
+            recognizer.start(); // 再開
         }
-
-        // 無音タイマーをリセット
-        if (silenceTimer) {
-            clearTimeout(silenceTimer);
-            silenceTimer = null;
-        }
-    } else {
-        // 無音検出
-        if (isSpeaking && !silenceTimer) {
-            console.log('🔇 無音検出: タイマー開始（' + (SILENCE_DURATION / 1000) + '秒）');
-            silenceTimer = setTimeout(() => {
-                console.log('⏱️ 無音が' + (SILENCE_DURATION / 1000) + '秒続きました。次の質問へ');
-                isSpeaking = false;
-                nextQuestion();
-            }, SILENCE_DURATION);
-        }
-    }
-
-    // 継続的に監視
-    voiceAnimationFrame = requestAnimationFrame(monitorVoiceLevel);
+    };
 }
 
-/**
- * 音声監視を停止
- */
-function stopVoiceMonitoring() {
+function resetSilenceTimer() {
     if (silenceTimer) {
+        console.log('⏱️ タイマーリセット');
         clearTimeout(silenceTimer);
         silenceTimer = null;
     }
+}
 
-    if (voiceAnimationFrame) {
-        cancelAnimationFrame(voiceAnimationFrame);
-        voiceAnimationFrame = null;
-    }
-
-    voiceAnalyser = null;
-    isSpeaking = false;
-
-    console.log('⏹️ 音声監視を停止しました');
+function startSilenceTimer() {
+    resetSilenceTimer();
+    silenceTimer = setTimeout(function() {
+        console.log('⏰ 無音タイムアウト!');
+        nextQuestion();
+    }, SILENCE_THRESHOLD);
 }
 
 // ========================================
@@ -470,6 +423,10 @@ async function startCameraAndMicrophone() {
         const micStarted = await microphoneManager.start();
         if (micStarted) {
             updateMicStatus('録音中', '#dc3545');
+
+            let silenceTimer = null;
+            let isSpeaking = false;
+            const SILENCE_THRESHOLD = 5000;
 
             // ★★★ 音声監視を開始（タイマー機能） ★★★
             if (microphoneManager.stream) {
@@ -606,21 +563,38 @@ function cleanup() {
  * 現在の質問を取得して表示
  */
 function loadCurrentQuestion() {
-    console.log('テスト: 質問読み込み開始');
+    console.log('📋 質問読み込み開始');
 
     fetch('/interview/api/current-question')
-        .then(response => {
-            console.log('ステータス:', response.status);
+        .then(function(response) {
+            console.log('✅ ステータス:', response.status);
             return response.json();
         })
-        .then(data => {
-            console.log('データ:', data);
-            document.querySelector(".center-texts").textContent = data.question;
-            document.querySelector(".progress").value = data.progress;
+        .then(function(data) {
+            console.log('📊 取得データ:', data);
+            var questionElement = document.querySelector(".center-texts");
+            var progressElement = document.querySelector(".progress");
+
+            if (questionElement) {
+                questionElement.textContent = data.question;
+                console.log('✅ 質問表示完了:', data.question);
+            } else {
+                console.error('❌ .center-texts 要素が見つかりません');
+            }
+
+            if (progressElement) {
+                progressElement.value = data.progress;
+                console.log('✅ 進捗表示完了:', data.progress + '%');
+            } else {
+                console.error('❌ .progress 要素が見つかりません');
+            }
         })
-        .catch(error => {
-            console.error('エラー:', error);
-            document.querySelector(".center-texts").textContent = '質問の読み込みに失敗しました';
+        .catch(function(error) {
+            console.error('❌ エラー:', error);
+            var questionElement = document.querySelector(".center-texts");
+            if (questionElement) {
+                questionElement.textContent = '質問の読み込みに失敗しました';
+            }
         });
 }
 
@@ -628,10 +602,11 @@ function loadCurrentQuestion() {
  * 次の質問に進む
  */
 function nextQuestion() {
-    console.log('次の質問へ');
+    console.log('➡️ 次の質問へ');
 
     // 無音タイマーをリセット
     if (silenceTimer) {
+        console.log('⏱️ タイマーをクリア');
         clearTimeout(silenceTimer);
         silenceTimer = null;
     }
@@ -644,19 +619,25 @@ function nextQuestion() {
             'Content-Type': 'application/json'
         }
     })
-        .then(response => {
-            console.log('次の質問ステータス:', response.status);
+        .then(function(response) {
+            console.log('✅ ステータス:', response.status);
             return response.json();
         })
-        .then(data => {
-            console.log('次の質問データ:', data);
+        .then(function(data) {
+            console.log('📊 次の質問データ:', data);
+
+            var questionElement = document.querySelector(".center-texts");
+            var progressElement = document.querySelector(".progress");
 
             if (data.isFinished) {
-                document.querySelector(".center-texts").textContent = '面接が終了しました。お疲れ様でした。';
-                document.querySelector(".progress").value = 100;
+                if (questionElement) {
+                    questionElement.textContent = '面接が終了しました。お疲れ様でした。';
+                }
+                if (progressElement) {
+                    progressElement.value = 100;
+                }
 
-                // ボタンを無効化
-                const btn = document.querySelector('.button-next');
+                var btn = document.querySelector('.button-next');
                 if (btn) {
                     btn.disabled = true;
                     btn.textContent = '面接終了';
@@ -664,14 +645,23 @@ function nextQuestion() {
 
                 // 音声監視を停止
                 stopVoiceMonitoring();
+                console.log('✅ 面接終了');
             } else {
-                document.querySelector(".center-texts").textContent = data.question;
-                document.querySelector(".progress").value = data.progress;
+                if (questionElement) {
+                    questionElement.textContent = data.question;
+                }
+                if (progressElement) {
+                    progressElement.value = data.progress;
+                }
+                console.log('✅ 次の質問表示完了');
             }
         })
-        .catch(error => {
-            console.error('次の質問エラー:', error);
-            document.querySelector(".center-texts").textContent = '質問の読み込みに失敗しました';
+        .catch(function(error) {
+            console.error('❌ エラー:', error);
+            var questionElement = document.querySelector(".center-texts");
+            if (questionElement) {
+                questionElement.textContent = '質問の読み込みに失敗しました';
+            }
         });
 }
 
@@ -679,28 +669,78 @@ function nextQuestion() {
 // イベントリスナー
 // ========================================
 
-// ページ読み込み時の初期化
-window.addEventListener('DOMContentLoaded', async () => {
-    console.log('=== ページ初期化開始 ===');
+/**
+ * 面接画面の初期化
+ */
+async function initializeInterview() {
 
-    // マイクイベントを設定
-    setupMicrophoneEvents();
+    try {
+        setupMicrophoneEvents();
+        await startCameraAndMicrophone();
 
-    // カメラとマイクを起動
-    await startCameraAndMicrophone();
+        const nextButton = document.querySelector('.button-next');
+        if (nextButton) {
+            nextButton.addEventListener('click', nextQuestion);
+        }
 
-    // 最初の質問を読み込む
-    loadCurrentQuestion();
-
-    // 次へボタンのイベントリスナーを設定
-    const nextButton = document.querySelector('.button-next');
-    if (nextButton) {
-        nextButton.addEventListener('click', nextQuestion);
-        console.log('✅ 次へボタンにイベント設定完了');
+    } catch (error) {
+        console.error('❌ 初期化エラー:', error);
     }
+}
+
+// ページ読み込み後に実行
+window.addEventListener('load', function() {
+    initializeInterview();
 });
+
+// 質問読み込み（確実に実行）
+setTimeout(function() {
+
+    var questionElement = document.querySelector(".center-texts");
+    var progressElement = document.querySelector(".progress");
+
+    if (questionElement && progressElement) {
+        loadCurrentQuestion();
+    } else {
+        console.error('❌ 要素が見つかりません');
+    }
+}, 1500); // 1.5秒後に確実に実行
 
 // ページを離れる時のクリーンアップ
-window.addEventListener('beforeunload', () => {
+window.addEventListener('beforeunload', function() {
     cleanup();
 });
+// ========================================
+// デバッグ用：強制的に実行
+// ========================================
+
+// 即座に実行
+setTimeout(function() {
+
+    // 要素の存在確認
+    var questionElement = document.querySelector(".center-texts");
+    var progressElement = document.querySelector(".progress");
+
+    // 強制的に質問を読み込む
+    fetch('/interview/api/current-question')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+
+            if (questionElement) {
+                questionElement.textContent = data.question;
+            } else {
+                console.error('★ 質問要素が見つかりません！');
+            }
+
+            if (progressElement) {
+                progressElement.value = data.progress;
+            } else {
+                console.error('★ 進捗要素が見つかりません！');
+            }
+        })
+        .catch(function(error) {
+            console.error('★ エラー発生:', error);
+        });
+}, 2000); // 2秒後に実行
