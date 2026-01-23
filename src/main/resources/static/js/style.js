@@ -83,12 +83,10 @@ window.addEventListener('DOMContentLoaded', () => {
             messageContainer.style.display = 'block';
             console.log('システムメッセージを表示しました:', messageText);
 
-            // オプション：数秒後に自動で消したい場合は以下を有効化
-            /*
+            // 5秒後にメッセージを非表示にする
             setTimeout(() => {
                 messageContainer.style.display = 'none';
             }, 5000);
-            */
         }
     }
 });
