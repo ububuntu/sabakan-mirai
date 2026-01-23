@@ -2,9 +2,28 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>ログ | Mirai</title>
+    <link rel="stylesheet" th:href="@{/css/color.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/administrator.css}">
 </head>
 <body>
+<header th:replace="common/header :: siteHeader('manageHeader')"></header>
+<div th:replace="~{common/color :: svg-sprite}"></div>
 
+<main>
+    <section class="menu" aria-label="システム統計">
+        <div class="statistics">
+            <form onsubmit="return confirm('今後実装！');" style="margin-top: 1.5rem">
+                <button class="button-center button-primary" type="submit">
+                    ログを見る
+                </button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="common/footer :: siteFooter"></footer>
+<script th:src="@{/js/style.js}"></script>
 </body>
 </html>

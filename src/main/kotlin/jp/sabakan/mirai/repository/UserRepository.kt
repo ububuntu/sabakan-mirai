@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.util.Date
 
 /**
@@ -83,6 +84,31 @@ class UserRepository {
         UPDATE goal_m
         SET goal_content = :goalContent, goal_date = :goalDate
         WHERE goal_id = :goalId
+    """.trimIndent()
+
+    val deleteUser = """
+        DELETE FROM user_m WHERE user_id = :userId
+    """.trimIndent()
+
+    val deleteGoal = """
+        DELETE FROM goal_m WHERE user_id = :userId
+    """.trimIndent()
+
+    val deleteEs = """
+        DELEET FROM es_t WHERE user_id = :userId
+    """.trimIndent()
+
+    val deleteInterview = """
+        DELETE FROM interview_t WHERE user_id = :userId
+    """.trimIndent()
+
+    val deleteSpiHistory = """
+        DELETE FROM spi_history_t WHERE user_id = :userId
+    """.trimIndent()
+
+    val deleteSpiDetail = """
+        DELETE FROM spi_detail_t 
+        WHERE spi_hs_id IN (SELECT spi_hs_id FROM spi_history_t WHERE user_id = :userId)
     """.trimIndent()
 
     /**
@@ -230,5 +256,22 @@ class UserRepository {
             "goalDate" to data.goalDate
         )
         return njdbc.update(updateGoal, params)
+    }
+
+    /**
+     * ユーザ情報を削除する
+     *
+     * @param userId ユーザID
+     */
+    fun deleteUser(userId: String) {
+        val params = mapOf<String, Any?>(
+            "userId" to userId
+        )
+        njdbc.update(deleteSpiDetail, params)
+        njdbc.update(deleteSpiHistory, params)
+        njdbc.update(deleteInterview, params)
+        njdbc.update(deleteEs, params)
+        njdbc.update(deleteGoal, params)
+        njdbc.update(deleteUser, params)
     }
 }

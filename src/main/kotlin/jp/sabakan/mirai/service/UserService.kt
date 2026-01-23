@@ -12,6 +12,7 @@ import jp.sabakan.mirai.response.UserResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.UUID
@@ -148,15 +149,21 @@ class UserService {
         return count > 0
     }
 
+    /**
+     * パスワードを更新する
+     *
+     * @param request ユーザ情報リクエスト
+     * @return 更新成功:true, 失敗:false
+     */
     fun updatePassword(request: UserRequest): Boolean {
         val response = UserResponse()
         val newPassword = request.password ?: return false
 
+        // ユーザ情報取得
         val data = UserData().apply {
             this.userId = request.userId
         }
         val map = userRepository.getOneUserList(data) ?: return false
-
 
         // ユーザ情報更新
         val inputdata = UserData().apply {
@@ -277,6 +284,18 @@ class UserService {
                 this.goalDate = request.goalDate
             }
             userRepository.updateGoal(updateData)
+        }
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    fun deleteUser(request: UserRequest): Boolean {
+        val userId = request.userId ?: return false
+
+        try{
+            userRepository.deleteUser(userId)
+            return true
+        } catch (e: DataIntegrityViolationException) {
+            throw e
         }
     }
 
