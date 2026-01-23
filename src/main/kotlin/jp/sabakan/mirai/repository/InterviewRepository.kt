@@ -1,56 +1,146 @@
 package jp.sabakan.mirai.repository
 
 import jp.sabakan.mirai.data.InterviewData
-import org.springframework.beans.factory.annotation.Autowired
+import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 
+/**
+ * 面接データへのデータアクセスを担当するRepository
+ * データベースへの読み書きのみを行い、ビジネスロジックは含まない
+ */
 @Repository
-class InterviewRepository {
-    @Autowired
-    lateinit var jdbc: JdbcTemplate
+class InterviewRepository(
+    private val jdbc: JdbcTemplate,
+    private val namedJdbc: NamedParameterJdbcTemplate
+) {
+    private val logger = LoggerFactory.getLogger(InterviewRepository::class.java)
 
-    // 面接履歴を取得するSQLクエリ
-    val getInterviews = """
-        SELECT * FROM interview_t
-        WHERE user_id = :userId
-        ORDER BY interview_id
-    """.trimIndent()
+    companion object {
+        // SQLクエリ定義
+        private const val SELECT_INTERVIEWS = """
+            SELECT 
+                interview_id,
+                user_id,
+                interview_expression,
+                interview_eyes,
+                interview_posture,
+                interview_voice,
+                interview_date,
+                interview_score
+            FROM interview_t
+            WHERE user_id = :userId
+            ORDER BY interview_date DESC
+        """
 
-    // 面接履歴を保存するSQLクエリ
-    val insertInterview = """
-        INSERT INTO interview_t (interview_id, user_id, interview_expression, interview_eyes, interview_posture, interview_voice, interview_date, interview_score)
-        VALUES (:interviewId, :userId, :interviewExpression, :interviewEyes, :interviewPosture, :interviewVoice, CURRENT_TIMESTAMP, :interviewScore)
-    """.trimIndent()
+        private const val INSERT_INTERVIEW = """
+            INSERT INTO interview_t (
+                interview_id,
+                user_id,
+                interview_expression,
+                interview_eyes,
+                interview_posture,
+                interview_voice,
+                interview_date,
+                interview_score
+            ) VALUES (
+                :interviewId,
+                :userId,
+                :interviewExpression,
+                :interviewEyes,
+                :interviewPosture,
+                :interviewVoice,
+                CURRENT_TIMESTAMP,
+                :interviewScore
+            )
+        """
 
-    // 最大面接ID取得SQLクエリ
-    val getMaxInterviewId = "SELECT MAX(interview_id) AS max_interview_id FROM interview_t"
+        private const val SELECT_INTERVIEW_BY_ID = """
+            SELECT 
+                interview_id,
+                user_id,
+                interview_expression,
+                interview_eyes,
+                interview_posture,
+                interview_voice,
+                interview_date,
+                interview_score
+            FROM interview_t
+            WHERE interview_id = :interviewId
+        """
+
+        private const val UPDATE_INTERVIEW = """
+            UPDATE interview_t
+            SET
+                interview_expression = :interviewExpression,
+                interview_eyes = :interviewEyes,
+                interview_posture = :interviewPosture,
+                interview_voice = :interviewVoice,
+                interview_score = :interviewScore
+            WHERE interview_id = :interviewId
+        """
+
+        private const val DELETE_INTERVIEW = """
+            DELETE FROM interview_t
+            WHERE interview_id = :interviewId
+        """
+
+        private const val COUNT_INTERVIEWS_BY_USER = """
+            SELECT COUNT(*) FROM interview_t
+            WHERE user_id = :userId
+        """
+
+        private const val SELECT_RECENT_INTERVIEWS = """
+            SELECT 
+                interview_id,
+                user_id,
+                interview_expression,
+                interview_eyes,
+                interview_posture,
+                interview_voice,
+                interview_date,
+                interview_score
+            FROM interview_t
+            WHERE user_id = :userId
+            ORDER BY interview_date DESC
+            LIMIT :limit
+        """
+    }
+
+    // ==================== 基本CRUD操作 ====================
 
     /**
      * 指定ユーザの面接履歴を取得する
      *
-     * @param userId ユーザID
-     * @return 面接履歴リスト
+     * @param data ユーザIDを含む検索条件
+     * @return 面接履歴のリスト
      */
     fun getInterviews(data: InterviewData): List<Map<String, Any?>> {
-        // パラメータマップの作成
-        val paramMap = mapOf<String, Any?>(
-            "userId" to data.userId
-        )
+        logger.debug("面接履歴取得: userId=${data.userId}")
 
-        // クエリの実行
-        return jdbc.queryForList(getInterviews, paramMap)
+        val paramMap = mapOf("userId" to data.userId)
+
+        return try {
+            val result = namedJdbc.queryForList(SELECT_INTERVIEWS, paramMap)
+            logger.debug("面接履歴取得成功: ${result.size}件")
+            result
+        } catch (e: Exception) {
+            logger.error("面接履歴取得エラー: userId=${data.userId}", e)
+            throw e
+        }
     }
 
     /**
      * 面接履歴を新規登録する
      *
-     * @param userId ユーザID
-     * @return 面接履歴リスト
+     * @param data 登録する面接データ
+     * @return 影響を受けた行数
      */
     fun insertInterview(data: InterviewData): Int {
-        // パラメータマップの作成
-        val paramMap = mapOf<String, Any?>(
+        logger.debug("面接履歴登録: interviewId=${data.interviewId}, userId=${data.userId}")
+
+        val paramMap = mapOf(
             "interviewId" to data.interviewId,
             "userId" to data.userId,
             "interviewExpression" to data.interviewExpression,
@@ -60,78 +150,147 @@ class InterviewRepository {
             "interviewScore" to data.interviewScore
         )
 
-        // クエリの実行
-        return jdbc.update(insertInterview, paramMap)
+        return try {
+            val rowsAffected = namedJdbc.update(INSERT_INTERVIEW, paramMap)
+            logger.info("面接履歴登録成功: interviewId=${data.interviewId}")
+            rowsAffected
+        } catch (e: Exception) {
+            logger.error("面接履歴登録エラー: interviewId=${data.interviewId}", e)
+            throw e
+        }
     }
 
     /**
-     * 質問内容を取得する
+     * 面接IDで面接履歴を取得する
      *
-     * @return 質問内容リスト
+     * @param interviewId 面接ID
+     * @return 面接データ（存在しない場合はnull）
      */
-    // クラスレベルで質問リストとインデックスを保持
-    private val questions: List<String> = listOf(
-        "あなたの志望動機は何ですか？",
-        "自己PRをお願いします",
-        "長所と短所を教えてください"
-    )
-    private var index = 0
+    fun getInterviewById(interviewId: String): Map<String, Any?>? {
+        logger.debug("面接履歴取得: interviewId=$interviewId")
 
-    /**
-     * 現在の質問を取得する
-     */
-    fun getCurrentQuestion(): String {
-        return questions.getOrNull(index) ?: "質問はありません"
+        val paramMap = mapOf("interviewId" to interviewId)
+
+        return try {
+            val results = namedJdbc.queryForList(SELECT_INTERVIEW_BY_ID, paramMap)
+            results.firstOrNull()
+        } catch (e: Exception) {
+            logger.error("面接履歴取得エラー: interviewId=$interviewId", e)
+            null
+        }
     }
 
     /**
-     * 次の質問に進んで取得する
+     * 面接履歴を更新する
+     *
+     * @param data 更新する面接データ
+     * @return 影響を受けた行数
      */
-    fun getNextQuestion(): String? {
-        index++
-        return questions.getOrNull(index)
+    fun updateInterview(data: InterviewData): Int {
+        logger.debug("面接履歴更新: interviewId=${data.interviewId}")
+
+        val paramMap = mapOf(
+            "interviewId" to data.interviewId,
+            "interviewExpression" to data.interviewExpression,
+            "interviewEyes" to data.interviewEyes,
+            "interviewPosture" to data.interviewPosture,
+            "interviewVoice" to data.interviewVoice,
+            "interviewScore" to data.interviewScore
+        )
+
+        return try {
+            val rowsAffected = namedJdbc.update(UPDATE_INTERVIEW, paramMap)
+            logger.info("面接履歴更新成功: interviewId=${data.interviewId}, rows=$rowsAffected")
+            rowsAffected
+        } catch (e: Exception) {
+            logger.error("面接履歴更新エラー: interviewId=${data.interviewId}", e)
+            throw e
+        }
     }
 
     /**
-     * 質問のインデックスをリセットする
+     * 面接履歴を削除する
+     *
+     * @param interviewId 削除する面接ID
+     * @return 影響を受けた行数
      */
-    fun resetQuestions() {
-        index = 0
+    fun deleteInterview(interviewId: String): Int {
+        logger.debug("面接履歴削除: interviewId=$interviewId")
+
+        val paramMap = mapOf("interviewId" to interviewId)
+
+        return try {
+            val rowsAffected = namedJdbc.update(DELETE_INTERVIEW, paramMap)
+            logger.info("面接履歴削除成功: interviewId=$interviewId, rows=$rowsAffected")
+            rowsAffected
+        } catch (e: Exception) {
+            logger.error("面接履歴削除エラー: interviewId=$interviewId", e)
+            throw e
+        }
+    }
+
+    // ==================== 集計・検索系 ====================
+
+    /**
+     * 指定ユーザの面接履歴件数を取得する
+     *
+     * @param userId ユーザID
+     * @return 面接履歴件数
+     */
+    fun countInterviewsByUser(userId: String): Int {
+        logger.debug("面接履歴件数取得: userId=$userId")
+
+        val paramMap = mapOf("userId" to userId)
+
+        return try {
+            namedJdbc.queryForObject(COUNT_INTERVIEWS_BY_USER, paramMap, Int::class.java) ?: 0
+        } catch (e: Exception) {
+            logger.error("面接履歴件数取得エラー: userId=$userId", e)
+            0
+        }
     }
 
     /**
-     * 進捗率を取得する
+     * 指定ユーザの最近の面接履歴を取得する
+     *
+     * @param userId ユーザID
+     * @param limit 取得件数
+     * @return 面接履歴のリスト
      */
-    fun getProgress(): Int {
-        return if (questions.isEmpty()) 100
-        else ((index + 1) * 100 / questions.size)
+    fun getRecentInterviews(userId: String, limit: Int = 10): List<Map<String, Any?>> {
+        logger.debug("最近の面接履歴取得: userId=$userId, limit=$limit")
+
+        val paramMap = mapOf(
+            "userId" to userId,
+            "limit" to limit
+        )
+
+        return try {
+            namedJdbc.queryForList(SELECT_RECENT_INTERVIEWS, paramMap)
+        } catch (e: Exception) {
+            logger.error("最近の面接履歴取得エラー: userId=$userId", e)
+            emptyList()
+        }
     }
 
     /**
-     * 次の質問が存在するかチェック
+     * 面接IDの存在確認
+     *
+     * @param interviewId 面接ID
+     * @return 存在する場合true
      */
-    fun hasNextQuestion(): Boolean {
-        return index < questions.size - 1
-    }
+    fun existsById(interviewId: String): Boolean {
+        logger.debug("面接ID存在確認: interviewId=$interviewId")
 
-    /**
-     * 全質問数を取得する
-     */
-    fun getTotalQuestions(): Int {
-        return questions.size
-    }
+        val sql = "SELECT COUNT(*) FROM interview_t WHERE interview_id = :interviewId"
+        val paramMap = mapOf("interviewId" to interviewId)
 
-    /**
-     * 現在の質問番号を取得する（1始まり）
-     */
-    fun getCurrentQuestionNumber(): Int {
-        return index + 1
-    }
-
-    /**
-     * 全ての質問リストを取得する
-     */
-    fun getAllQuestions(): List<String> {
-        return questions
+        return try {
+            val count = namedJdbc.queryForObject(sql, paramMap, Int::class.java) ?: 0
+            count > 0
+        } catch (e: Exception) {
+            logger.error("面接ID存在確認エラー: interviewId=$interviewId", e)
+            false
+        }
     }
 }

@@ -1,19 +1,19 @@
 package jp.sabakan.mirai.controller
 
-import jp.sabakan.mirai.request.InterviewRequest
 import jp.sabakan.mirai.service.InterviewService
-import org.springframework.beans.factory.annotation.Autowired
+import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.*
 import java.security.Principal
+import java.util.concurrent.CompletableFuture
 
+/**
+ * 面接画面表示用Controller
+ */
 @Controller
-class InterviewController {
-
-    @Autowired
-    lateinit var interviewService: InterviewService
+class InterviewViewController {
 
     // 面接メイン画面
     @GetMapping("/interview")
@@ -38,104 +38,379 @@ class InterviewController {
     fun getInterviewResult(): String {
         return "/interview/interview-result"
     }
+}
 
-    // 面接メイン画面
-    @PostMapping("/interview")
-    fun postInterview(): String {
-        return "/interview/interview-main"
+/**
+ * 面接API用RestController
+ */
+@RestController
+@RequestMapping("/interview/api")
+class InterviewApiController(
+    private val interviewService: InterviewService
+) {
+    private val logger = LoggerFactory.getLogger(InterviewApiController::class.java)
+
+    // ========================================
+    // GET リクエスト
+    // ========================================
+
+    @GetMapping("/analysis/audio-result")
+    fun getAudioResult(): CompletableFuture<ResponseEntity<ByteArray>> {
+        logger.info("音声結果取得リクエスト")
+
+        return interviewService.getAudioResult()
+            .thenApply<ResponseEntity<ByteArray>> { audioData ->
+                if (audioData.isNotEmpty()) {
+                    logger.info("音声結果取得成功: サイズ=${audioData.size}")
+                    ResponseEntity.ok()
+                        .header("Content-Type", "audio/wav")
+                        .body(audioData)
+                } else {
+                    logger.warn("音声結果が見つかりません")
+                    ResponseEntity.notFound().build()
+                }
+            }
+            .exceptionally { e ->
+                logger.error("音声結果取得エラー", e)
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+            }
     }
 
-    // Web面接画面
-    @PostMapping("/interview/do")
-    fun postInterviewDo(interviewRequest: InterviewRequest, principal: Principal?): String {
-        interviewRequest.userId = principal?.name ?: "test-user"
-        interviewService.insertInterview(interviewRequest)
-        return "/interview/interview-do"
+    @GetMapping("/current-question")
+    fun getCurrentQuestion(): ResponseEntity<Map<String, Any>> {
+        return try {
+            logger.info("現在の質問取得リクエスト")
+            val question = interviewService.getCurrentQuestion()
+            val progress = interviewService.getProgress()
+            val questionNumber = interviewService.getCurrentQuestionNumber()
+            val totalQuestions = interviewService.getTotalQuestions()
+
+            ResponseEntity.ok(
+                mapOf(
+                    "question" to question,
+                    "progress" to progress,
+                    "questionNumber" to questionNumber,
+                    "totalQuestions" to totalQuestions
+                )
+            )
+        } catch (e: Exception) {
+            logger.error("現在の質問取得エラー", e)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                mapOf(
+                    "status" to "error",
+                    "message" to "質問の取得に失敗しました: ${e.message}"
+                )
+            )
+        }
     }
 
-    // 面接ログ画面
-    @PostMapping("/interview/log")
-    fun postInterviewLog(): String {
-        return "/interview/interview-log"
+    @GetMapping("/questions")
+    fun getAllQuestions(): ResponseEntity<Map<String, Any>> {
+        return try {
+            logger.info("全質問取得リクエスト")
+            val questions = interviewService.getAllQuestions()
+            val total = interviewService.getTotalQuestions()
+
+            ResponseEntity.ok(
+                mapOf(
+                    "questions" to questions,
+                    "total" to total
+                )
+            )
+        } catch (e: Exception) {
+            logger.error("全質問取得エラー", e)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                mapOf(
+                    "status" to "error",
+                    "message" to "質問の取得に失敗しました: ${e.message}"
+                )
+            )
+        }
     }
 
-    // 面接結果画面
-    @PostMapping("/interview/result")
-    fun postInterviewResult(): String {
-        return "/interview/interview-result"
+    // ========================================
+    // POST リクエスト
+    // ========================================
+
+    @PostMapping("/sessions")
+    fun startInterviewSession(
+        @RequestBody(required = false) request: Map<String, Any>?,
+        principal: Principal?
+    ): CompletableFuture<ResponseEntity<Map<String, Any>>> {
+        val userId = principal?.name ?: "anonymous"
+        logger.info("面接セッション開始リクエスト: userId=$userId")
+
+        return interviewService.startInterviewSession(userId, request ?: emptyMap())
+            .thenApply<ResponseEntity<Map<String, Any>>> { sessionId ->
+                logger.info("面接セッション開始成功: sessionId=$sessionId")
+                ResponseEntity.ok(
+                    mapOf(
+                        "status" to "success",
+                        "sessionId" to sessionId,
+                        "message" to "面接セッションを開始しました"
+                    )
+                )
+            }
+            .exceptionally { e ->
+                logger.error("面接セッション開始エラー", e)
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    mapOf(
+                        "status" to "error",
+                        "message" to "面接セッションの開始に失敗しました: ${e.message}"
+                    )
+                )
+            }
     }
 
-    /**
-     * 現在の質問を取得
-     * GET /interview/api/current-question
-     */
-    @GetMapping("/interview/api/current-question")
-    @ResponseBody
-    fun getCurrentQuestion(): Map<String, Any> {
-        val question = interviewService.getCurrentQuestion()
-        val progress = interviewService.getProgress()
-        val questionNumber = interviewService.getCurrentQuestionNumber()
-        val totalQuestions = interviewService.getTotalQuestions()
+    @PostMapping("/sessions/{sessionId}/stop")
+    fun stopInterviewSession(
+        @PathVariable sessionId: String
+    ): CompletableFuture<ResponseEntity<Map<String, Any?>>> {
+        logger.info("面接セッション停止リクエスト: sessionId=$sessionId")
 
-        return mapOf(
-            "question" to question,
-            "progress" to progress,
-            "questionNumber" to questionNumber,
-            "totalQuestions" to totalQuestions
-        )
+        return interviewService.stopInterviewSession(sessionId)
+            .thenApply<ResponseEntity<Map<String, Any?>>> { result ->
+                logger.info("面接セッション停止成功: sessionId=$sessionId")
+                ResponseEntity.ok(
+                    mapOf(
+                        "status" to "success",
+                        "result" to result,
+                        "message" to "面接セッションを停止しました"
+                    )
+                )
+            }
+            .exceptionally { e ->
+                logger.error("面接セッション停止エラー: sessionId=$sessionId", e)
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    mapOf(
+                        "status" to "error",
+                        "message" to "面接セッションの停止に失敗しました: ${e.message}"
+                    )
+                )
+            }
     }
 
-    /**
-     * 次の質問に進む
-     * POST /interview/api/next-question
-     */
-    @PostMapping("/interview/api/next-question")
-    @ResponseBody
-    fun getNextQuestion(): Map<String, Any?> {
-        val nextQuestion = interviewService.getNextQuestion()
-        val progress = interviewService.getProgress()
-        val questionNumber = interviewService.getCurrentQuestionNumber()
-        val totalQuestions = interviewService.getTotalQuestions()
-        val hasNext = interviewService.hasNextQuestion()
-        val isFinished = nextQuestion == null
+    @PostMapping("/analysis/start")
+    fun startAnalysis(): CompletableFuture<ResponseEntity<Map<String, Any>>> {
+        logger.info("AI分析開始リクエスト")
 
-        return mapOf(
-            "question" to nextQuestion,
-            "progress" to progress,
-            "questionNumber" to questionNumber,
-            "totalQuestions" to totalQuestions,
-            "hasNext" to hasNext,
-            "isFinished" to isFinished
-        )
+        return interviewService.startAnalysis()
+            .thenApply<ResponseEntity<Map<String, Any>>> { success ->
+                if (success) {
+                    logger.info("AI分析開始成功")
+                    ResponseEntity.ok(
+                        mapOf(
+                            "status" to "success",
+                            "message" to "AI分析を開始しました"
+                        )
+                    )
+                } else {
+                    logger.warn("AI分析開始失敗")
+                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                        mapOf(
+                            "status" to "error",
+                            "message" to "AI分析の開始に失敗しました"
+                        )
+                    )
+                }
+            }
+            .exceptionally { e ->
+                logger.error("AI分析開始エラー", e)
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    mapOf(
+                        "status" to "error",
+                        "message" to "AI分析の開始に失敗しました: ${e.message}"
+                    )
+                )
+            }
     }
 
-    /**
-     * 質問をリセット
-     * POST /interview/api/reset-questions
-     */
-    @PostMapping("/interview/api/reset-questions")
-    @ResponseBody
-    fun resetQuestions(): Map<String, String> {
-        interviewService.resetQuestions()
-        return mapOf(
-            "status" to "success",
-            "message" to "質問をリセットしました"
-        )
+    @PostMapping("/analysis/audio")
+    fun analyzeAudio(
+        @RequestBody request: Map<String, String>
+    ): CompletableFuture<ResponseEntity<Map<String, Any>>> {
+        val audio = request["audio"]
+        if (audio.isNullOrBlank()) {
+            logger.warn("音声データが空です")
+            return CompletableFuture.completedFuture(
+                ResponseEntity.badRequest().body(
+                    mapOf(
+                        "status" to "error",
+                        "message" to "音声データが指定されていません"
+                    )
+                )
+            )
+        }
+
+        logger.info("音声分析リクエスト: データサイズ=${audio.length}")
+
+        return interviewService.analyzeAudio(audio)
+            .thenApply<ResponseEntity<Map<String, Any>>> { success ->
+                if (success) {
+                    logger.info("音声分析成功")
+                    ResponseEntity.ok(
+                        mapOf(
+                            "status" to "success",
+                            "message" to "音声分析が完了しました"
+                        )
+                    )
+                } else {
+                    logger.warn("音声分析失敗")
+                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                        mapOf(
+                            "status" to "error",
+                            "message" to "音声分析に失敗しました"
+                        )
+                    )
+                }
+            }
+            .exceptionally { e ->
+                logger.error("音声分析エラー", e)
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    mapOf(
+                        "status" to "error",
+                        "message" to "音声分析に失敗しました: ${e.message}"
+                    )
+                )
+            }
     }
 
-    /**
-     * 全質問を取得
-     * GET /interview/api/all-questions
-     */
-    @GetMapping("/interview/api/all-questions")
-    @ResponseBody
-    fun getAllQuestions(): Map<String, Any> {
-        val questions = interviewService.getAllQuestions()
-        val total = interviewService.getTotalQuestions()
+    @PostMapping("/analysis/frame")
+    fun analyzeFrame(
+        @RequestBody request: Map<String, String>
+    ): CompletableFuture<ResponseEntity<Map<String, Any>>> {
+        val image = request["image"]
+        if (image.isNullOrBlank()) {
+            logger.warn("画像データが空です")
+            return CompletableFuture.completedFuture(
+                ResponseEntity.badRequest().body(
+                    mapOf(
+                        "status" to "error",
+                        "message" to "画像データが指定されていません"
+                    )
+                )
+            )
+        }
 
-        return mapOf(
-            "questions" to questions,
-            "total" to total
-        )
+        logger.info("画像分析リクエスト: データサイズ=${image.length}")
+
+        return interviewService.analyzeFrame(image)
+            .thenApply<ResponseEntity<Map<String, Any>>> { success ->
+                if (success) {
+                    logger.info("画像分析成功")
+                    ResponseEntity.ok(
+                        mapOf(
+                            "status" to "success",
+                            "message" to "画像分析が完了しました"
+                        )
+                    )
+                } else {
+                    logger.warn("画像分析失敗")
+                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                        mapOf(
+                            "status" to "error",
+                            "message" to "画像分析に失敗しました"
+                        )
+                    )
+                }
+            }
+            .exceptionally { e ->
+                logger.error("画像分析エラー", e)
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    mapOf(
+                        "status" to "error",
+                        "message" to "画像分析に失敗しました: ${e.message}"
+                    )
+                )
+            }
+    }
+
+    @PostMapping("/analysis/reset")
+    fun resetAnalysis(): CompletableFuture<ResponseEntity<Map<String, Any>>> {
+        logger.info("AI分析リセットリクエスト")
+
+        return interviewService.resetAnalysis()
+            .thenApply<ResponseEntity<Map<String, Any>>> { success ->
+                if (success) {
+                    logger.info("AI分析リセット成功")
+                    ResponseEntity.ok(
+                        mapOf(
+                            "status" to "success",
+                            "message" to "AI分析をリセットしました"
+                        )
+                    )
+                } else {
+                    logger.warn("AI分析リセット失敗")
+                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                        mapOf(
+                            "status" to "error",
+                            "message" to "AI分析のリセットに失敗しました"
+                        )
+                    )
+                }
+            }
+            .exceptionally { e ->
+                logger.error("AI分析リセットエラー", e)
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    mapOf(
+                        "status" to "error",
+                        "message" to "AI分析のリセットに失敗しました: ${e.message}"
+                    )
+                )
+            }
+    }
+
+    @PostMapping("/next-question")
+    fun getNextQuestion(): ResponseEntity<Map<String, Any?>> {
+        return try {
+            logger.info("次の質問リクエスト")
+            val nextQuestion = interviewService.getNextQuestion()
+            val progress = interviewService.getProgress()
+            val questionNumber = interviewService.getCurrentQuestionNumber()
+            val totalQuestions = interviewService.getTotalQuestions()
+            val hasNext = interviewService.hasNextQuestion()
+            val isFinished = nextQuestion == null
+
+            ResponseEntity.ok(
+                mapOf(
+                    "question" to nextQuestion,
+                    "progress" to progress,
+                    "questionNumber" to questionNumber,
+                    "totalQuestions" to totalQuestions,
+                    "hasNext" to hasNext,
+                    "isFinished" to isFinished
+                )
+            )
+        } catch (e: Exception) {
+            logger.error("次の質問取得エラー", e)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                mapOf(
+                    "status" to "error",
+                    "message" to "次の質問の取得に失敗しました: ${e.message}"
+                )
+            )
+        }
+    }
+
+    @PostMapping("/questions/reset")
+    fun resetQuestions(): ResponseEntity<Map<String, String>> {
+        return try {
+            logger.info("質問リセットリクエスト")
+            interviewService.resetQuestions()
+            ResponseEntity.ok(
+                mapOf(
+                    "status" to "success",
+                    "message" to "質問をリセットしました"
+                )
+            )
+        } catch (e: Exception) {
+            logger.error("質問リセットエラー", e)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                mapOf(
+                    "status" to "error",
+                    "message" to "質問のリセットに失敗しました: ${e.message}"
+                )
+            )
+        }
     }
 }
