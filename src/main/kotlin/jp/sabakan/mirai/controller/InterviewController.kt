@@ -41,9 +41,9 @@ class InterviewViewController {
 }
 
 /**
- * 面接API用RestController
+ * 面接API用Controller
  */
-@RestController
+@Controller
 @RequestMapping("/interview/api")
 class InterviewApiController(
     private val interviewService: InterviewService
@@ -55,6 +55,7 @@ class InterviewApiController(
     // ========================================
 
     @GetMapping("/analysis/audio-result")
+    @ResponseBody
     fun getAudioResult(): CompletableFuture<ResponseEntity<ByteArray>> {
         logger.info("音声結果取得リクエスト")
 
@@ -77,6 +78,7 @@ class InterviewApiController(
     }
 
     @GetMapping("/current-question")
+    @ResponseBody
     fun getCurrentQuestion(): ResponseEntity<Map<String, Any>> {
         return try {
             logger.info("現在の質問取得リクエスト")
@@ -105,6 +107,7 @@ class InterviewApiController(
     }
 
     @GetMapping("/questions")
+    @ResponseBody
     fun getAllQuestions(): ResponseEntity<Map<String, Any>> {
         return try {
             logger.info("全質問取得リクエスト")
@@ -133,6 +136,7 @@ class InterviewApiController(
     // ========================================
 
     @PostMapping("/sessions")
+    @ResponseBody
     fun startInterviewSession(
         @RequestBody(required = false) request: Map<String, Any>?,
         principal: Principal?
@@ -163,6 +167,7 @@ class InterviewApiController(
     }
 
     @PostMapping("/sessions/{sessionId}/stop")
+    @ResponseBody
     fun stopInterviewSession(
         @PathVariable sessionId: String
     ): CompletableFuture<ResponseEntity<Map<String, Any?>>> {
@@ -191,6 +196,7 @@ class InterviewApiController(
     }
 
     @PostMapping("/analysis/start")
+    @ResponseBody
     fun startAnalysis(): CompletableFuture<ResponseEntity<Map<String, Any>>> {
         logger.info("AI分析開始リクエスト")
 
@@ -226,6 +232,7 @@ class InterviewApiController(
     }
 
     @PostMapping("/analysis/audio")
+    @ResponseBody
     fun analyzeAudio(
         @RequestBody request: Map<String, String>
     ): CompletableFuture<ResponseEntity<Map<String, Any>>> {
@@ -276,6 +283,7 @@ class InterviewApiController(
     }
 
     @PostMapping("/analysis/frame")
+    @ResponseBody
     fun analyzeFrame(
         @RequestBody request: Map<String, String>
     ): CompletableFuture<ResponseEntity<Map<String, Any>>> {
@@ -326,6 +334,7 @@ class InterviewApiController(
     }
 
     @PostMapping("/analysis/reset")
+    @ResponseBody
     fun resetAnalysis(): CompletableFuture<ResponseEntity<Map<String, Any>>> {
         logger.info("AI分析リセットリクエスト")
 
@@ -361,6 +370,7 @@ class InterviewApiController(
     }
 
     @PostMapping("/next-question")
+    @ResponseBody
     fun getNextQuestion(): ResponseEntity<Map<String, Any?>> {
         return try {
             logger.info("次の質問リクエスト")
@@ -393,6 +403,7 @@ class InterviewApiController(
     }
 
     @PostMapping("/questions/reset")
+    @ResponseBody
     fun resetQuestions(): ResponseEntity<Map<String, String>> {
         return try {
             logger.info("質問リセットリクエスト")
