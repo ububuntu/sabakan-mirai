@@ -10,10 +10,11 @@
 <header th:replace="common/header :: siteHeader('userTargetHeader')"></header>
 
 <main>
-    <div th:if="${message}" >
-        <p th:text="${message}"></p>
-    </div>
     <section class="menu">
+        <!-- ポップアップメッセージ用のコンテナ（JavaScriptで表示） -->
+        <div th:if="${message}" style="display: none;"
+             data-message th:text="${message}">
+        </div>
         <div class="menu-item">
             <div class="texts">
                 <p class="title">目標を設定する</p>
@@ -43,5 +44,6 @@
 </main>
 
 <footer th:replace="common/footer :: siteFooter"></footer>
+<script th:src="@{/js/style.js}"></script>
 </body>
 </html>

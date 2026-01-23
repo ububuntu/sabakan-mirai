@@ -11,10 +11,11 @@
 <header th:replace="common/header :: siteHeader('userMainHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
     <main>
-        <div th:if="${message}" >
-            <p th:text="${message}"></p>
-        </div>
         <section class="menu" aria-label="ユーザ画面">
+            <!-- ポップアップメッセージ用のコンテナ（JavaScriptで表示） -->
+            <div th:if="${message}" style="display: none;"
+                 data-message th:text="${message}">
+            </div>
             <!-- ユーザーネーム -->
             <div class="menu-item">
                 <svg class="icon" width="48" height="48">
@@ -25,7 +26,7 @@
                 </div>
             </div>
             <!-- 現在の目標 -->
-            <div class="menu-item">
+            <div onclick="location.href='./user/target'" class="menu-item">
                 <svg class="icon" width="48" height="48">
                     <use href="#user"></use>
                 </svg>

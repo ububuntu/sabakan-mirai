@@ -59,6 +59,12 @@ public class MessageConfig {
         // M017: 入力形式エラー(メールアドレス)
         const val EMAIL_INVALID_FORMAT_ERROR = "メールアドレスの形式が不正です"
 
+        // M018: 目標設定が完了しました
+        const val GOAL_SET_SUCCESS = "目標設定が完了しました"
+
+        // M019: 目標設定に失敗しました
+        const val GOAL_SET_FAILED = "目標設定に失敗しました"
+
         // M201: 面接履歴の取得に失敗しました
         const val INTERVIEW_NOT_FOUND = "面接履歴が見つかりません"
 

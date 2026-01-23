@@ -98,12 +98,16 @@ class UserController {
     // ユーザー目標設定画面
     @PostMapping("/user/target")
     fun postTarget(
-        @ModelAttribute goalRequest: GoalRequest
+        @ModelAttribute goalRequest: GoalRequest,
+        redirectAttributes: RedirectAttributes
     ): String{
         // ダミーユーザIDをセット
         val DUMMY_USER_ID = "test-user-id"
         goalRequest.userId = DUMMY_USER_ID
+        // 目標を保存
         userService.saveGoal(goalRequest)
-        return "redirect:/user/target"
+
+        redirectAttributes.addFlashAttribute("message", MessageConfig.GOAL_SET_SUCCESS)
+        return "redirect:/user"
     }
 }

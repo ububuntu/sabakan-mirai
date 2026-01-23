@@ -2,15 +2,10 @@ package jp.sabakan.mirai.repository
 
 import jp.sabakan.mirai.data.GoalData
 import jp.sabakan.mirai.data.UserData
-import jp.sabakan.mirai.request.UserRequest
-import org.h2.command.dml.Insert
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
-import org.springframework.transaction.annotation.Transactional
-import java.util.Date
 
 /**
  * ユーザ情報リポジトリクラス
