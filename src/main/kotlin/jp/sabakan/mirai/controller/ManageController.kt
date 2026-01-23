@@ -112,14 +112,17 @@ class ManageController {
             return "/manage/users/manage-users-edit"
         }
         // 更新処理を実行
-        val isSuccess = userService.updateUser(request)
+        val response = userService.updatePassword(request)
 
-        if (isSuccess) {
-            redirectAttributes.addFlashAttribute("message", MessageConfig.USER_UPDATE_SUCCESS)
-            return "redirect:/manage/users"
+        // メッセージの内容で成功・失敗を判定
+        if (response.message == MessageConfig.PASSWORD_CHANGE_SUCCESS) {
+            // 成功時：一覧画面へリダイレクト
+            redirectAttributes.addFlashAttribute("message", response.message)
+            return "redirect:/manage/user"
         } else {
-            redirectAttributes.addFlashAttribute("message", MessageConfig.USER_UPDATE_FAILED)
-            return "/manage/users/manage-users-edit"
+            // 失敗時：編集画面に戻りエラーメッセージを表示
+            model.addAttribute("message", response.message)
+            return "/manage/user/manage-user-edit"
         }
     }
     // ユーザー追加画面

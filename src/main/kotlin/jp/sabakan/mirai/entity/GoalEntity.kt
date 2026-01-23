@@ -1,6 +1,7 @@
 package jp.sabakan.mirai.entity
 
 import lombok.Data
+import org.springframework.format.annotation.DateTimeFormat
 import java.util.Date
 
 @Data
@@ -15,6 +16,7 @@ class GoalEntity {
     var goalContent: String? = null
 
     // 目標日付
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     var goalDate: Date? = null
     
     // 画面表示用：残り日数

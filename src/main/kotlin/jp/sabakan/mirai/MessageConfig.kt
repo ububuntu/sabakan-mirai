@@ -44,8 +44,8 @@ public class MessageConfig {
         // M012: パスワードの変更に失敗しました
         const val PASSWORD_CHANGE_FAILED = "パスワードの変更に失敗しました"
 
-        // M013: 文字数制限不足エラー
-        const val LENGTH_MINIMUM_ERROR = "入力が短すぎます"
+        // M013: 未入力エラー
+        const val NOT_BLANK_ERROR = "必須項目が未入力です"
 
         // M014: 文字数制限超過エラー
         const val LENGTH_MAXIMUM_ERROR = "入力が長すぎます"
@@ -64,6 +64,9 @@ public class MessageConfig {
 
         // M019: 目標設定に失敗しました
         const val GOAL_SET_FAILED = "目標設定に失敗しました"
+
+        // M020: 目標情報の更新が完了しました
+        const val GOAL_UPDATE_SUCCESS = "目標情報の更新が完了しました"
 
         // M201: 面接履歴の取得に失敗しました
         const val INTERVIEW_NOT_FOUND = "面接履歴が見つかりません"

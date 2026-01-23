@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.interceptor.TransactionAspectSupport
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.UUID
@@ -111,14 +112,22 @@ class UserService {
      * @param request ユーザ情報リクエスト
      * @return ユーザ情報レスポンス
      */
-    fun updateUser(request: UserRequest): Boolean {
+    @Transactional(rollbackFor = [Exception::class])
+    fun updateUser(request: UserRequest): UserResponse {
+        val response = UserResponse()
         // ユーザIDがnullの場合は処理を中断
-        val userId = request.userId ?: return false
+        val userId = request.userId
+        if (userId == null) {
+            response.message = MessageConfig.USER_NOT_FOUND
+            return response
+        }
 
         // 現在のパスワードを取得
-        val currentPassword = duplicatePassword(userId) ?: return false
-
-        val response = UserResponse()
+        val currentPassword = duplicatePassword(userId)
+        if (currentPassword == null) {
+            response.message = MessageConfig.USER_NOT_FOUND
+            return response
+        }
 
         // ユーザ情報更新
         val data = UserData().apply {
@@ -143,10 +152,7 @@ class UserService {
         } catch (e: DataIntegrityViolationException) {
             response.message = MessageConfig.USER_UPDATE_FAILED
         }
-
-        // 3. 更新実行
-        val count = userRepository.updateUser(data)
-        return count > 0
+        return response
     }
 
     /**
@@ -155,15 +161,24 @@ class UserService {
      * @param request ユーザ情報リクエスト
      * @return 更新成功:true, 失敗:false
      */
-    fun updatePassword(request: UserRequest): Boolean {
+    @Transactional(rollbackFor = [Exception::class])
+    fun updatePassword(request: UserRequest): UserResponse {
         val response = UserResponse()
-        val newPassword = request.password ?: return false
+        val newPassword = request.password
+        if (newPassword.isNullOrEmpty()) {
+            response.message = MessageConfig.PASSWORD_CHANGE_FAILED
+            return response
+        }
 
         // ユーザ情報取得
         val data = UserData().apply {
             this.userId = request.userId
         }
-        val map = userRepository.getOneUserList(data) ?: return false
+        val map = userRepository.getOneUserList(data)
+        if (map == null) {
+            response.message = MessageConfig.USER_NOT_FOUND
+            return response
+        }
 
         // ユーザ情報更新
         val inputdata = UserData().apply {
@@ -178,15 +193,13 @@ class UserService {
 
         // ユーザ情報更新処理を実行
         try {
-            userRepository.updateUser(data)
+            userRepository.updateUser(inputdata)
             response.message = MessageConfig.USER_UPDATE_SUCCESS
         } catch (e: DataIntegrityViolationException) {
             response.message = MessageConfig.USER_UPDATE_FAILED
         }
 
-        // 3. 更新実行
-        val count = userRepository.updateUser(data)
-        return count > 0
+        return response
     }
 
     /**
@@ -240,12 +253,13 @@ class UserService {
             this.goalId = row["goal_id"] as String?
             this.userId = row["user_id"] as String?
             this.goalContent = row["goal_content"] as String?
-            this.goalDate = row["goal_date"] as java.util.Date?
+            this.goalDate = row["goal_date"] as? java.util.Date
         }
 
-        if (entity.goalDate != null) {
+        entity.goalDate?.let { date ->
             val today = LocalDate.now()
-            val target = java.sql.Date(entity.goalDate!!.time).toLocalDate()
+            // java.util.Date -> java.sql.Date -> LocalDate の変換
+            val target = java.sql.Date(date.time).toLocalDate()
             val diff = ChronoUnit.DAYS.between(today, target)
             entity.remainingDays = if (diff < 0) 0 else diff
         }
@@ -258,33 +272,55 @@ class UserService {
      *
      * @param request 目標情報リクエスト
      */
-    fun saveGoal(request: GoalRequest){
-        val searchData = GoalData().apply {
-            this.userId = request.userId
+    fun saveGoal(request: GoalRequest): UserResponse {
+        val response = UserResponse()
+
+        // ユーザーIDチェック
+        val userId = request.userId
+        if (userId == null) {
+            response.message = "ユーザーIDが不正です" // MessageConfig.USER_ID_INVALID 等があれば定数を使用
+            return response
         }
-        // DBから検索
+
+        // 検索用データ作成
+        val searchData = GoalData().apply { this.userId = userId }
         val currentGoalList = userRepository.getGoal(searchData)
 
-        if (currentGoalList.isEmpty()) {
-            // 新規登録
-            val newId = "G" + UUID.randomUUID().toString()
-            val newData = GoalData().apply {
-                this.goalId = newId
-                this.userId = request.userId
-                this.goalContent = request.goalContent
-                this.goalDate = request.goalDate
+        try {
+            if (currentGoalList.isEmpty()) {
+                // --- 新規登録 ---
+                val newGoalId = UUID.randomUUID().toString()
+                val insertData = GoalData().apply {
+                    this.goalId = newGoalId
+                    this.userId = userId
+                    this.goalContent = request.goalContent
+                    this.goalDate = request.goalDate
+                }
+                userRepository.insertGoal(insertData)
+
+                // 成功メッセージをセット
+                response.message = MessageConfig.GOAL_SET_SUCCESS
+            } else {
+                // --- 更新 ---
+                val existingGoalId = currentGoalList[0]["goal_id"] as String
+                val updateData = GoalData().apply {
+                    this.goalId = existingGoalId
+                    this.goalContent = request.goalContent
+                    this.goalDate = request.goalDate
+                }
+                userRepository.updateGoal(updateData)
+
+                // 更新成功メッセージをセット
+                response.message = MessageConfig.GOAL_UPDATE_SUCCESS
             }
-            userRepository.insertGoal(newData)
-        } else {
-            // 更新 (リストの最初の要素のIDを使う)
-            val existingGoalId = currentGoalList[0]["goal_id"] as String
-            val updateData = GoalData().apply {
-                this.goalId = existingGoalId
-                this.goalContent = request.goalContent
-                this.goalDate = request.goalDate
-            }
-            userRepository.updateGoal(updateData)
+        } catch (e: Exception) {
+            // エラーハンドリング
+            e.printStackTrace()
+            // 明示的にロールバックを指示
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()
+            response.message = MessageConfig.GOAL_SET_FAILED
         }
+        return response
     }
 
     @Transactional(rollbackFor = [Exception::class])

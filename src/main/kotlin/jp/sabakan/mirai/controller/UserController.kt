@@ -1,5 +1,6 @@
 package jp.sabakan.mirai.controller
 
+import jakarta.validation.Valid
 import jp.sabakan.mirai.MessageConfig
 import jp.sabakan.mirai.request.GoalRequest
 import jp.sabakan.mirai.request.UserRequest
@@ -7,6 +8,7 @@ import jp.sabakan.mirai.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
+import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
@@ -86,11 +88,13 @@ class UserController {
         val result = userService.updatePassword(userRequest)
 
         // 結果に応じてメッセージを設定しリダイレクト
-        if (result) {
-            redirectAttributes.addFlashAttribute("message", MessageConfig.PASSWORD_CHANGE_SUCCESS)
+        val response = userService.updatePassword(userRequest)
+
+        if (response.message == MessageConfig.PASSWORD_CHANGE_SUCCESS) {
+            redirectAttributes.addFlashAttribute("message", response.message)
             return "redirect:/user"
         } else {
-            model.addAttribute("message", MessageConfig.PASSWORD_CHANGE_FAILED)
+            model.addAttribute("message", response.message)
             return "users/user-repassword"
         }
     }
@@ -98,16 +102,25 @@ class UserController {
     // ユーザー目標設定画面
     @PostMapping("/user/target")
     fun postTarget(
-        @ModelAttribute goalRequest: GoalRequest,
+        @Valid @ModelAttribute goalRequest: GoalRequest,
+        bindingResult: BindingResult,
+        model: Model,
         redirectAttributes: RedirectAttributes
     ): String{
+        // バリデーションエラーがある場合、元の入力画面に戻す
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("message", "入力内容に不備があります")
+            return "users/user-target"
+        }
+
         // ダミーユーザIDをセット
         val DUMMY_USER_ID = "test-user-id"
         goalRequest.userId = DUMMY_USER_ID
         // 目標を保存
-        userService.saveGoal(goalRequest)
+        val response = userService.saveGoal(goalRequest)
 
-        redirectAttributes.addFlashAttribute("message", MessageConfig.GOAL_SET_SUCCESS)
+        // 結果メッセージを設定しリダイレクト
+        redirectAttributes.addFlashAttribute("message", response.message)
         return "redirect:/user"
     }
 }

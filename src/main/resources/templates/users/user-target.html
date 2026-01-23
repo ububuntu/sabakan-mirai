@@ -8,7 +8,7 @@
 </head>
 <body>
 <header th:replace="common/header :: siteHeader('userTargetHeader')"></header>
-
+<div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
     <section class="menu">
         <!-- ポップアップメッセージ用のコンテナ（JavaScriptで表示） -->
@@ -21,26 +21,25 @@
                 <p class="desc">達成したい目標と期限を設定しましょう。</p>
             </div>
         </div>
+        <form th:action="@{/user/target}" method="post" class="menu">
+
+            <div class="menu-item">
+                <div class="texts">
+                    <label class="title">目標の内容</label>
+                    <input type="text" name="goalContent" placeholder="例：資格試験に合格する" required>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="texts">
+                    <label class="title">達成期限</label>
+                    <input type="date" name="goalDate" required>
+                </div>
+            </div>
+
+            <button class="button-center" type="submit">保存する</button>
+        </form>
     </section>
-
-    <form th:action="@{/user/target}" method="post" class="menu">
-
-        <div class="menu-item">
-            <div class="texts">
-                <label class="title">目標の内容</label>
-                <input type="text" name="goalContent" placeholder="例：資格試験に合格する" required>
-            </div>
-        </div>
-
-        <div class="menu-item">
-            <div class="texts">
-                <label class="title">達成期限</label>
-                <input type="date" name="goalDate" required>
-            </div>
-        </div>
-
-        <button class="button-center" type="submit">保存する</button>
-    </form>
 </main>
 
 <footer th:replace="common/footer :: siteFooter"></footer>
