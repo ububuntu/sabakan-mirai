@@ -4,7 +4,7 @@ import lombok.Data
 
 @Data
 class CabGabRequest {
-    // CAB/GAB受検ID
+    // Cab・Gab受検ID
     var cabGabId: String? = null
 
     // 問題文
@@ -29,7 +29,7 @@ class CabGabRequest {
     var cabGabCategory: String? = null
 
     // 回答結果ID
-    var cabgabResultId: String? = null
+    var cabGabResultId: String? = null
 
     // ユーザーID
     var userId: String? = null
@@ -42,4 +42,18 @@ class CabGabRequest {
 
     // 回答日時
     var answerDate: String? = null
+
+    // 90問分の回答を一括送信するためのリクエスト
+    @Data
+    class CabGabExamRequest {
+        var userId: String? = null
+        var answers: List<CabGabAnswerItem>? = null
+    }
+
+    // 1問ごとの回答内容
+    @Data
+    class CabGabAnswerItem {
+        var cabGabId: String? = null
+        var userAnswer: Int? = null
+    }
 }

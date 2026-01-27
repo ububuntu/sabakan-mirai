@@ -12,7 +12,7 @@
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
     <div class="menu-item">
-        <p class="title">正答率　:　30%</p>
+        <p class="title" th:text="'正答率　:　' + ${result.accuracyRate} + '%'">正答率 : 0%</p>
     </div>
     <p class="note">正誤リスト</p>
     <table class="question-table">
@@ -20,37 +20,16 @@
         <tr>
             <th class="no">問題</th>
             <th class="judge">正誤</th>
-            <th class="beginning">内容</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td class="no">1</td>
-            <td class="judge is-ok"></td>
-            <td class="beginning">問題文の冒頭...</td>
-        </tr>
-        <tr>
-            <td class="no">2</td>
-            <td class="judge is-ng"></td>
-            <td class="beginning">問題文の冒頭...</td>
-        </tr>
-        <tr>
-            <td class="no">3</td>
-            <td class="judge is-ok"></td>
-            <td class="beginning">問題文の冒頭...</td>
-        </tr>
-        <tr>
-            <td class="no">4</td>
-            <td class="judge is-ok"></td>
-            <td class="beginning">問題文の冒頭...</td>
-        </tr>
-        <tr>
-            <td class="no">5</td>
-            <td class="judge is-ok"></td>
-            <td class="beginning">問題文の冒頭...</td>
+        <tr th:each="detail, stat : ${details}">
+            <td class="no" th:text="${stat.count}">1</td>
+            <td class="judge" th:classappend="${detail.isCorrect} ? 'is-ok' : 'is-ng'"></td>
         </tr>
         </tbody>
     </table>
+    <button class="button-center" onclick="location.href='/cabgab'">トップへ戻る</button>
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam
 @Controller
 class QuestionsController {
 
-    // Serviceを使えるように注入します
     @Autowired
     lateinit var spiService: SpiService
     @Autowired
@@ -23,135 +22,25 @@ class QuestionsController {
     @Autowired
     lateinit var session: HttpSession
 
-    // テスト用
     val TEST_USER_ID = "test-user-id"
+    // 問題数の定数化（必要に応じて調整してください）
+    val SPI_TOTAL_COUNT = 70
+    val CABGAB_TOTAL_COUNT = 70
 
-    // 適性試験メイン画面
+    // --- 共通・メイン画面 ---
+
     @GetMapping("/questions")
-    fun getQuestions(): String{
-        return "questions/questions-main"
-    }
+    fun getQuestions(): String = "questions/questions-main"
 
-    //　SPIメイン画面
-    @GetMapping("/spi")
-    fun getQuestionSpiMain(model: Model): String{
-        val inProgressId = spiService.getInProgressExamId(TEST_USER_ID)
-
-        if (inProgressId != null) {
-            model.addAttribute("hasInProgress", true)
-        } else {
-            model.addAttribute("hasInProgress", false)
-        }
-
-        return "questions/spi-main"
-    }
-
-
-
-    // SPI問題画面
-    @GetMapping("/spi/study")
-    fun getQuestionSpiStudy(
-        @RequestParam(name = "index") index: Int, // URLの ?index=〇〇 を受け取る
-        model: Model
-    ): String {
-        // セッションチェック (不正アクセス防止)
-        val examId = session.getAttribute("currentSpiExamId") as? String
-        if (examId == null) {
-            return "redirect:/spi" // セッション切れならトップへ
-        }
-
-        // 1. カテゴリ決定 (1-40:言語, 41-70:非言語)
-        val targetCategory = if (index <= 40) "言語" else "非言語"
-
-        // 2. 問題を取得
-        val request = SpiRequest().apply {
-            spiCategory = targetCategory
-        }
-        val response = spiService.getSpi(request)
-        val questionList = response.spis
-
-        if (questionList.isNullOrEmpty()) {
-            return "redirect:/spi" // エラー時はメインへ戻す
-        }
-
-        // 3. 画面に必要なデータを渡す
-        model.addAttribute("question", questionList[0])
-        model.addAttribute("currentIndex", index) // 受け取った番号をそのまま渡す
-        model.addAttribute("totalCount", 70)      // 全70問
-
-        // 進捗率計算
-        val progress = (index.toDouble() / 70 * 100).toInt()
-        model.addAttribute("progress", progress)
-
-        return "questions/spi-study"
-    }
-
-    // SPI結果画面
-    @GetMapping("/spi/result")
-    fun getQuestionSpiResult(): String{
-        return "questions/spi-result"
-    }
-
-    @GetMapping("/spi/history")
-    fun getSpiHistory(): String {
-        return "questions/spi-history"
-    }
-
-    // CAB/GABメイン画面
-    @GetMapping("/cabgab")
-    fun getQuestionCabgabMain(): String{
-        return "questions/cabgab-main"
-    }
-
-    // CAB/GAB問題画面
-    @GetMapping("/cabgab/study")
-    fun getQuestionCabgabStudy(
-        @RequestParam(name = "index") index: Int, // URLの　index受け取り
-        model: Model
-    ): String{
-
-        // TODO ここのカテゴリに関してcabgabの使用が違うと思うので確認
-        // 1.カテゴリ決定 ( 1-40:言語, 41-70:非言語)
-        val targetCategory = if(index <= 40) "言語" else "非言語"
-
-        // 2.問題の取得
-        val request = CabGabRequest().apply {
-            cabGabCategory = targetCategory
-        }
-        val response = cabGabService.getCabGab(request)
-        val questionList = response.cabGabs
-
-        if (questionList.isNullOrEmpty()) {
-            return "redirect:/cabgab" // エラー時メイン画面へ戻す
-        }
-
-        // 3.画面に必要なデータを渡す
-        model.addAttribute("question", questionList[0])
-        model.addAttribute("currentIndex", index)
-        model.addAttribute("totalCount", 70)
-
-        // 進捗率計算
-        val progress = (index.toDouble() / 70 * 100).toInt()
-        model.addAttribute("progress", progress)
-
-        return "questions/cabgab-study"
-    }
-
-    // CAB/GAB結果画面
-    @GetMapping("/cabgab/result")
-    fun getQuestionCabgabResult(): String{
-        return "questions/cabgab-result"
-    }
-
-    // 適性試験メイン画面
     @PostMapping("/questions")
-    fun postQuestions(): String{
-        return "questions/questions-main"
-    }
+    fun postQuestions(): String = "questions/questions-main"
 
-    // SPIメイン画面
-    @PostMapping("/spi")
-    fun postQuestionSpiMain(): String{
+    // --- SPI 制御 (既存ロジック維持) ---
+
+    @GetMapping("/spi")
+    fun getQuestionSpiMain(model: Model): String {
+        val inProgressId = spiService.getInProgressExamId(TEST_USER_ID)
+        model.addAttribute("hasInProgress", inProgressId != null)
         return "questions/spi-main"
     }
 
@@ -165,113 +54,204 @@ class QuestionsController {
         var startIndex = 1
 
         when (mode) {
-            //  新規最初から
             "new_start" -> {
                 examId = spiService.startNewExam(TEST_USER_ID)
                 startIndex = 1
             }
-
-            // 新規途中から
             "new_middle" -> {
                 examId = spiService.startNewExam(TEST_USER_ID)
                 startIndex = middleIndex ?: 1
             }
-
-            // 再開
             "resume" -> {
                 examId = spiService.getInProgressExamId(TEST_USER_ID)
                 if (examId != null) {
-                    // 解いた問題数 + 1 からスタート
                     startIndex = spiService.getCurrentQuestionIndex(examId)
                 } else {
                     return "redirect:/spi"
                 }
             }
         }
-
-        // セッションに試験IDを保存
         session.setAttribute("currentSpiExamId", examId)
         return "redirect:/spi/study?index=$startIndex"
     }
 
-    // SPI問題画面
+    @GetMapping("/spi/study")
+    fun getQuestionSpiStudy(@RequestParam(name = "index") index: Int, model: Model): String {
+        val examId = session.getAttribute("currentSpiExamId") as? String ?: return "redirect:/spi"
+        val targetCategory = if (index <= 40) "言語" else "非言語"
+
+        val response = spiService.getSpi(SpiRequest().apply { spiCategory = targetCategory })
+        val questionList = response.spis
+
+        if (questionList.isNullOrEmpty()) return "redirect:/spi"
+
+        model.addAttribute("question", questionList[0])
+        model.addAttribute("currentIndex", index)
+        model.addAttribute("totalCount", SPI_TOTAL_COUNT)
+        model.addAttribute("progress", (index.toDouble() / SPI_TOTAL_COUNT * 100).toInt())
+
+        return "questions/spi-study"
+    }
+
     @PostMapping("/spi/study")
     fun postQuestionSpiStudy(
-        @RequestParam(name = "currentIndex") currentIndex: Int,
-        @RequestParam(name = "spiId") spiId: String,
-        @RequestParam(name = "answer", required = false) answer: Int?, // 中断時はnullの可能性があるので nullable に変更
-        @RequestParam(name = "action") action: String, // 追加: どのボタンが押されたか
-        model: Model
+        @RequestParam currentIndex: Int,
+        @RequestParam spiId: String,
+        @RequestParam(required = false) answer: Int?,
+        @RequestParam action: String
     ): String {
+        val examId = session.getAttribute("currentSpiExamId") as? String ?: return "redirect:/spi"
 
-        // セッションから現在の試験IDを取得
-        val examId = session.getAttribute("currentSpiExamId") as? String
-            ?: return "redirect:/spi" // セッション切れ対策
-
-        // 分岐処理
         when (action) {
             "suspend" -> {
-                // 中断
                 session.removeAttribute("currentSpiExamId")
                 return "redirect:/spi"
             }
-
             "finish" -> {
-                // 途中終了
                 spiService.finishExam(examId)
                 session.removeAttribute("currentSpiExamId")
                 return "redirect:/spi/result"
             }
-
             "next" -> {
-                // 次へ
-                if (answer != null) {
-                    spiService.saveOneAnswer(examId, spiId, answer)
-                }
-
-                // 次の問題へ
+                if (answer != null) spiService.saveOneAnswer(examId, spiId, answer)
                 val nextIndex = currentIndex + 1
-                if (nextIndex > 70) {
-                    // 70問終わったら自動的に終了処理
+                if (nextIndex > SPI_TOTAL_COUNT) {
                     spiService.finishExam(examId)
                     session.removeAttribute("currentSpiExamId")
                     return "redirect:/spi/result"
                 }
-
                 return "redirect:/spi/study?index=$nextIndex"
             }
         }
-
         return "redirect:/spi"
     }
 
-    // SPI結果画面
-    @PostMapping("/spi/result")
-    fun postQuestionSpiResult(): String{
-        return "questions/spi-result"
-    }
+    // --- CAB/GAB 制御 (SpiServiceの仕様に合わせて修正) ---
 
-    @PostMapping("/spi/history")
-    fun postSpiHistory(): String {
-        return "questions/spi-history"
-    }
-
-    // CAB/GABメイン画面
-    @PostMapping("/cabgab")
-    fun postQuestionCabgabMain(): String{
+    @GetMapping("/cabgab")
+    fun getQuestionCabgabMain(model: Model): String {
+        // 進行中の試験があるか確認
+        val inProgressId = cabGabService.getInProgressCabGabId(TEST_USER_ID)
+        model.addAttribute("hasInProgress", inProgressId != null)
         return "questions/cabgab-main"
     }
 
-    // CAB/GAB問題画面
-    @PostMapping("/cabgab/study")
-    fun postQuestionCabgabStudy(): String{
+    @PostMapping("/cabgab/start")
+    fun startCabGabExam(
+        @RequestParam mode: String,
+        @RequestParam(required = false) middleIndex: Int?,
+        model: Model
+    ): String {
+        var examId: String? = null
+        var startIndex = 1
+
+        when (mode) {
+            "new_start" -> {
+                examId = cabGabService.startNewCabGab(TEST_USER_ID)
+                startIndex = 1
+            }
+            "new_middle" -> {
+                examId = cabGabService.startNewCabGab(TEST_USER_ID)
+                startIndex = middleIndex ?: 1
+            }
+            "resume" -> {
+                examId = cabGabService.getInProgressCabGabId(TEST_USER_ID)
+                if (examId != null) {
+                    startIndex = cabGabService.getCurrentCabGabIndex(examId)
+                } else {
+                    return "redirect:/cabgab"
+                }
+            }
+        }
+        // セッションにCabGab用の試験IDを保存
+        session.setAttribute("currentCabGabExamId", examId)
+        return "redirect:/cabgab/study?index=$startIndex"
+    }
+
+    @GetMapping("/cabgab/study")
+    fun getQuestionCabgabStudy(
+        @RequestParam(name = "index") index: Int,
+        model: Model
+    ): String {
+        // セッションチェック
+        val examId = session.getAttribute("currentCabGabExamId") as? String ?: return "redirect:/cabgab"
+
+        // カテゴリ決定ロジック
+        val targetCategory = if (index <= 40) "言語" else "非言語"
+
+        val request = CabGabRequest().apply { cabGabCategory = targetCategory }
+        val response = cabGabService.getCabGab(request)
+        val questionList = response.cabGabs
+
+        if (questionList.isNullOrEmpty()) return "redirect:/cabgab"
+
+        model.addAttribute("question", questionList[0])
+        model.addAttribute("currentIndex", index)
+        model.addAttribute("totalCount", CABGAB_TOTAL_COUNT)
+        model.addAttribute("progress", (index.toDouble() / CABGAB_TOTAL_COUNT * 100).toInt())
+
         return "questions/cabgab-study"
     }
 
-    //　CAB/GAB結果画面
-    @PostMapping("/cabgab/result")
-    fun postQuestionCabgabResult(): String{
-        return "questions/cabgab-result"
+    @PostMapping("/cabgab/study")
+    fun postQuestionCabgabStudy(
+        @RequestParam currentIndex: Int,
+        @RequestParam cabGabId: String,
+        @RequestParam(required = false) answer: Int?,
+        @RequestParam action: String
+    ): String {
+        val examId = session.getAttribute("currentCabGabExamId") as? String ?: return "redirect:/cabgab"
+
+        when (action) {
+            "suspend" -> {
+                session.removeAttribute("currentCabGabExamId")
+                return "redirect:/cabgab"
+            }
+            "finish" -> {
+                cabGabService.finishCabGab(examId)
+                session.removeAttribute("currentCabGabExamId")
+                return "redirect:/cabgab/result"
+            }
+            "next" -> {
+                if (answer != null) {
+                    cabGabService.saveOneCabGabAnswer(examId, cabGabId, answer)
+                }
+
+                val nextIndex = currentIndex + 1
+                if (nextIndex > CABGAB_TOTAL_COUNT) {
+                    cabGabService.finishCabGab(examId)
+                    session.removeAttribute("currentCabGabExamId")
+                    return "redirect:/cabgab/result"
+                }
+                return "redirect:/cabgab/study?index=$nextIndex"
+            }
+        }
+        return "redirect:/cabgab"
     }
 
+    // --- 結果・履歴画面 ---
+
+    @GetMapping("/spi/result")
+    fun getQuestionSpiResult(): String = "questions/spi-result"
+
+    @GetMapping("/spi/history")
+    fun getSpiHistory(): String = "questions/spi-history"
+
+    @GetMapping("/cabgab/result")
+    fun getQuestionCabgabResult(): String = "questions/cabgab-result"
+
+    @GetMapping("/cabgab/history")
+    fun getCabgabHistory(): String = "questions/cabgab-history"
+
+    @PostMapping("/spi/result")
+    fun postQuestionSpiResult(): String = "questions/spi-result"
+
+    @PostMapping("/spi/history")
+    fun postSpiHistory(): String = "questions/spi-history"
+
+    @PostMapping("/cabgab/result")
+    fun postQuestionCabgabResult(): String = "questions/cabgab-result"
+
+    @PostMapping("/cabgab/history")
+    fun postCabgabHistory(): String = "questions/cabgab-history"
 }

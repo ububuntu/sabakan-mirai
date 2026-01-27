@@ -10,44 +10,47 @@
 <header th:replace="common/header :: siteHeader('cabgabStudyHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
-    <form class="menu" action="/spi-submit" method="post">
-        <!-- 進捗 -->
-        <progress class="progress" max="100" value="70"></progress>
-        <!-- 問題 -->
+    <form class="menu" action="/cabgab/study" method="post">
+        <progress class="progress" max="100" th:value="${progress}"></progress>
+
+        <p class="progress-text">
+            問題 <span th:text="${currentIndex}">1</span> / <span th:text="${totalCount}">70</span>
+        </p>
+
         <div class="menu-item">
-            <p class="title">日本の首都</p>
+            <p class="title" th:text="${question.cabGabContent}">問題文</p>
         </div>
-        <!-- 選択肢 -->
-        <label class="menu-item choice-label" for="1">
-            <svg class="icon icon-with-bg" width="48" height="48">
-                <use href="#es"></use>
-            </svg>
-            <input type="radio" id="1" name="answer" value="1" required>
-            <span class="note">札幌</span>
+
+        <label class="menu-item choice-label" for="ans1">
+            <input type="radio" id="ans1" name="answer" value="1" required>
+            <span class="note" th:text="${question.cabGabAnswer1}">選択肢1</span>
         </label>
-        <label class="menu-item choice-label" for="2">
-            <svg class="icon icon-with-bg" width="48" height="48">
-                <use href="#es"></use>
-            </svg>
-            <input type="radio" id="2" name="answer" value="2">
-            <span class="note">大阪</span>
+
+        <label class="menu-item choice-label" for="ans2">
+            <input type="radio" id="ans2" name="answer" value="2">
+            <span class="note" th:text="${question.cabGabAnswer2}">選択肢2</span>
         </label>
-        <label class="menu-item choice-label" for="3">
-            <svg class="icon icon-with-bg" width="48" height="48">
-                <use href="#es"></use>
-            </svg>
-            <input type="radio" id="3" name="answer" value="3">
-            <span class="note">東京</span>
+
+        <label class="menu-item choice-label" for="ans3">
+            <input type="radio" id="ans3" name="answer" value="3">
+            <span class="note" th:text="${question.cabGabAnswer3}">選択肢3</span>
         </label>
-        <label class="menu-item choice-label" for="4">
-            <svg class="icon icon-with-bg" width="48" height="48">
-                <use href="#es"></use>
-            </svg>
-            <input type="radio" id="4" name="answer" value="4">
-            <span class="note">京都</span>
+
+        <label class="menu-item choice-label" for="ans4">
+            <input type="radio" id="ans4" name="answer" value="4">
+            <span class="note" th:text="${question.cabGabAnswer4}">選択肢4</span>
         </label>
-        <!-- 次の問題 -->
-        <button class="button-center" type="submit">次の問題</button>
+
+        <input type="hidden" name="cabGabId" th:value="${question.cabGabId}" />
+        <input type="hidden" name="currentIndex" th:value="${currentIndex}" />
+
+        <button class="button-center" type="submit" name="action" value="next">
+            <span th:text="${currentIndex == totalCount} ? '結果を見る' : '次の問題'">次の問題</span>
+        </button>
+
+        <button class="button-center" type="submit" name="action" value="suspend" formnovalidate>
+            中断して戻る
+        </button>
     </form>
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>

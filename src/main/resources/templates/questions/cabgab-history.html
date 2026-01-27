@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>CAB/GAB 実施履歴 | Mirai</title>
+    <link rel="stylesheet" th:href="@{/css/color.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<header th:replace="~{common/header :: siteHeader('cabgabHistoryHeader')}"></header>
+<div th:replace="~{common/color :: svg-sprite}"></div>
+
+<main>
+    <div class="menu">
+        <p class="note">過去の実施結果</p>
+        <table class="question-table">
+            <thead>
+            <tr>
+                <th>実施日</th>
+                <th>正答率</th>
+                <th>正解数</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="history : ${histories}">
+                <td th:text="${#temporals.format(history.cabGabHsDate, 'yyyy/MM/dd HH:mm')}">2024/01/01</td>
+                <td th:text="${history.accuracyRate} + '%'">80%</td>
+                <td th:text="${history.correctCount} + ' / ' + ${history.totalQuestions}">40 / 50</td>
+            </tr>
+            </tbody>
+        </table>
+        <button class="button-center" onclick="location.href='/cabgab'">戻る</button>
+    </div>
+</main>
+<footer th:replace="~{common/footer :: siteFooter}"></footer>
+</body>
+</html>

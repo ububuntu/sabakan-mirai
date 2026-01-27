@@ -107,6 +107,12 @@ public class MessageConfig {
         // M310: Cab/Gab問題の削除に失敗しました
         const val CABGAB_DELETE_FAILED = "Cab/Gab問題の削除に失敗しました"
 
+        // M311: Cab/Gab問題の更新に成功しました
+        const val CABGAB_UPDATE_SUCCESS = "Cab/Gab問題の更新に成功しました"
+
+        // M312: Cab/Gab問題の更新に失敗しました
+        const val CABGAB_UPDATE_FAILED = "Cab/Gab問題の更新に失敗しました"
+
         // M401: ESの登録に成功しました
         const val ES_INSERT_SUCCESS = "ESの登録に成功しました"
 

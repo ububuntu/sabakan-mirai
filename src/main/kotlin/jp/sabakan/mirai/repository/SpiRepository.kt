@@ -4,7 +4,6 @@ import jp.sabakan.mirai.data.SpiData
 import jp.sabakan.mirai.data.SpiDetailData
 import jp.sabakan.mirai.data.SpiHistoryData
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import java.math.BigDecimal
@@ -19,6 +18,7 @@ class SpiRepository {
         SELECT * FROM spi_m ORDER BY spi_category, spi_id
     """.trimIndent()
 
+    // 指定IDのSPI質問を取得するSQLクエリ
     val getSpiByIdSql = """
         SELECT * FROM spi_m WHERE spi_id = :spiId
     """.trimIndent()
@@ -66,6 +66,7 @@ class SpiRepository {
         VALUES (:spiDlId, :spiHsId, :spiId, :userAnswer, :isCorrect)
     """.trimIndent()
 
+    // SPI問題文を更新するSQLクエリ
     val updateSpiSql = """
         UPDATE spi_m 
         SET spi_content = :spiContent, 

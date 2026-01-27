@@ -11,7 +11,6 @@
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
     <form class="menu" action="/spi/study" method="post">
-
         <progress class="progress" max="100" th:value="${progress}"></progress>
 
         <p class="progress-text">
@@ -45,9 +44,6 @@
             <input type="radio" id="4" name="answer" value="4">
             <span class="note" th:text="${question.spiAnswer4}">選択肢4</span>
         </label>
-
-        <input type="hidden" name="spiId" th:value="${question.spiId}" />
-        <input type="hidden" name="currentIndex" th:value="${currentIndex}" />
 
         <input type="hidden" name="spiId" th:value="${question.spiId}" />
         <input type="hidden" name="currentIndex" th:value="${currentIndex}" />
