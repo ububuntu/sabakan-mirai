@@ -2,7 +2,7 @@
 CREATE TABLE user_m(
     user_id         CHAR(37) PRIMARY KEY NOT NULL UNIQUE ,
     user_name       VARCHAR(50) NOT NULL ,
-    user_address    VARCHAR(50) NOT NULL ,
+    user_address    VARCHAR(100) NOT NULL ,
     password        VARCHAR(255) NOT NULL ,
     user_role       VARCHAR(5) NOT NULL ,
     user_valid      BOOLEAN NOT NULL ,

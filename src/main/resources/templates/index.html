@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>ようこそ | Mirai</title>
@@ -60,13 +60,13 @@
         </div>
 
         <!--FIXME 管理者のみ実行可能に変更予定 -->
-        <div onclick="location.href='./manage'" class="menu-item">
+        <div sec:authorize="hasRole('ADMIN')" onclick="location.href='./manage'" class="menu-item">
             <svg class="icon icon-with-bg icon-manage" width="48" height="48">
                 <use href="#settings"></use>
             </svg>
             <div class="texts">
                 <p class="title">管理者画面</p>
-                <p class="desc">ユーザを管理しよう</p>
+                <p class="desc">システムの管理・ユーザー確認</p>
             </div>
         </div>
     </section>

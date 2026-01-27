@@ -4,8 +4,10 @@ import jakarta.validation.Valid
 import jp.sabakan.mirai.MessageConfig
 import jp.sabakan.mirai.request.GoalRequest
 import jp.sabakan.mirai.request.UserRequest
+import jp.sabakan.mirai.security.LoginUserDetails
 import jp.sabakan.mirai.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.validation.BindingResult
@@ -22,15 +24,18 @@ class UserController {
 
     // ユーザーメイン画面
     @GetMapping("/user")
-    fun getUser(model: Model): String {
-        // ダミーユーザIDでユーザ情報と目標情報を取得
-        val DUMMY_USER_ID = "test-user-id"
+    fun getUser(
+        model: Model,
+        @AuthenticationPrincipal userDetails: LoginUserDetails
+    ): String {
+        // ユーザー情報を取得
+        val userId = userDetails.getUserEntity().userId
         val userRequest = UserRequest().apply {
-            userId = DUMMY_USER_ID
+            this.userId = userId
         }
         val user = userService.getOneUserList(userRequest)
         val goalRequest = GoalRequest().apply {
-            userId = DUMMY_USER_ID
+            this.userId = userId
         }
 
         // 目標情報を取得
@@ -78,18 +83,19 @@ class UserController {
     // パスワード変更画面
     @PostMapping("/user/repassword")
     fun postRepassword(
-        @ModelAttribute userRequest: UserRequest,
+        @Valid @ModelAttribute userRequest: UserRequest,
+        bindingResult: BindingResult,
         model: Model,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
+        @AuthenticationPrincipal userDetails: LoginUserDetails
     ): String{
-        // ダミーユーザIDをセット
-        val DUMMY_USER_ID = "test-user-id"
-        userRequest.userId = DUMMY_USER_ID
-        val result = userService.updatePassword(userRequest)
+        // バリデーションエラーがある場合、元の入力画面に戻す
+        userRequest.userId = userDetails.getUserEntity().userId
 
         // 結果に応じてメッセージを設定しリダイレクト
         val response = userService.updatePassword(userRequest)
 
+        // 結果メッセージを設定しリダイレクト
         if (response.message == MessageConfig.PASSWORD_CHANGE_SUCCESS) {
             redirectAttributes.addFlashAttribute("message", response.message)
             return "redirect:/user"
@@ -105,7 +111,8 @@ class UserController {
         @Valid @ModelAttribute goalRequest: GoalRequest,
         bindingResult: BindingResult,
         model: Model,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
+        @AuthenticationPrincipal userDetails: LoginUserDetails
     ): String{
         // バリデーションエラーがある場合、元の入力画面に戻す
         if (bindingResult.hasErrors()) {
@@ -113,9 +120,8 @@ class UserController {
             return "users/user-target"
         }
 
-        // ダミーユーザIDをセット
-        val DUMMY_USER_ID = "test-user-id"
-        goalRequest.userId = DUMMY_USER_ID
+        // ユーザーIDを設定
+        goalRequest.userId = userDetails.getUserEntity().userId
         // 目標を保存
         val response = userService.saveGoal(goalRequest)
 

@@ -10,11 +10,22 @@ INSERT INTO user_m (
     updated_at,     -- 最終更新日
     lasted_at       -- 最終ログイン日時
 ) VALUES (
-    'test-user-id',
+    'U3f9c2e4a-7b61-4a9d-9d8a-2c6b5e8f1a42',
     'テスト太郎',
     'test@example.com',
-    'password123',
+    '$2a$10$32GM1QCgsowKty7TgMXc8eM2vXPWitdkKyBmVXhO/hHfutq1ORyq6',
     'USER',
+    TRUE,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+),
+(
+    'U8a4d1c72-5f3b-4e9a-b6c2-91f7d0a3e845', -- U + UUID (37文字)
+    'システム管理者',
+    'admin@example.com',
+    '$2a$10$32GM1QCgsowKty7TgMXc8eM2vXPWitdkKyBmVXhO/hHfutq1ORyq6', -- password123
+    'ADMIN',
     TRUE,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,

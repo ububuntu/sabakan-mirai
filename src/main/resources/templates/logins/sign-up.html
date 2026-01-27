@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,30 +9,39 @@
     <link rel="stylesheet" th:href="@{/css/sign.css}" />
 </head>
 <body>
-    <main class="auth-container">
-        <div class="app-icon">アプリアイコン</div>
-        <h1 class="app-title">Mirai</h1>
-        <p class="app-tagline">あなたの就活の道をサポート</p>
+<main class="auth-container">
+    <div class="app-icon">アプリアイコン</div>
+    <h1 class="app-title">Mirai</h1>
+    <p class="app-tagline">あなたの就活の道をサポート</p>
 
-        <form th:action="@{/signup}" method="post" class="auth-form">
-            <label for="username">ユーザ名</label>
-            <input type="text" id="username" name="username" placeholder="example" required />
+    <div th:if="${errorMessage}" style="color: red; margin-bottom: 1rem;">
+        <p th:text="${errorMessage}"></p>
+    </div>
 
-            <label for="email">メールアドレス</label>
-            <input type="email" id="email" name="email" placeholder="example@email.com" required />
+    <form th:action="@{/signup}" method="post" class="auth-form" th:object="${userRequest}">
 
-            <label for="password">パスワード</label>
-            <input type="password" id="password" name="password" placeholder="password" required />
+        <label for="username">ユーザ名</label>
+        <input type="text" id="username" name="userName" th:field="*{userName}" placeholder="example" required />
+        <span th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}" style="color:red;"></span>
 
-            <div class="checkbox-group">
-                <label><input type="checkbox" name="agree_terms" required /> 利用規約 に同意する</label>
-                <label><input type="checkbox" name="agree_privacy" required /> プライバシーポリシー に同意する</label>
-            </div>
+        <label for="email">メールアドレス</label>
+        <input type="email" id="email" name="userAddress" th:field="*{userAddress}" placeholder="example@email.com" required />
+        <span th:if="${#fields.hasErrors('userAddress')}" th:errors="*{userAddress}" style="color:red;"></span>
 
-            <button type="submit" class="auth-button">登録</button>
-        </form>
+        <label for="password">パスワード</label>
+        <input type="password" id="password" name="password" th:field="*{password}" placeholder="password" required />
+        <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red;"></span>
 
-        <footer class="auth-footer">Mirai by ぎじゅつりょくがすごい人たち</footer>
-    </main>
+        <div class="checkbox-group">
+            <label><input type="checkbox" name="agree_terms" required /> <a href="#">利用規約</a> に同意する</label>
+        </div>
+
+        <button type="submit" class="auth-button">登録</button>
+    </form>
+
+    <div class="auth-links">
+        <a th:href="@{/login}">すでにアカウントをお持ちの方はログイン</a>
+    </div>
+</main>
 </body>
 </html>

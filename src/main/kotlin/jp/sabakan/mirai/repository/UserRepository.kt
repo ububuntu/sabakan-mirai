@@ -81,29 +81,42 @@ class UserRepository {
         WHERE goal_id = :goalId
     """.trimIndent()
 
+    // ユーザ情報削除
     val deleteUser = """
         DELETE FROM user_m WHERE user_id = :userId
     """.trimIndent()
 
+    // 目標情報削除
     val deleteGoal = """
         DELETE FROM goal_m WHERE user_id = :userId
     """.trimIndent()
 
+    // エントリーシート情報削除
     val deleteEs = """
         DELEET FROM es_t WHERE user_id = :userId
     """.trimIndent()
 
+    // 面接情報削除
     val deleteInterview = """
         DELETE FROM interview_t WHERE user_id = :userId
     """.trimIndent()
 
+    // SPI履歴情報削除
     val deleteSpiHistory = """
         DELETE FROM spi_history_t WHERE user_id = :userId
     """.trimIndent()
 
+    // SPI詳細情報削除
     val deleteSpiDetail = """
         DELETE FROM spi_detail_t 
         WHERE spi_hs_id IN (SELECT spi_hs_id FROM spi_history_t WHERE user_id = :userId)
+    """.trimIndent()
+
+    // メールアドレス（userAddress）でユーザを検索するSQL
+    val getUserByAddress = """
+        SELECT user_id, user_name, user_address, password, user_role, user_valid, created_at, updated_at, lasted_at
+        FROM user_m
+        WHERE user_address = :userAddress
     """.trimIndent()
 
     /**
@@ -150,6 +163,18 @@ class UserRepository {
 
         // クエリの実行
         return njdbc.queryForList(getUserListByName, params)
+    }
+
+    /**
+     * メールアドレスでユーザ情報を取得する
+     *
+     * @param email ユーザメールアドレス
+     * @return ユーザ情報のマップ
+     */
+    fun getUserByAddress(email: String): Map<String, Any?>? {
+        val params = mapOf("userAddress" to email)
+        val result = njdbc.queryForList(getUserByAddress, params)
+        return if (result.isNotEmpty()) result[0] else null
     }
 
     /**

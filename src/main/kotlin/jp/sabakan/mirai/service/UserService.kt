@@ -11,6 +11,7 @@ import jp.sabakan.mirai.request.UserRequest
 import jp.sabakan.mirai.response.UserResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.interceptor.TransactionAspectSupport
@@ -22,6 +23,8 @@ import java.util.UUID
 class UserService {
     @Autowired
     lateinit var userRepository: UserRepository
+    @Autowired
+    lateinit var passwordEncoder: PasswordEncoder
 
     /**
      * ユーザ一覧を取得する
@@ -72,6 +75,20 @@ class UserService {
         }
 
         return tableToListEntity(table)
+    }
+
+    /**
+     * メールアドレスからユーザ情報を取得する
+     *
+     * @param email メールアドレス
+     * @return ユーザ情報エンティティ
+     */
+    fun getUserByEmail(email: String): UserEntity? {
+        val map = userRepository.getUserByAddress(email) ?: return null
+
+        // tableToListEntityはリストを受け取る仕様のため、リスト化して変換
+        val entityList = tableToListEntity(listOf(map))
+        return entityList.firstOrNull()
     }
 
     /**
