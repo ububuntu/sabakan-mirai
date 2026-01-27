@@ -2,7 +2,6 @@ package jp.sabakan.mirai.data
 
 import lombok.Data
 
-
 @Data
 class InterviewData {
     // 面接ID
@@ -28,4 +27,7 @@ class InterviewData {
 
     // 面接総合評価
     var interviewScore: String? = null
+
+    // 面接コメント
+    var interviewComment: String? = null
 }

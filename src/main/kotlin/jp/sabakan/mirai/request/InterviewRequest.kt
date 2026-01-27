@@ -27,4 +27,7 @@ class InterviewRequest {
 
     // 面接総合評価
     var interviewScore: String? = null
+
+    // 面接コメント
+    var interviewComment: String? = null
 }

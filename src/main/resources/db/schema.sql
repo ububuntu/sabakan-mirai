@@ -30,6 +30,7 @@ CREATE TABLE interview_t(
     interview_voice         INT,
     interview_date          DATE,
     interview_score         INT,
+    interviewComment        VARCHAR(500) NOT NULL ,
     FOREIGN KEY (user_id) REFERENCES user_m(user_id)
 );
 

@@ -2,6 +2,7 @@ package jp.sabakan.mirai.service
 
 import jp.sabakan.mirai.MessageConfig
 import jp.sabakan.mirai.component.InterviewComponent
+import jp.sabakan.mirai.component.InterviewCommentGenerator
 import jp.sabakan.mirai.data.InterviewData
 import jp.sabakan.mirai.entity.InterviewEntity
 import jp.sabakan.mirai.repository.InterviewRepository
@@ -10,21 +11,28 @@ import jp.sabakan.mirai.response.InterviewResponse
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
+import tools.jackson.databind.ObjectMapper
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.max
 
 @Service
 class InterviewService(
     private val interviewRepository: InterviewRepository,
-    private val interviewComponent: InterviewComponent
+    private val interviewComponent: InterviewComponent,
+    private val commentGenerator: InterviewCommentGenerator
 ) {
+    private val objectMapper = ObjectMapper()
     private val logger = LoggerFactory.getLogger(InterviewService::class.java)
 
     // 質問管理用の状態（インメモリ管理）
     private val questionLists = ConcurrentHashMap<String, MutableList<String>>()
     private val currentQuestionIndices = ConcurrentHashMap<String, Int>()
     private val sessionIdMap = ConcurrentHashMap<String, String>()
+
+    // セッションごとの分析結果を一時保存
+    private val sessionAnalysisResults = ConcurrentHashMap<String, Map<String, Any>>()
 
     companion object {
         private const val DEFAULT_SESSION = "default"
@@ -88,6 +96,7 @@ class InterviewService(
                     interviewPosture = request.interviewPosture
                     interviewVoice = request.interviewVoice
                     interviewScore = request.interviewScore
+                    interviewComment = request.interviewComment
                 }
 
                 interviewRepository.insertInterview(data)
@@ -124,14 +133,13 @@ class InterviewService(
     private fun tableToListEntity(table: List<Map<String, Any?>>): List<InterviewEntity> {
         return table.map { row ->
             InterviewEntity().apply {
-                interviewId = row["interview_id"] as String?
                 userId = row["user_id"] as String?
-                interviewExpression = row["interview_expression"] as String?
-                interviewEyes = row["interview_eyes"] as String?
-                interviewPosture = row["interview_posture"] as String?
-                interviewVoice = row["interview_voice"] as String?
-                interviewDate = row["interview_date"] as String?
-                interviewScore = row["interview_score"] as String?
+                interviewExpression = row["interview_expression"]?.toString()
+                interviewEyes = row["interview_eyes"]?.toString()
+                interviewPosture = row["interview_posture"]?.toString()
+                interviewVoice = row["interview_voice"]?.toString()
+                interviewScore = row["interview_score"]?.toString()
+                interviewComment = row["interview_comment"] as String?
             }
         }
     }
@@ -174,19 +182,201 @@ class InterviewService(
     }
 
     /**
-     * 面接セッションを停止する
+     * 面接セッションを停止し、結果とコメントを生成する
      */
-    fun stopInterviewSession(sessionId: String): CompletableFuture<String?> {
+    fun stopInterviewSession(sessionId: String): CompletableFuture<Map<String, Any?>> {
         logger.info("面接セッション停止: sessionId=$sessionId")
 
-        return interviewComponent.stopAnalysis().thenApply { result ->
+        return interviewComponent.stopAnalysis().thenApply { analysisResult ->
+            // 分析結果をパース
+            val report = parseAnalysisResult(analysisResult)
+
+            // 各項目の点数を計算
+            val scores = calculateScores(report)
+
+            // コメントを生成（4項目のみ）
+            val comments = generateComments(scores, report)
+
             // セッション情報をクリーンアップ
             questionLists.remove(sessionId)
             currentQuestionIndices.remove(sessionId)
             sessionIdMap.values.remove(sessionId)
 
-            logger.info("セッション停止完了: sessionId=$sessionId")
+            // 結果を保存（一時的）
+            val result = mapOf(
+                "scores" to scores,
+                "comments" to comments,
+                "report" to report
+            )
+            sessionAnalysisResults[sessionId] = result
+
+            logger.info("面接セッション停止完了: sessionId=$sessionId, scores=$scores")
             result
+        }
+    }
+
+    /**
+     * Flask APIからの分析結果をパースする
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun parseAnalysisResult(result: String?): Map<String, Any> {
+        if (result.isNullOrBlank()) {
+            logger.warn("分析結果が空です")
+            return emptyMap()
+        }
+
+        return try {
+            // JSONをパース
+            val jsonMap = objectMapper.readValue(result, Map::class.java) as Map<String, Any>
+            val report = jsonMap["report"] as? Map<String, Any> ?: emptyMap()
+
+            logger.info("分析結果パース成功: ${report.keys}")
+            report
+        } catch (e: Exception) {
+            logger.error("分析結果のパースに失敗しました", e)
+            emptyMap()
+        }
+    }
+
+    /**
+     * 分析結果から各項目の点数を計算する（4項目のみ）
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun calculateScores(report: Map<String, Any>): Map<String, Int> {
+        // 表情点数 (0-100)
+        val expressionScore = calculateExpressionScore(report)
+
+        // 視線点数 (0-100)
+        val eyesScore = calculateEyesScore(report)
+
+        // 姿勢点数 (0-100)
+        val postureScore = calculatePostureScore(report)
+
+
+        return mapOf(
+            "expression" to expressionScore,
+            "eyes" to eyesScore,
+            "posture" to postureScore
+        )
+    }
+
+    /**
+     * 表情点数を計算（喜びのパーセンテージ）
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun calculateExpressionScore(report: Map<String, Any>): Int {
+        val emotion = report["emotion"] as? Map<String, Any> ?: return 0
+        val joyPercentage = emotion["喜び"] as? Number ?: return 0
+        return joyPercentage.toInt().coerceIn(0, 100)
+    }
+
+    /**
+     * 視線点数を計算（正面を見ているパーセンテージ）
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun calculateEyesScore(report: Map<String, Any>): Int {
+        val gaze = report["gaze"] as? Map<String, Any> ?: return 0
+        val directions = gaze["directions"] as? Map<String, Any> ?: return 0
+        val frontGaze = directions["正面を見ている"] as? Map<String, Any> ?: return 0
+        val percentage = frontGaze["percentage"] as? Number ?: return 0
+        return percentage.toInt().coerceIn(0, 100)
+    }
+
+    /**
+     * 姿勢点数を計算（perfect_rate）
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun calculatePostureScore(report: Map<String, Any>): Int {
+        val posture = report["posture"] as? Map<String, Any> ?: return 0
+        val perfectRate = posture["perfect_rate"] as? Number ?: return 0
+        return perfectRate.toInt().coerceIn(0, 100)
+    }
+
+    /**
+     * 発話速度点数を計算
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun calculateSpeechSpeedScore(report: Map<String, Any>): Int {
+        val speech = report["speech"] as? Map<String, Any> ?: return 0
+        val charsPerMinute = (speech["chars_per_minute"] as? Number)?.toDouble() ?: return 0
+
+        // 適切な発話速度: 300-400文字/分
+        return when {
+            charsPerMinute in 300.0..400.0 -> 100
+            charsPerMinute < 300.0 -> ((charsPerMinute / 300.0) * 100).toInt()
+            else -> max(0, (100 - (charsPerMinute - 400) / 2).toInt())
+        }.coerceIn(0, 100)
+    }
+
+    /**
+     * 点数と分析結果から4項目のコメントを生成する
+     */
+    private fun generateComments(scores: Map<String, Int>, report: Map<String, Any>): Map<String, String> {
+        val expressionScore = scores["expression"] ?: 0
+        val eyesScore = scores["eyes"] ?: 0
+        val postureScore = scores["posture"] ?: 0
+        val speechSpeedScore = scores["speechSpeed"] ?: 0
+
+        // 姿勢の詳細コメント生成（点数が低い場合のみ詳細化）
+        val postureComment = if (postureScore < 70) {
+            generatePostureDetailComment(report)
+        } else {
+            commentGenerator.generatePostureComment(postureScore)
+        }
+
+        // 4項目の評価結果を生成
+        return commentGenerator.generateEvaluationResults(
+            expressionScore,
+            eyesScore,
+            postureScore,
+            speechSpeedScore
+        )
+    }
+
+    /**
+     * 姿勢の詳細コメントを生成（どの項目がダメかを明示）
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun generatePostureDetailComment(report: Map<String, Any>): String {
+        val posture = report["posture"] as? Map<String, Any> ?: return "姿勢データが取得できませんでした"
+
+        val faceCentered = posture["face_centered"] as? Map<String, Any>
+        val faceStraight = posture["face_straight"] as? Map<String, Any>
+        val shouldersLevel = posture["shoulders_level"] as? Map<String, Any>
+
+        val issues = mutableListOf<String>()
+
+        // 顔が中央にあるかチェック
+        if (faceCentered != null) {
+            val success = (faceCentered["success"] as? Number)?.toInt() ?: 0
+            val fail = (faceCentered["fail"] as? Number)?.toInt() ?: 0
+            if (fail > success) {
+                issues.add("顔が中央にありません")
+            }
+        }
+
+        // 顔が傾いていないかチェック
+        if (faceStraight != null) {
+            val success = (faceStraight["success"] as? Number)?.toInt() ?: 0
+            val fail = (faceStraight["fail"] as? Number)?.toInt() ?: 0
+            if (fail > success) {
+                issues.add("顔が傾いています")
+            }
+        }
+
+        // 肩が水平かチェック
+        if (shouldersLevel != null) {
+            val success = (shouldersLevel["success"] as? Number)?.toInt() ?: 0
+            val fail = (shouldersLevel["fail"] as? Number)?.toInt() ?: 0
+            if (fail > success) {
+                issues.add("肩が水平ではありません")
+            }
+        }
+
+        return if (issues.isEmpty()) {
+            "姿勢は良好ですが、さらなる改善が可能です。"
+        } else {
+            "緊張から表情が硬くなる場面がありました。${issues.joinToString("、")}。正しい姿勢を意識しましょう。"
         }
     }
 
@@ -228,6 +418,13 @@ class InterviewService(
     fun getAudioResult(): CompletableFuture<ByteArray> {
         logger.info("音声結果取得")
         return interviewComponent.getAudioResult().thenApply { it ?: ByteArray(0) }
+    }
+
+    /**
+     * セッションの分析結果を取得する
+     */
+    fun getSessionResult(sessionId: String): Map<String, Any>? {
+        return sessionAnalysisResults[sessionId]
     }
 
     // ==================== 質問管理（デフォルトセッション対応） ====================

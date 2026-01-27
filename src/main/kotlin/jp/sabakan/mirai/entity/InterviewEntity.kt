@@ -4,9 +4,6 @@ import lombok.Data
 
 @Data
 class InterviewEntity {
-    // 面接ID
-    var interviewId: String? = null
-
     // ユーザID
     var userId: String? = null
 
@@ -22,9 +19,9 @@ class InterviewEntity {
     // 発話速度評価
     var interviewVoice: String? = null
 
-    // 面接日時
-    var interviewDate: String? = null
-
     // 面接総合評価
     var interviewScore: String? = null
+
+    // 面接コメント
+    var interviewComment: String? = null
 }

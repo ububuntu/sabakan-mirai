@@ -28,7 +28,8 @@ class InterviewRepository(
                 interview_posture,
                 interview_voice,
                 interview_date,
-                interview_score
+                interview_score,
+                interview_comment
             FROM interview_t
             WHERE user_id = :userId
             ORDER BY interview_date DESC
@@ -43,7 +44,8 @@ class InterviewRepository(
                 interview_posture,
                 interview_voice,
                 interview_date,
-                interview_score
+                interview_score,
+                interview_comment
             ) VALUES (
                 :interviewId,
                 :userId,
@@ -52,7 +54,8 @@ class InterviewRepository(
                 :interviewPosture,
                 :interviewVoice,
                 CURRENT_TIMESTAMP,
-                :interviewScore
+                :interviewScore,
+                :interviewComment
             )
         """
 
@@ -65,7 +68,8 @@ class InterviewRepository(
                 interview_posture,
                 interview_voice,
                 interview_date,
-                interview_score
+                interview_score,
+                interview_comment
             FROM interview_t
             WHERE interview_id = :interviewId
         """
@@ -77,7 +81,8 @@ class InterviewRepository(
                 interview_eyes = :interviewEyes,
                 interview_posture = :interviewPosture,
                 interview_voice = :interviewVoice,
-                interview_score = :interviewScore
+                interview_score = :interviewScore,
+                interview_comment = :interviewComment
             WHERE interview_id = :interviewId
         """
 
@@ -100,7 +105,8 @@ class InterviewRepository(
                 interview_posture,
                 interview_voice,
                 interview_date,
-                interview_score
+                interview_score,
+                interview_comment
             FROM interview_t
             WHERE user_id = :userId
             ORDER BY interview_date DESC
@@ -147,7 +153,8 @@ class InterviewRepository(
             "interviewEyes" to data.interviewEyes,
             "interviewPosture" to data.interviewPosture,
             "interviewVoice" to data.interviewVoice,
-            "interviewScore" to data.interviewScore
+            "interviewScore" to data.interviewScore,
+            "interviewComment" to data.interviewComment
         )
 
         return try {
@@ -195,7 +202,8 @@ class InterviewRepository(
             "interviewEyes" to data.interviewEyes,
             "interviewPosture" to data.interviewPosture,
             "interviewVoice" to data.interviewVoice,
-            "interviewScore" to data.interviewScore
+            "interviewScore" to data.interviewScore,
+            "interviewComment" to data.interviewComment
         )
 
         return try {

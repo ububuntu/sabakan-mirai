@@ -131,6 +131,44 @@ class InterviewApiController(
         }
     }
 
+    @GetMapping("/sessions/{sessionId}/result")
+    @ResponseBody
+    fun getSessionResult(
+        @PathVariable sessionId: String
+    ): ResponseEntity<Map<String, Any>> {
+        return try {
+            logger.info("セッション結果取得リクエスト: sessionId=$sessionId")
+
+            val result = interviewService.getSessionResult(sessionId)
+
+            if (result != null) {
+                logger.info("セッション結果取得成功: sessionId=$sessionId")
+                ResponseEntity.ok(
+                    mapOf(
+                        "status" to "success",
+                        "data" to result
+                    )
+                )
+            } else {
+                logger.warn("セッション結果が見つかりません: sessionId=$sessionId")
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    mapOf(
+                        "status" to "error",
+                        "message" to "セッション結果が見つかりません"
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            logger.error("セッション結果取得エラー: sessionId=$sessionId", e)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                mapOf(
+                    "status" to "error",
+                    "message" to "セッション結果の取得に失敗しました: ${e.message}"
+                )
+            )
+        }
+    }
+
     // ========================================
     // POST リクエスト
     // ========================================
@@ -176,10 +214,22 @@ class InterviewApiController(
         return interviewService.stopInterviewSession(sessionId)
             .thenApply<ResponseEntity<Map<String, Any?>>> { result ->
                 logger.info("面接セッション停止成功: sessionId=$sessionId")
+
+                // 点数とコメントを抽出
+                @Suppress("UNCHECKED_CAST")
+                val scores = result["scores"] as? Map<String, Int> ?: emptyMap()
+                @Suppress("UNCHECKED_CAST")
+                val comments = result["comments"] as? Map<String, String> ?: emptyMap()
+
+                // 点数をString型に変換
+                val scoresStr = scores.mapValues { it.value.toString() }
+
                 ResponseEntity.ok(
                     mapOf(
                         "status" to "success",
-                        "result" to result,
+                        "sessionId" to sessionId,
+                        "scores" to scoresStr,
+                        "comments" to comments,
                         "message" to "面接セッションを停止しました"
                     )
                 )
