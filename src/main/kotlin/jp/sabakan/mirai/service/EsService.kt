@@ -6,7 +6,6 @@ import jp.sabakan.mirai.entity.EsEntity
 import jp.sabakan.mirai.repository.EsRepository
 import jp.sabakan.mirai.request.EsRequest
 import jp.sabakan.mirai.response.EsResponse
-import org.apache.logging.log4j.message.Message
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -136,14 +135,15 @@ class EsService {
     fun tableToListEntity(table: List<Map<String, Any?>>): List<EsEntity> {
         return table.map { row ->
             EsEntity().apply {
-                esId = row["esId"] as String?
-                userId = row["userId"] as String?
-                esContentReason = row["esContentReason"] as String?
-                esContentSelfpr = row["esContentSelfpr"] as String?
-                esContentActivities = row["esContentActivities"] as String?
-                esContentStwe = row["esContentStwe"] as String?
-                esOccupation = row["esOccupation"] as String?
-                esDate = row["esDate"] as String?
+                // 左側はEntityのプロパティ（キャメル）、右側はDBのカラム名（スネーク）
+                esId = row["es_id"] as String?
+                userId = row["user_id"] as String?
+                esContentReason = row["es_content_reason"] as String?
+                esContentSelfpr = row["es_content_selfpr"] as String?
+                esContentActivities = row["es_content_activities"] as String?
+                esContentStwe = row["es_content_stwe"] as String?
+                esOccupation = row["es_occupation"] as String?
+                esDate = row["es_date"]?.toString() // DATE型をStringへ
             }
         }
     }

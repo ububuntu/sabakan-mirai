@@ -23,7 +23,21 @@ class EsController {
 
     // ESメイン画面
     @GetMapping("/es")
-    fun getEs(): String {
+    fun getEs(principal: Principal?, model: Model): String {
+        // ユーザーIDの取得
+        val userId = principal?.name ?: "test-user-id"
+
+        // 検索リクエストの作成
+        val request = EsRequest().apply {
+            this.userId = userId
+        }
+
+        // サービスから一覧を取得
+        val response = esService.getEsList(request)
+
+        // 画面にリストを渡す
+        model.addAttribute("esList", response.esList)
+
         return "entrysheet/es-main"
     }
 

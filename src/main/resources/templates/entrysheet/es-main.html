@@ -33,19 +33,43 @@
                     <p class="desc">編集管理</p>
                 </div>
             </div>
+<!--            &lt;!&ndash; 最近作業 &ndash;&gt;-->
+<!--            <a class="note">最近の作業</a>-->
+<!--            <div onclick="location.href='./es-creation'" class="menu-item">-->
+<!--                <svg class="icon icon-with-bg" width="48" height="48">-->
+<!--                    <use href="#file"></use>-->
+<!--                </svg>-->
+<!--                <div class="texts">-->
+<!--                    <p class="title">あいうえお</p>-->
+<!--                    <p class="desc">かきくけこ</p>-->
+<!--                </div>-->
+<!--            </div>-->
+        </section>
 
+        <section class="menu" aria-label="esリスト">
+            <div class="sort">
+            </div>
 
-            <!-- 最近作業 -->
-            <a class="note">最近の作業</a>
-            <div onclick="location.href='./es-creation'" class="menu-item">
-                <svg class="icon icon-with-bg" width="48" height="48">
-                    <use href="#file"></use>
-                </svg>
+            <div th:each="es : ${esList}" class="menu-item"
+                 th:onclick="|location.href='@{/es/creation(esId=${es.esId})}'|">
                 <div class="texts">
-                    <p class="title">あいうえお</p>
-                    <p class="desc">かきくけこ</p>
+                    <p class="title" th:text="${es.esOccupation}">企業名</p>
+
+                    <div class="meta status-row">
+                        <p class="status draft">制作中</p>
+                        <p class="desc">更新日時未定</p>
+                    </div>
+
+                    <p class="desc">作成日：<span th:text="${es.esDate}">2025/01/01</span></p>
                 </div>
             </div>
+
+            <div th:if="${esList == null or esList.isEmpty()}" class="menu-item">
+                <div class="texts">
+                    <p class="title">作成済みのESはありません</p>
+                </div>
+            </div>
+
         </section>
     </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
