@@ -181,42 +181,46 @@ class UserService {
     @Transactional(rollbackFor = [Exception::class])
     fun updatePassword(request: UserRequest): UserResponse {
         val response = UserResponse()
-        val newPassword = request.password
-        if (newPassword.isNullOrEmpty()) {
+
+        // 入力チェック
+        if (request.password.isNullOrEmpty()) {
             response.message = MessageConfig.PASSWORD_CHANGE_FAILED
             return response
         }
-
-        // ユーザ情報取得
-        val data = UserData().apply {
-            this.userId = request.userId
-        }
-        val map = userRepository.getOneUserList(data)
-        if (map == null) {
-            response.message = MessageConfig.USER_NOT_FOUND
+        if (request.password != request.passwordConfirm) {
+            response.message = MessageConfig.PASSWORD_MISMATCH_ERROR
             return response
         }
 
-        // ユーザ情報更新
-        val inputdata = UserData().apply {
-            this.userId =  request.userId
-            this.userName = map["user_name"] as String?
-            this.userAddress = map["user_address"] as String?
-            this.password = newPassword
-            this.userRole = map["user_role"] as String?
-            this.isValid = map["user_valid"] as Boolean?
+        // ユーザIDチェック
+        val userId = request.userId ?: return response.apply { message = MessageConfig.USER_NOT_FOUND }
+        val userMap = userRepository.getOneUserList(UserData().apply { this.userId = userId })
+            ?: return response.apply { message = MessageConfig.USER_NOT_FOUND }
 
+        // 現在のパスワードチェック
+        val currentEncodedPassword = userMap["password"] as String
+        if (!passwordEncoder.matches(request.oldPassword, currentEncodedPassword)) {
+            response.message = MessageConfig.CURRENT_PASSWORD_INCORRECT_ERROR
+            return response
         }
 
-        // ユーザ情報更新処理を実行
-        try {
-            userRepository.updateUser(inputdata)
-            response.message = MessageConfig.USER_UPDATE_SUCCESS
+        // パスワード更新処理
+        val inputData = UserData().apply {
+            this.userId = userId
+            this.userName = userMap["user_name"] as String?
+            this.userAddress = userMap["user_address"] as String?
+            this.password = passwordEncoder.encode(request.password)
+            this.userRole = userMap["user_role"] as String?
+            this.isValid = userMap["user_valid"] as Boolean?
+        }
+
+        // 更新実行
+        return try {
+            userRepository.updateUser(inputData)
+            response.apply { message = MessageConfig.USER_UPDATE_SUCCESS }
         } catch (e: DataIntegrityViolationException) {
-            response.message = MessageConfig.USER_UPDATE_FAILED
+            response.apply { message = MessageConfig.USER_UPDATE_FAILED }
         }
-
-        return response
     }
 
     /**

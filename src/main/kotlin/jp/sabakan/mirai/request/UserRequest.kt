@@ -27,6 +27,14 @@ class UserRequest {
     @field:Size(max = 100, message = MessageConfig.LENGTH_MAXIMUM_ERROR)
     var password: String? = null
 
+    // 旧パスワード
+    @field:Size(max = 100, message = MessageConfig.LENGTH_MAXIMUM_ERROR)
+    var oldPassword: String? = null
+
+    // パスワード確認用
+    @field:Size(max = 100, message = MessageConfig.LENGTH_MAXIMUM_ERROR)
+    var passwordConfirm: String? = null
+
     // 権限
     var userRole: String? = null
 

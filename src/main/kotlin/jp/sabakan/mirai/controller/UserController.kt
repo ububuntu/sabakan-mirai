@@ -1,5 +1,6 @@
 package jp.sabakan.mirai.controller
 
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import jp.sabakan.mirai.MessageConfig
 import jp.sabakan.mirai.request.GoalRequest
@@ -87,18 +88,19 @@ class UserController {
         bindingResult: BindingResult,
         model: Model,
         redirectAttributes: RedirectAttributes,
-        @AuthenticationPrincipal userDetails: LoginUserDetails
-    ): String{
-        // バリデーションエラーがある場合、元の入力画面に戻す
+        @AuthenticationPrincipal userDetails: LoginUserDetails,
+        request: HttpServletRequest // 追加：ServletRequestを受け取る
+    ): String {
         userRequest.userId = userDetails.getUserEntity().userId
 
-        // 結果に応じてメッセージを設定しリダイレクト
         val response = userService.updatePassword(userRequest)
 
-        // 結果メッセージを設定しリダイレクト
         if (response.message == MessageConfig.PASSWORD_CHANGE_SUCCESS) {
+            // パスワード変更成功時のみログアウト処理を実行
+            // TODO セッションの破棄方法について再検討
+            request.logout()
             redirectAttributes.addFlashAttribute("message", response.message)
-            return "redirect:/user"
+            return "redirect:/login?passwordChanged=true"
         } else {
             model.addAttribute("message", response.message)
             return "users/user-repassword"

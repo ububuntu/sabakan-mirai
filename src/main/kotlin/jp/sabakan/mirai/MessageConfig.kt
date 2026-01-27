@@ -38,6 +38,12 @@ public class MessageConfig {
         // M010: ログアウトしました
         const val LOGOUT_SUCCESS = "ログアウトしました"
 
+        // M011: 新しいパスワードと確認用パスワードが一致しません
+        const val PASSWORD_MISMATCH_ERROR = "新しいパスワードと確認用パスワードが一致しません"
+
+        // M012: 現在のパスワードが正しくありません
+        const val CURRENT_PASSWORD_INCORRECT_ERROR = "現在のパスワードが正しくありません"
+
         // M011: パスワードの変更が完了しました
         const val PASSWORD_CHANGE_SUCCESS = "パスワードの変更が完了しました"
 
