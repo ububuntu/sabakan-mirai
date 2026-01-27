@@ -572,14 +572,14 @@ function loadCurrentQuestion() {
         })
         .then(function(data) {
             console.log('📊 取得データ:', data);
-            var questionElement = document.querySelector(".center-texts");
+            var questionElement = document.querySelector(".question");
             var progressElement = document.querySelector(".progress");
 
             if (questionElement) {
                 questionElement.textContent = data.question;
                 console.log('✅ 質問表示完了:', data.question);
             } else {
-                console.error('❌ .center-texts 要素が見つかりません');
+                console.error('❌ .question 要素が見つかりません');
             }
 
             if (progressElement) {
@@ -591,7 +591,7 @@ function loadCurrentQuestion() {
         })
         .catch(function(error) {
             console.error('❌ エラー:', error);
-            var questionElement = document.querySelector(".center-texts");
+            var questionElement = document.querySelector(".question");
             if (questionElement) {
                 questionElement.textContent = '質問の読み込みに失敗しました';
             }
@@ -626,7 +626,7 @@ function nextQuestion() {
         .then(function(data) {
             console.log('📊 次の質問データ:', data);
 
-            var questionElement = document.querySelector(".center-texts");
+            var questionElement = document.querySelector(".question");
             var progressElement = document.querySelector(".progress");
 
             if (data.isFinished) {
@@ -658,7 +658,7 @@ function nextQuestion() {
         })
         .catch(function(error) {
             console.error('❌ エラー:', error);
-            var questionElement = document.querySelector(".center-texts");
+            var questionElement = document.querySelector(".question");
             if (questionElement) {
                 questionElement.textContent = '質問の読み込みに失敗しました';
             }
@@ -696,7 +696,7 @@ window.addEventListener('load', function() {
 // 質問読み込み（確実に実行）
 setTimeout(function() {
 
-    var questionElement = document.querySelector(".center-texts");
+    var questionElement = document.querySelector(".question");
     var progressElement = document.querySelector(".progress");
 
     if (questionElement && progressElement) {
@@ -718,7 +718,7 @@ window.addEventListener('beforeunload', function() {
 setTimeout(function() {
 
     // 要素の存在確認
-    var questionElement = document.querySelector(".center-texts");
+    var questionElement = document.querySelector(".question");
     var progressElement = document.querySelector(".progress");
 
     // 強制的に質問を読み込む

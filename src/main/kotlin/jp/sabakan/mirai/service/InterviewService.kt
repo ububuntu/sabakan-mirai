@@ -32,9 +32,9 @@ class InterviewService(
 
         // デフォルト質問リスト
         private val DEFAULT_QUESTIONS = listOf(
-            "あなたの志望動機を教えてください。",
+            "志望動機を教えてください",
             "自己PRをお願いします",
-            "あなたの長所と短所を教えてください"
+            "長所と短所を教えてください"
         )
     }
 
