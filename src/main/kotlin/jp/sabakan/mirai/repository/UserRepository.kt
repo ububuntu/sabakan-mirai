@@ -5,6 +5,7 @@ import jp.sabakan.mirai.data.UserData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Repository
 
 /**
@@ -194,7 +195,7 @@ class UserRepository {
             "userId" to data.userId,
             "userName" to data.userName,
             "userAddress" to data.userAddress,
-            "password" to data.password,
+            "password" to BCryptPasswordEncoder().encode(data.password),
             "userRole" to data.userRole,
             "isValid" to data.isValid
         )

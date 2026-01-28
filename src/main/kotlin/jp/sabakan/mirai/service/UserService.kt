@@ -98,7 +98,6 @@ class UserService {
      */
     fun insertUser(request: UserRequest): UserResponse {
         val response = UserResponse()
-
         // ユーザIDを生成
         val userId = toCreateUserId()
 
@@ -107,7 +106,7 @@ class UserService {
             this.userId = userId
             this.userName = request.userName
             this.userAddress = request.userAddress
-            this.password = request.password
+            this.password = request.password?.let { passwordEncoder.encode(it) }
             this.userRole = request.userRole
             this.isValid = request.isValid
         }
@@ -132,11 +131,7 @@ class UserService {
     fun updateUser(request: UserRequest): UserResponse {
         val response = UserResponse()
         // ユーザIDがnullの場合は処理を中断
-        val userId = request.userId
-        if (userId == null) {
-            response.message = MessageConfig.USER_NOT_FOUND
-            return response
-        }
+        val userId = request.userId ?: return response.apply { message = MessageConfig.USER_NOT_FOUND }
 
         // 現在のパスワードを取得
         val currentPassword = duplicatePassword(userId)
@@ -156,8 +151,7 @@ class UserService {
             this.password = if (request.password.isNullOrEmpty()) {
                 currentPassword
             } else {
-                request.password
-                //passwordEncoder.encode(request.password)
+                passwordEncoder.encode(request.password)
             }
         }
 
