@@ -165,34 +165,6 @@ class ManageController {
         }
 
     }
-    @PostMapping("/manage/users/delete")
-    fun deleteUser(
-        @RequestParam("userId") userId: String,
-        redirectAttributes: RedirectAttributes
-    ): String {
-        val request = UserRequest().apply {
-            this.userId = userId
-        }
-
-        try {
-            // サービスを呼び出して削除実行
-            userService.deleteUser(request)
-
-            // 成功メッセージ
-            // TODO aaa
-            redirectAttributes.addFlashAttribute("message", "ユーザを削除しました。")
-            return "redirect:/manage/users"
-
-        } catch (e: Exception) {
-            // エラーログ出力など
-            e.printStackTrace()
-
-            // 失敗メッセージ
-            redirectAttributes.addFlashAttribute("message", "削除に失敗しました。")
-            // 編集画面または一覧画面に戻す
-            return "redirect:/manage/users/edit/$userId"
-        }
-    }
 
     //todo SPI
 

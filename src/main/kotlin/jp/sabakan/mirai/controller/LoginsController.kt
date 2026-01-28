@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
 @Controller
@@ -27,8 +28,13 @@ class LoginsController {
      * SecurityConfigで .loginPage("/login") としているため、ここも /login にします。
      */
     @GetMapping("/login")
-    fun login(model: Model): String {
-        // htmlファイルが src/main/resources/templates/logins/sign-in.html にある場合
+    fun login(
+        @RequestParam(value = "logout", required = false) logout: String?,
+        model: Model
+    ): String {
+        if (logout != null) {
+            model.addAttribute("message", "ログアウトしました。")
+        }
         return "logins/sign-in"
     }
 

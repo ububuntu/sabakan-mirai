@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Repository
+import java.util.Date
 
 /**
  * ユーザ情報リポジトリクラス
@@ -39,6 +40,14 @@ class UserRepository {
         FROM user_m
         WHERE user_name LIKE :keyword
         ORDER BY created_at DESC
+    """.trimIndent()
+
+    // 期限切れユーザID取得
+    val getExpiredUserIdsSql = """
+        SELECT user_id 
+        FROM user_m 
+        WHERE user_valid = false 
+        AND updated_at < :thresholdDate
     """.trimIndent()
 
     // ユーザ情報登録
@@ -131,6 +140,17 @@ class UserRepository {
 
         // クエリの実行
         return njdbc.queryForList(getUserList, params)
+    }
+
+    /**
+     * 期限切れユーザID一覧を取得する
+     *
+     * @param thresholdDate 期限日付
+     * @return 期限切れユーザIDのリスト
+     */
+    fun getExpiredUserIds(thresholdDate: Date): List<String> {
+        val params = mapOf("thresholdDate" to thresholdDate)
+        return njdbc.queryForList(getExpiredUserIdsSql, params).map { it["user_id"] as String }
     }
 
     /**

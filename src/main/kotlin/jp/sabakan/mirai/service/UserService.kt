@@ -11,6 +11,7 @@ import jp.sabakan.mirai.request.UserRequest
 import jp.sabakan.mirai.response.UserResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -337,16 +338,37 @@ class UserService {
         return response
     }
 
-    @Transactional(rollbackFor = [Exception::class])
-    fun deleteUser(request: UserRequest): Boolean {
-        val userId = request.userId ?: return false
+    /**
+     * 期限切れユーザを自動削除する（毎日3時に実行）
+     */
+    @Scheduled(cron = "0 0 3 * * *")
+    fun autoDeleteExpiredUsers(){
+        // 3ヶ月前の日付を計算
+        val thresholdLocalDate = LocalDate.now().minusMonths(3)
+        val thresholdDate = java.sql.Date.valueOf(thresholdLocalDate)
 
-        try{
-            userRepository.deleteUser(userId)
-            return true
-        } catch (e: DataIntegrityViolationException) {
-            throw e
+        val targetUserIds = userRepository.getExpiredUserIds(thresholdDate)
+        if (targetUserIds.isEmpty()) {
+            return
         }
+        for (userId in targetUserIds) {
+            try {
+                deleteUserTransaction(userId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    /**
+     * ユーザ情報を削除する（トランザクション内で実行）
+     *
+     * @param userId ユーザID
+     */
+    @Transactional(rollbackFor = [Exception::class])
+    fun deleteUserTransaction(userId: String) {
+        // Repositoryにある「たくさんのテーブルを消すメソッド」を呼ぶ
+        userRepository.deleteUser(userId)
     }
 
     /**
