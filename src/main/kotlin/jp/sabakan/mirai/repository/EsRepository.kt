@@ -1,6 +1,7 @@
 package jp.sabakan.mirai.repository
 
 import jp.sabakan.mirai.data.EsData
+import jp.sabakan.mirai.request.EsRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -76,15 +77,14 @@ class EsRepository {
      * @param userId ユーザID
      * @return ESデータ (存在しない場合はnull)
      */
-    fun getEsById(esId: String, userId: String): Map<String, Any?>? {
+    fun getEsById(data: EsData): List<Map<String, Any?>> {
         val paramMap = mapOf(
-            "esId" to esId,
-            "userId" to userId
+            "esId" to data.esId,
+            "userId" to data.userId
         )
 
         // 1件取得 (存在しない場合は空のリストが返るので考慮)
-        val list = jdbc.queryForList(getEsById, paramMap)
-        return if (list.isEmpty()) null else list[0]
+        return jdbc.queryForList(getEsById, paramMap)
     }
 
     /**

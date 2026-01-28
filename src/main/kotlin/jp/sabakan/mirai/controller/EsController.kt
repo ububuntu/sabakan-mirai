@@ -3,13 +3,14 @@ package jp.sabakan.mirai.controller
 import jp.sabakan.mirai.request.EsRequest
 import jp.sabakan.mirai.service.EsService
 import jp.sabakan.mirai.component.EcComponent
+import jp.sabakan.mirai.security.LoginUserDetails
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
-import java.security.Principal
 
 @Controller
 class EsController {
@@ -23,9 +24,9 @@ class EsController {
 
     // ESメイン画面
     @GetMapping("/es")
-    fun getEs(principal: Principal?, model: Model): String {
+    fun getEs(@AuthenticationPrincipal userDetails: LoginUserDetails, model: Model): String {
         // ユーザーIDの取得
-        val userId = principal?.name ?: "test-user-id"
+        val userId = userDetails.getUserEntity().userId
 
         // 検索リクエストの作成
         val request = EsRequest().apply {
@@ -43,9 +44,9 @@ class EsController {
 
     // ES一覧画面 (GET)
     @GetMapping("/es/list")
-    fun getEsList(principal: Principal?, model: Model): String { // principalはnullableにしておくのが安全
-        // ログインユーザーIDの取得 (認証がない場合は仮のIDを設定)
-        val userId = principal?.name ?: "test-user-id"
+    fun getEsList(@AuthenticationPrincipal userDetails: LoginUserDetails, model: Model): String { // principalはnullableにしておくのが安全
+        // ユーザーIDの取得
+        val userId = userDetails.getUserEntity().userId
 
         // 検索用リクエストオブジェクトの作成
         val request = EsRequest().apply {
@@ -61,67 +62,40 @@ class EsController {
         return "/entrysheet/es-list"
     }
 
-    // ES作成画面 (GET)
+    // ES新規作成画面 (POST)
     @GetMapping("/es/creation")
-    fun getEsCreation(
-        @RequestParam(required = false) esId: String?,
-        principal: Principal?,
-        model: Model
-    ): String {
-
-        val userId = principal?.name ?: "test-user-id"
-        val esRequest = if (esId != null) {
-            // IDがあるならDBから取得
-            esService.getEsDetail(esId, userId)
-        } else {
-            // 新規なら空のオブジェクト
-            EsRequest()
-        }
-
-        // 画面に渡す
-        model.addAttribute("esRequest", esRequest)
+    fun getEsCreation(model: Model): String {
+        // IDを指定せず、常に空のEsRequestを渡す
+        model.addAttribute("esRequest", EsRequest())
         return "entrysheet/es-creation"
     }
 
+    // ES新規作成画面 (GET)
     @PostMapping("/es/creation")
     fun postEsCreation(
         esRequest: EsRequest,
         @RequestParam(value = "action", required = false) action: String?,
-        // HTMLのhiddenから「前回の結果」を受け取る（最初はnullなのでOptionalにする）
         @RequestParam(required = false) reasonResult: String?,
         @RequestParam(required = false) selfprResult: String?,
         @RequestParam(required = false) activitiesResult: String?,
         @RequestParam(required = false) stweResult: String?,
-        principal: Principal?,
+        @AuthenticationPrincipal userDetails: LoginUserDetails,
         model: Model
     ): String {
-        val userId = principal?.name ?: "test-user-id"
+        val userId = userDetails.getUserEntity().userId
         esRequest.userId = userId
 
-        // まず、受け取った「前回の結果」をすべて一旦モデルに戻す
+        // 前回の結果を保持（添削を繰り返すため）
         model.addAttribute("reasonResult", reasonResult)
         model.addAttribute("selfprResult", selfprResult)
         model.addAttribute("activitiesResult", activitiesResult)
         model.addAttribute("stweResult", stweResult)
 
-        // その後、今回押されたボタンの処理で、新しい結果を上書きする
         when (action) {
-            "checkReason" -> {
-                val result = ecComponent.analyzeMessage(esRequest.esContentReason ?: "")
-                model.addAttribute("reasonResult", result) // 新しい結果に更新
-            }
-            "checkSelfpr" -> {
-                val result = ecComponent.analyzeMessage(esRequest.esContentSelfpr ?: "")
-                model.addAttribute("selfprResult", result) // 新しい結果に更新
-            }
-            "checkActivities" -> {
-                val result = ecComponent.analyzeMessage(esRequest.esContentActivities ?: "")
-                model.addAttribute("activitiesResult", result)
-            }
-            "checkStwe" -> {
-                val result = ecComponent.analyzeMessage(esRequest.esContentStwe ?: "")
-                model.addAttribute("stweResult", result)
-            }
+            "checkReason" -> model.addAttribute("reasonResult", ecComponent.analyzeMessage(esRequest.esContentReason ?: ""))
+            "checkSelfpr" -> model.addAttribute("selfprResult", ecComponent.analyzeMessage(esRequest.esContentSelfpr ?: ""))
+            "checkActivities" -> model.addAttribute("activitiesResult", ecComponent.analyzeMessage(esRequest.esContentActivities ?: ""))
+            "checkStwe" -> model.addAttribute("stweResult", ecComponent.analyzeMessage(esRequest.esContentStwe ?: ""))
             "save" -> {
                 esService.saveEs(esRequest)
                 return "redirect:/es/list"
@@ -131,4 +105,77 @@ class EsController {
         model.addAttribute("esRequest", esRequest)
         return "entrysheet/es-creation"
     }
+
+    // ES編集画面 (GET)
+
+    @GetMapping("/es/edit")
+    fun getEsEdit(
+        @RequestParam esId: String,
+        @AuthenticationPrincipal userDetails: LoginUserDetails,
+        model: Model
+    ): String {
+        val userId = userDetails.getUserEntity().userId
+
+        val request = EsRequest().apply {
+            this.esId = esId
+            this.userId = userId
+        }
+
+        // DBから取得（結果がListで返ってくる場合）
+        val esDetailList = esService.getEsDetail(request)
+
+        // リストが空でないか確認し、最初の1件をモデルに渡す
+        if (esDetailList is List<*> && esDetailList.isNotEmpty()) {
+            model.addAttribute("esRequest", esDetailList[0])
+        } else if (esDetailList is EsRequest) {
+            // もし既に単一オブジェクトで返ってきているならそのまま渡す
+            model.addAttribute("esRequest", esDetailList)
+        } else {
+            // データが見つからない場合のハンドリング
+            return "redirect:/es/list"
+        }
+
+        return "entrysheet/es-edit"
+    }
+
+    // ES編集画面(POST)
+    @PostMapping("/es/edit")
+    fun postEsEdit(
+        esRequest: EsRequest,
+        @RequestParam(value = "action", required = false) action: String?,
+        @RequestParam(required = false) reasonResult: String?,
+        @RequestParam(required = false) selfprResult: String?,
+        @RequestParam(required = false) activitiesResult: String?,
+        @RequestParam(required = false) stweResult: String?,
+        @AuthenticationPrincipal userDetails: LoginUserDetails,
+        model: Model
+    ): String {
+        val userId = userDetails.getUserEntity().userId
+        esRequest.userId = userId
+
+        // 結果の保持
+        model.addAttribute("reasonResult", reasonResult)
+        model.addAttribute("selfprResult", selfprResult)
+        model.addAttribute("activitiesResult", activitiesResult)
+        model.addAttribute("stweResult", stweResult)
+
+        when (action) {
+            "checkReason" -> model.addAttribute("reasonResult", ecComponent.analyzeMessage(esRequest.esContentReason ?: ""))
+            "checkSelfpr" -> model.addAttribute("selfprResult", ecComponent.analyzeMessage(esRequest.esContentSelfpr ?: ""))
+            "checkActivities" -> model.addAttribute("activitiesResult", ecComponent.analyzeMessage(esRequest.esContentActivities ?: ""))
+            "checkStwe" -> model.addAttribute("stweResult", ecComponent.analyzeMessage(esRequest.esContentStwe ?: ""))
+            "save" -> {
+                esService.saveEs(esRequest)
+                return "redirect:/es/list"
+            }
+            "delete" -> {
+                esService.deleteEs(esRequest)
+                return "redirect:/es/list"
+            }
+        }
+
+        model.addAttribute("esRequest", esRequest)
+        return "entrysheet/es-edit" // edit用のHTMLを返す
+    }
+
 }

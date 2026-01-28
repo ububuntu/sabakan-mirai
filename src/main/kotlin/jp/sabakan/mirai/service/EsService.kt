@@ -43,19 +43,15 @@ class EsService {
      * @param userId ユーザID
      * @return ESリクエスト
      */
-    fun getEsDetail(esId: String, userId: String): EsRequest {
-        val row = esRepository.getEsById(esId, userId) ?: return EsRequest() // なければ空を返す
-
-        // MapからEsRequestへ詰め替え
-        return EsRequest().apply {
-            this.esId = row["es_id"] as String? // カラム名はDB定義に合わせてください(スネークケースの場合あり)
-            this.userId = row["user_id"] as String?
-            this.esOccupation = row["es_occupation"] as String?
-            this.esContentReason = row["es_content_reason"] as String?
-            this.esContentSelfpr = row["es_content_selfpr"] as String?
-            this.esContentActivities = row["es_content_activities"] as String?
-            this.esContentStwe = row["es_content_stwe"] as String?
+    fun getEsDetail(esRequest: EsRequest): List<EsEntity> {
+        val data = EsData().apply {
+            this.esId = esRequest.esId
+            this.userId = esRequest.userId
         }
+
+        val table = esRepository.getEsById(data)
+
+        return tableToListEntity(table)
     }
 
     /**
@@ -86,29 +82,22 @@ class EsService {
 
     /**
      * ESを削除する
-     *
-     * @param request ESリクエスト
-     * @return ESレスポンス
      */
     fun deleteEs(request: EsRequest): EsResponse {
         // リクエストからデータ変換
         val data = EsData().apply {
-            esId = toCreateEsId()
-            userId = request.userId
+            this.esId = request.esId
+            this.userId = request.userId
         }
 
         // リポジトリへ削除処理
         val deleteCount = esRepository.deleteEs(data)
 
-        // 削除結果を確認してレスポンスを返す
+        // 結果の返却
         return if (deleteCount == 0) {
-            EsResponse().apply {
-                message = MessageConfig.ES_DELETE_FAILED
-            }
+            EsResponse().apply { message = MessageConfig.ES_DELETE_FAILED }
         } else {
-            EsResponse().apply {
-                message = MessageConfig.ES_DELETE_SUCCESS
-            }
+            EsResponse().apply { message = MessageConfig.ES_DELETE_SUCCESS }
         }
     }
 

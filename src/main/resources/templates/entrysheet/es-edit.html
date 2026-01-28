@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ES編集 | Mirai</title>
+    <link rel="stylesheet" th:href="@{/css/color.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+<header th:replace="common/header :: siteHeader('esEditHeader')"></header>
+<div th:replace="~{common/color :: svg-sprite}"></div>
+<main>
+    <form th:action="@{/es/edit}" th:object="${esRequest}" method="post" class="menu">
+
+        <input type="hidden" th:field="*{esId}">
+
+        <div class="menu-item">
+            <div class="stretch">
+                <label class="title" for="company-name">企業名</label>
+                <input id="company-name" th:field="*{esOccupation}" placeholder="企業名を入力">
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="stretch content-spacing">
+                <label class="title" for="motivation">志望動機</label>
+                <textarea id="motivation" th:field="*{esContentReason}"></textarea>
+                <button class="button-center button-primary check-button"
+                        type="submit"
+                        name="action"
+                        value="checkReason">
+                    添削を始める
+                </button>
+                <input type="hidden" name="reasonResult" th:value="${reasonResult}">
+                <p class="title">AIによる回答</p>
+                <p class="desc" style="white-space: pre-wrap;" th:text="${reasonResult ?: '添削結果が表示されます'}"></p>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="stretch content-spacing">
+                <label class="title" for="self-pr">自己PR</label>
+                <textarea id="self-pr" th:field="*{esContentSelfpr}"></textarea>
+                <button class="button-center button-primary check-button"
+                        type="submit"
+                        name="action"
+                        value="checkSelfpr">
+                    添削を始める
+                </button>
+                <input type="hidden" name="selfprResult" th:value="${selfprResult}">
+                <p class="title">AIによる回答</p>
+                <p class="desc" style="white-space: pre-wrap;" th:text="${selfprResult ?: '添削結果が表示されます'}"></p>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="stretch content-spacing">
+                <label class="title" for="effort">学生時代に力を入れたこと</label>
+                <textarea id="effort" th:field="*{esContentActivities}"></textarea>
+                <button class="button-center button-primary check-button"
+                        type="submit"
+                        name="action"
+                        value="checkActivities">
+                    添削を始める
+                </button>
+                <input type="hidden" name="activitiesResult" th:value="${activitiesResult}">
+                <p class="title">AIによる回答</p>
+                <p class="desc" style="white-space: pre-wrap;" th:text="${activitiesResult ?: '添削結果が表示されます'}"></p>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="stretch content-spacing">
+                <label class="title" for="strengths">長所短所</label>
+                <textarea id="strengths" th:field="*{esContentStwe}"></textarea>
+                <button class="button-center button-primary check-button"
+                        type="submit"
+                        name="action"
+                        value="checkStwe">
+                    添削を始める
+                </button>
+                <input type="hidden" name="stweResult" th:value="${stweResult}">
+                <p class="title">AIによる回答</p>
+                <p class="desc" style="white-space: pre-wrap;" th:text="${stweResult ?: '添削結果が表示されます'}"></p>
+            </div>
+        </div>
+
+        <button class="button-center button-primary" type="submit" name="action" value="save">更新する</button>
+        <button class="button-center button-primary delete-btn" type="submit" name="action" value="delete">削除する</button>
+    </form>
+    <div class="spacer" aria-hidden="true"></div>
+</main>
+<footer th:replace="common/footer :: siteFooter"></footer>
+<script th:src="@{/js/style.js}"></script>
+<script th:src="@{/js/disable.js}"></script>
+</body>
+</html>

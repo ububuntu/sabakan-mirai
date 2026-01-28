@@ -19,15 +19,9 @@
         </div>
 
         <div th:each="es : ${esList}" class="menu-item"
-             th:onclick="|location.href='@{/es/creation(esId=${es.esId})}'|">
+             th:onclick="|location.href='@{/es/edit(esId=${es.esId})}'|">
             <div class="texts">
                 <p class="title" th:text="${es.esOccupation}">企業名</p>
-
-                <div class="meta status-row">
-                    <p class="status draft">制作中</p>
-                    <p class="desc">更新日時未定</p>
-                </div>
-
                 <p class="desc">作成日：<span th:text="${es.esDate}">2025/01/01</span></p>
             </div>
         </div>
