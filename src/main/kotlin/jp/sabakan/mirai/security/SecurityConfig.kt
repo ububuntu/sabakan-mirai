@@ -46,9 +46,9 @@ class SecurityConfig {
                 form
                     .loginPage("/login")             // ログイン画面のURL
                     .loginProcessingUrl("/login")    // フォームのPOST先
-                    .usernameParameter("userAddress") // HTMLフォームのname属性 (デフォルトはusername)
+                    .usernameParameter("userAddress") // HTMLフォームのname属性
                     .passwordParameter("password")    // HTMLフォームのname属性
-                    .defaultSuccessUrl("/user", true) // 成功時の遷移先 (UserControllerの/userへ)
+                    .defaultSuccessUrl("/index", true) // 成功時の遷移先
                     .failureUrl("/login?error=true")
                     .permitAll()
             }

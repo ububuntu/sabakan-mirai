@@ -4,11 +4,14 @@
     --primary: #2b73ff;
     --question: #2B73FF0D;
     --bg: #f7f8fb;
+    /* --bg: #fff8e1; */
     --text: #1f2a37;
     --muted: #6b7280;
     --card: #ffffff;
     --border: #e5e7eb;
     --icon-color: #6b7280;
+    --select-bg: #ffffff;
+    --select-text: #1f2a37;
 
     /* フォーム要素用 (admin/style共通) */
     --select-bg: #ffffff;
@@ -52,29 +55,58 @@
 }
 
 /* ====== ダークモード ====== */
-[data-theme="dark"] {
-    --primary: #64b5f6;
-    --question: #64b5f61a;
-    --bg: #121212;
-    --text: #e0e0e0;
-    --muted: #9ca3af;
-    --card: #1e1e1e;
-    --border: #374151;
-    --icon-color: #ffffff;
-    --select-bg: #2d2d2d;
-    --select-text: #e0e0e0;
+[data-theme="dark"] {--primary: #64b5f6;
+    --question: rgba(100, 181, 246, 0.15); /* 透明度指定を明示的に */
+    --bg: #0f172a;    /* 真っ黒より少しネイビー寄りにすると高級感が出ます */
+    --text: #f1f5f9;  /* より白に近いグレー */
+    --muted: #94a3b8;
+    --card: #1e293b;  /* 背景との差をつける */
+    --border: #334155;
+    --icon-color: #cbd5e1;
+    --select-bg: #1e293b;
+    --select-text: #f1f5f9;
+
+    /* 固定カラーの最適化 */
+    --csv-interview: #e57373;
+    --csv-question:  #66bb6a;
+    --csv-es:        #ffb74d;
+    --csv-manage:    #78909c;
 }
 
-/* ====== カスタムテーマ（あいうえお） ====== */
-[data-theme="qwer"] {
-    --primary: #ff9800;
-    --question: #ff98001a;
-    --bg: #fff8e1;
-    --text: #5d4037;
-    --muted: #8d6e63;
-    --card: #ffffff;
-    --border: #ffcc80;
-    --icon-color: #fb8c00;
-    --select-bg: #ffffff;
-    --select-text: #5d4037;
+/* ====== アイコン色の上書き ====== */
+.icon-interview{
+    --bg: var(--csv-interview);
+    --icon-color: #FFFFFF;
 }
+
+.icon-question{
+    --bg: var(--csv-question);
+    --icon-color: #FFFFFF;
+}
+
+.icon-es{
+    --bg: var(--csv-es);
+    --icon-color: #FFFFFF;
+}
+
+.icon-manage{
+    --bg: var(--csv-manage);
+    --icon-color: #FFFFFF;
+}
+
+/* ====== 塗りつぶしカード用の共通定義 ====== */
+.menu-item.is-colored {
+    background-color: var(--csv-color);
+    color: #ffffff;
+    border: none;
+    --text: #ffffff;
+    --muted: rgba(255, 255, 255, 0.8);
+    --bg: #ffffff;
+    --icon-color: var(--csv-color);
+}
+
+/* 個別色のマッピング（既存の変数を利用） */
+.menu-item.is-colored.icon-interview { --csv-color: var(--csv-interview); }
+.menu-item.is-colored.icon-question  { --csv-color: var(--csv-question); }
+.menu-item.is-colored.icon-es        { --csv-color: var(--csv-es); }
+.menu-item.is-colored.icon-manage    { --csv-color: var(--csv-manage); }

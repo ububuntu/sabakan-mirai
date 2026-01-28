@@ -40,7 +40,7 @@
             <!-- テーマ切り替えプルダウン -->
 
             <div class="menu-item">
-                <svg class="icon icon-with-bg" width="48" height="48">
+                <svg class="icon" width="48" height="48">
                     <use href="#user"></use>
                 </svg>
                 <div class="texts">
@@ -50,7 +50,6 @@
                         <select id="color" onchange="changeTheme(this.value)" th:attr="data-theme=${currentTheme}">
                             <option value="default" th:selected="${currentTheme == 'default'}">デフォルト</option>
                             <option value="dark" th:selected="${currentTheme == 'dark'}">ダークモード</option>
-                            <option value="qwer" th:selected="${currentTheme == 'qwer'}">あいうえお</option>
                         </select>
                     </div>
                 </div>
