@@ -1,77 +1,92 @@
 /* color.css と style.css を先に読み込む前提 */
-
+body {
+    display: flex;
+    justify-content: center;  /* 横方向中央 */
+    align-items: center;      /* 縦方向中央 */
+    min-height: 100vh;        /* ビューポートの高さいっぱい */
+    margin: 0;
+}
 /* ====== コンテナ ====== */
-.auth-container {
-    width: 90%;
-    max-width: 420px;
-    margin: 0 auto;
-    padding: 8% 0;
-    text-align: center;
+.auth-menu {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-menu);
+    align-items: center;
 }
 
 /* ====== アプリアイコンエリア ====== */
 .app-icon {
-    font-size: 1rem;
-    background: #eef2ff;
-    color: var(--primary); /* 変数利用 */
-    border-radius: 1rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
+    padding: 2%;
+    margin: 0;
     display: inline-block;
 }
 
+.app-icon img {
+    width: 100%;
+    height: auto;
+}
+
 .app-title {
-    font-size: 1.5rem;
+    font-size: var(--font-lg);
     font-weight: 700;
-    margin: 0.5rem 0;
+    margin: 0rem;
 }
 .app-tagline {
-    font-size: 1rem;
+    font-size: var(--font-md);
     color: var(--muted);
-    margin-bottom: 2rem;
+    margin: 0;
 }
 
 /* ====== フォーム ====== */
-.auth-form {
+.menu-box {
+    width: 100%;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    text-align: left;
+    align-items: stretch;
+    gap: var(--gap-item);
+    text-decoration: none;
+    color: inherit;
 }
-.auth-form input[type="text"],
-.auth-form input[type="email"],
-.auth-form input[type="password"] {
-    padding: 0.8rem;
-    font-size: 1rem;
-    border: 1px solid var(--border); /* 変数化 */
-    border-radius: var(--radius-sm);
-    background: var(--card);         /* 変数化 */
-    color: var(--text);
-    width: 100%;
-    box-sizing: border-box;
+.menu-box > * {
+    margin: 2% 0;
+}
+.menu-box input{
+   padding: var(--padding-card);
+   border-radius: var(--radius-sm);
+   background: var(--select-bg);
+   color: var(--select-text);
+   flex: 1;
+   min-width: 0;
+   box-sizing: border-box;
 }
 
 /* ====== ボタン・リンク ====== */
 .auth-button {
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    padding: 1rem;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
     width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: var(--padding-card);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    justify-content: center;
+    gap: var(--gap-item);
+    font-size: var(--font-xl);
+    font-weight: bold;
+    text-decoration: none;
 }
 
 .auth-links {
-    margin-top: 1rem;
-    font-size: 0.9rem;
+    margin-top: 0;
+    font-size: var(--font-md);
     text-align: center;
 }
 .auth-links a {
     display: block;
-    margin: 0.3rem 0;
+    margin: 0.5rem 0;
     color: var(--primary);
     text-decoration: none;
 }

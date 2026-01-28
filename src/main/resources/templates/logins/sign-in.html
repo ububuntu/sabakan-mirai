@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ログイン | Mirai</title>
     <link rel="stylesheet" th:href="@{/css/color.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/sign.css}" />
 </head>
 <body>
-<main class="auth-container">
-    <div class="app-icon">アプリアイコン</div>
-    <h1 class="app-title">Mirai</h1>
+<main class="auth-menu">
+    <div class="app-icon">
+        <img th:src="@{/img/icon.svg}" alt="Mirai アプリアイコン">
+    </div>
+    <p class="app-title">Mirai</p>
     <p class="app-tagline">あなたの就活の道をサポート</p>
 
     <div th:if="${param.error}" class="alert alert-danger" style="color: red; margin-bottom: 1rem;">
@@ -21,11 +22,11 @@
         ログアウトしました。
     </div>
 
-    <form th:action="@{/login}" method="post" class="auth-form">
-        <label for="email">メールアドレス</label>
+    <form th:action="@{/login}" method="post" class="menu-box">
+        <label for="email" class="app-title">メールアドレス</label>
         <input type="email" id="email" name="userAddress" placeholder="example@email.com" required />
 
-        <label for="password">パスワード</label>
+        <label for="password" class="app-title">パスワード</label>
         <input type="password" id="password" name="password" placeholder="password" required />
 
         <button type="submit" class="auth-button">ログイン</button>
