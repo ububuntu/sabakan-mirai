@@ -10,51 +10,64 @@
 <body>
 <header th:replace="common/header :: siteHeader('esMainHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
-    <main>
-        <section class="menu" aria-label="メニュー">
-            <a class="note">ESを作成してみよう</a>
+<main>
+    <section class="menu" aria-label="メニュー">
+        <a class="note">ESを作成してみよう</a>
 
-            <div onclick="location.href='./es/creation'" class="menu-item">
-                <svg class="icon icon-with-bg" width="48" height="48">
-                    <use href="#insert"></use>
-                </svg>
-                <div class="texts">
-                    <p class="title">新規作成</p>
-                    <p class="desc">テンプレートから作成</p>
-                </div>
+        <div th:onclick="|location.href='@{/es/creation}'|" class="menu-item" style="cursor: pointer;">
+            <svg class="icon icon-with-bg" width="48" height="48">
+                <use href="#insert"></use>
+            </svg>
+            <div class="texts">
+                <p class="title">新規作成</p>
+                <p class="desc">テンプレートから作成</p>
             </div>
+        </div>
 
-            <div onclick="location.href='./es/list'" class="menu-item">
-                <svg class="icon icon-with-bg" width="48" height="48">
-                    <use href="#file"></use>
-                </svg>
-                <div class="texts">
-                    <p class="title">作成済みES</p>
-                    <p class="desc">編集管理</p>
-                </div>
+        <div th:onclick="|location.href='@{/es/list}'|" class="menu-item" style="cursor: pointer;">
+            <svg class="icon icon-with-bg" width="48" height="48">
+                <use href="#file"></use>
+            </svg>
+            <div class="texts">
+                <p class="title">作成済みES</p>
+                <p class="desc">編集管理</p>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="menu" aria-label="esリスト">
-            <div class="sort">
-            </div>
+    <section class="menu" aria-label="esリスト">
+        <p class="note">最近の作成済みエントリーシート</p>
 
-            <div th:each="es : ${esList}" class="menu-item"
-                 th:onclick="|location.href='@{/es/edit(esId=${es.esId})}'|">
-                <div class="texts">
-                    <p class="title" th:text="${es.esOccupation}">企業名</p>
+        <div th:each="es, stat : ${esList}"
+             th:if="${stat.index < 3}"
+             class="menu-item"
+             th:onclick="|location.href='@{/es/edit(esId=${es.esId})}'|"
+             style="cursor: pointer;">
+            <div class="texts">
+                <p class="title" th:text="${es.esOccupation}">企業名</p>
+                <div class="meta status-row">
                     <p class="desc">作成日：<span th:text="${es.esDate}">2025/01/01</span></p>
                 </div>
             </div>
+        </div>
 
-            <div th:if="${esList == null or esList.isEmpty()}" class="menu-item">
-                <div class="texts">
-                    <p class="title">作成済みのESはありません</p>
-                </div>
+        <div th:if="${esList == null or esList.isEmpty()}" class="menu-item">
+            <div class="texts">
+                <p class="title">作成済みのESはありません</p>
+                <p class="desc">上の「新規作成」から始めてみましょう</p>
             </div>
+        </div>
 
-        </section>
-    </main>
+        <div th:if="${esList != null and esList.size() > 3}"
+             th:onclick="|location.href='@{/es/list}'|"
+             class="menu-item"
+             style="justify-content: center; cursor: pointer;">
+            <p class="desc">もっと見る（全 <span th:text="${esList.size()}">0</span> 件）</p>
+        </div>
+
+    </section>
+    <div class="spacer" aria-hidden="true"></div>
+</main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>
 </body>

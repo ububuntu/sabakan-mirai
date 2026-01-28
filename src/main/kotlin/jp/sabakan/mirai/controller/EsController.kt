@@ -36,8 +36,11 @@ class EsController {
         // サービスから一覧を取得
         val response = esService.getEsList(request)
 
-        // 画面にリストを渡す
-        model.addAttribute("esList", response.esList)
+        // 【ここ！】リストから最大3件を抽出
+        val top3List = response.esList?.take(3) ?: emptyList()
+
+        // 【ここを修正！】絞り込んだ top3List をモデルに渡す
+        model.addAttribute("esList", top3List)
 
         return "entrysheet/es-main"
     }
