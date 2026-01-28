@@ -3,9 +3,11 @@ package jp.sabakan.mirai.controller
 import jakarta.servlet.http.HttpSession
 import jp.sabakan.mirai.request.CabGabRequest
 import jp.sabakan.mirai.request.SpiRequest
+import jp.sabakan.mirai.security.LoginUserDetails
 import jp.sabakan.mirai.service.CabGabService
 import jp.sabakan.mirai.service.SpiService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,11 +23,9 @@ class QuestionsController {
     lateinit var cabGabService: CabGabService
     @Autowired
     lateinit var session: HttpSession
-
-    val TEST_USER_ID = "test-user-id"
     // 問題数の定数化（必要に応じて調整してください）
     val SPI_TOTAL_COUNT = 70
-    val CABGAB_TOTAL_COUNT = 70
+    val CABGAB_TOTAL_COUNT = 90
 
     // --- 共通・メイン画面 ---
 
@@ -38,8 +38,18 @@ class QuestionsController {
     // --- SPI 制御 (既存ロジック維持) ---
 
     @GetMapping("/spi")
-    fun getQuestionSpiMain(model: Model): String {
-        val inProgressId = spiService.getInProgressExamId(TEST_USER_ID)
+    fun getQuestionSpiMain(
+        model: Model,
+        @AuthenticationPrincipal userDetails: LoginUserDetails
+    ): String {
+        // ユーザーID取得
+        val userId = userDetails.getUserEntity().userId
+        val request = SpiRequest().apply {
+            this.userId = userId
+        }
+
+        // 進行中の試験があるか確認
+        val inProgressId = spiService.getInProgressExamId(request)
         model.addAttribute("hasInProgress", inProgressId != null)
         return "questions/spi-main"
     }
@@ -48,22 +58,29 @@ class QuestionsController {
     fun startSpiExam(
         @RequestParam mode: String,
         @RequestParam(required = false) middleIndex: Int?,
-        model: Model
+        model: Model,
+        @AuthenticationPrincipal userDetails: LoginUserDetails
     ): String {
+        // ユーザーID取得
+        val userId = userDetails.getUserEntity().userId
+        val request = SpiRequest().apply {
+            this.userId = userId
+        }
+
         var examId: String? = null
         var startIndex = 1
 
         when (mode) {
             "new_start" -> {
-                examId = spiService.startNewExam(TEST_USER_ID)
+                examId = spiService.startNewExam(request)
                 startIndex = 1
             }
             "new_middle" -> {
-                examId = spiService.startNewExam(TEST_USER_ID)
+                examId = spiService.startNewExam(request)
                 startIndex = middleIndex ?: 1
             }
             "resume" -> {
-                examId = spiService.getInProgressExamId(TEST_USER_ID)
+                examId = spiService.getInProgressExamId(request)
                 if (examId != null) {
                     startIndex = spiService.getCurrentQuestionIndex(examId)
                 } else {
@@ -129,9 +146,18 @@ class QuestionsController {
     // --- CAB/GAB 制御 (SpiServiceの仕様に合わせて修正) ---
 
     @GetMapping("/cabgab")
-    fun getQuestionCabgabMain(model: Model): String {
+    fun getQuestionCabgabMain(
+        model: Model,
+        @AuthenticationPrincipal userDetails: LoginUserDetails
+    ): String {
+        // ユーザーID取得
+        val userId = userDetails.getUserEntity().userId
+        val request = CabGabRequest().apply {
+            this.userId = userId
+        }
+
         // 進行中の試験があるか確認
-        val inProgressId = cabGabService.getInProgressCabGabId(TEST_USER_ID)
+        val inProgressId = cabGabService.getInProgressCabGabId(request)
         model.addAttribute("hasInProgress", inProgressId != null)
         return "questions/cabgab-main"
     }
@@ -140,22 +166,29 @@ class QuestionsController {
     fun startCabGabExam(
         @RequestParam mode: String,
         @RequestParam(required = false) middleIndex: Int?,
-        model: Model
+        model: Model,
+        @AuthenticationPrincipal userDetails: LoginUserDetails
     ): String {
+        // ユーザーID取得
+        var userId = userDetails.getUserEntity().userId
+        val request = CabGabRequest().apply {
+            this.userId = userId
+        }
+
         var examId: String? = null
         var startIndex = 1
 
         when (mode) {
             "new_start" -> {
-                examId = cabGabService.startNewCabGab(TEST_USER_ID)
+                examId = cabGabService.startNewCabGab(request)
                 startIndex = 1
             }
             "new_middle" -> {
-                examId = cabGabService.startNewCabGab(TEST_USER_ID)
+                examId = cabGabService.startNewCabGab(request)
                 startIndex = middleIndex ?: 1
             }
             "resume" -> {
-                examId = cabGabService.getInProgressCabGabId(TEST_USER_ID)
+                examId = cabGabService.getInProgressCabGabId(request)
                 if (examId != null) {
                     startIndex = cabGabService.getCurrentCabGabIndex(examId)
                 } else {

@@ -27,7 +27,9 @@ class SpiService {
      * @return 新しいSPI試験ID
      */
     @Transactional
-    fun startNewExam(userId: String): String {
+    fun startNewExam(request: SpiRequest): String? {
+        val userId = request.userId ?: return null
+
         // 新しいSPI試験IDを生成
         val historyId = UUID.randomUUID().toString()
 
@@ -158,7 +160,8 @@ class SpiService {
      * @param userId ユーザーID
      * @return 進行中のSPI試験ID、存在しない場合はnull
      */
-    fun getInProgressExamId(userId: String): String? {
+    fun getInProgressExamId(request: SpiRequest): String? {
+        val userId = request.userId ?: return null
         return spiRepository.getUnfinishedSpiHsId(userId)
     }
 

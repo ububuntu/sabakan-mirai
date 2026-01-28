@@ -179,7 +179,8 @@ class ManageController {
             userService.deleteUser(request)
 
             // 成功メッセージ
-            redirectAttributes.addFlashAttribute("message", "ユーザを削除しました。") // MessageConfigがあればそちらを使用
+            // TODO aaa
+            redirectAttributes.addFlashAttribute("message", "ユーザを削除しました。")
             return "redirect:/manage/users"
 
         } catch (e: Exception) {

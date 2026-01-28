@@ -2,6 +2,7 @@
 [data-theme="default"] {
     /* ====== 色設定 (全ファイル共通) ====== */
     --primary: #2b73ff;
+    --danger: #ef4444;
     --question: #2B73FF0D;
     --bg: #f7f8fb;
     /* --bg: #fff8e1; */
@@ -55,12 +56,14 @@
 }
 
 /* ====== ダークモード ====== */
-[data-theme="dark"] {--primary: #64b5f6;
-    --question: rgba(100, 181, 246, 0.15); /* 透明度指定を明示的に */
-    --bg: #0f172a;    /* 真っ黒より少しネイビー寄りにすると高級感が出ます */
-    --text: #f1f5f9;  /* より白に近いグレー */
+[data-theme="dark"] {
+    --primary: #64b5f6;
+    --danger: #f87171;
+    --question: rgba(100, 181, 246, 0.15);
+    --bg: #0f172a;
+    --text: #f1f5f9;
     --muted: #94a3b8;
-    --card: #1e293b;  /* 背景との差をつける */
+    --card: #1e293b;
     --border: #334155;
     --icon-color: #cbd5e1;
     --select-bg: #1e293b;

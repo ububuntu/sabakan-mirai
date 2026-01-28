@@ -131,6 +131,11 @@ main {
     color: var(--text);
     cursor: not-allowed;
 }
+.button-center.button-danger {
+    background: var(--danger);
+    color: white;
+}
+
 .menu-item .img {
     width: var(--icon-size);
     height: auto;

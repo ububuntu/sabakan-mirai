@@ -86,7 +86,6 @@ class UserService {
     fun getUserByEmail(email: String): UserEntity? {
         val map = userRepository.getUserByAddress(email) ?: return null
 
-        // tableToListEntityはリストを受け取る仕様のため、リスト化して変換
         val entityList = tableToListEntity(listOf(map))
         return entityList.firstOrNull()
     }
@@ -299,7 +298,7 @@ class UserService {
         // ユーザーIDチェック
         val userId = request.userId
         if (userId == null) {
-            response.message = "ユーザーIDが不正です" // MessageConfig.USER_ID_INVALID 等があれば定数を使用
+            response.message = MessageConfig.USER_NOT_FOUND
             return response
         }
 

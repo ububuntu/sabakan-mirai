@@ -7,6 +7,7 @@ import jp.sabakan.mirai.data.CabGabHistoryData
 import jp.sabakan.mirai.entity.CabGabEntity
 import jp.sabakan.mirai.repository.CabGabRepository
 import jp.sabakan.mirai.request.CabGabRequest
+import jp.sabakan.mirai.request.SpiRequest
 import jp.sabakan.mirai.response.CabGabResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -27,7 +28,8 @@ class CabGabService {
      * @return 新しいCabGab試験ID
      */
     @Transactional
-    fun startNewCabGab(userId: String): String {
+    fun startNewCabGab(request: CabGabRequest): String? {
+        val userId = request.userId ?: return null
         // 新しいCabGab試験IDを生成
         val historyId = UUID.randomUUID().toString()
 
@@ -131,7 +133,8 @@ class CabGabService {
     /**
      * 進行中のCabGab試験IDを取得する
      */
-    fun getInProgressCabGabId(userId: String): String? {
+    fun getInProgressCabGabId(request: CabGabRequest): String? {
+        val userId = request.userId ?: return null
         return cabGabRepository.getUnfinishedCabGabHsId(userId)
     }
 
