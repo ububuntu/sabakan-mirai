@@ -10,7 +10,7 @@
 <header th:replace="common/header :: siteHeader('spiStudyHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
-    <form class="menu" action="/spi/study" method="post">
+    <form class="menu" th:action="@{/spi/study}" method="post">
         <progress class="progress" max="100" th:value="${progress}"></progress>
 
         <p class="progress-text">
@@ -18,34 +18,38 @@
         </p>
 
         <div class="menu-item">
-            <p class="title" th:text="${question.spiContent}">問題文がここに表示されます</p>
+            <p class="title" th:text="${question.spi_content}">問題文がここに表示されます</p>
         </div>
 
-        <label class="menu-item choice-label" for="1">
+        <label class="menu-item choice-label" for="ans1">
             <svg class="icon icon-with-bg" width="48" height="48"><use href="#es"></use></svg>
-            <input type="radio" id="1" name="answer" value="1" required>
-            <span class="note" th:text="${question.spiAnswer1}">選択肢1</span>
+            <input type="radio" id="ans1" name="answer" value="1" required
+                   th:checked="${question.user_answer == 1}">
+            <span class="note" th:text="${question.spi_answer1}">選択肢1</span>
         </label>
 
-        <label class="menu-item choice-label" for="2">
+        <label class="menu-item choice-label" for="ans2">
             <svg class="icon icon-with-bg" width="48" height="48"><use href="#es"></use></svg>
-            <input type="radio" id="2" name="answer" value="2">
-            <span class="note" th:text="${question.spiAnswer2}">選択肢2</span>
+            <input type="radio" id="ans2" name="answer" value="2"
+                   th:checked="${question.user_answer == 2}">
+            <span class="note" th:text="${question.spi_answer2}">選択肢2</span>
         </label>
 
-        <label class="menu-item choice-label" for="3">
+        <label class="menu-item choice-label" for="ans3">
             <svg class="icon icon-with-bg" width="48" height="48"><use href="#es"></use></svg>
-            <input type="radio" id="3" name="answer" value="3">
-            <span class="note" th:text="${question.spiAnswer3}">選択肢3</span>
+            <input type="radio" id="ans3" name="answer" value="3"
+                   th:checked="${question.user_answer == 3}">
+            <span class="note" th:text="${question.spi_answer3}">選択肢3</span>
         </label>
 
-        <label class="menu-item choice-label" for="4">
+        <label class="menu-item choice-label" for="ans4">
             <svg class="icon icon-with-bg" width="48" height="48"><use href="#es"></use></svg>
-            <input type="radio" id="4" name="answer" value="4">
-            <span class="note" th:text="${question.spiAnswer4}">選択肢4</span>
+            <input type="radio" id="ans4" name="answer" value="4"
+                   th:checked="${question.user_answer == 4}">
+            <span class="note" th:text="${question.spi_answer4}">選択肢4</span>
         </label>
 
-        <input type="hidden" name="spiId" th:value="${question.spiId}" />
+        <input type="hidden" name="spiId" th:value="${question.spi_id}" />
         <input type="hidden" name="currentIndex" th:value="${currentIndex}" />
 
         <button class="button-center" type="submit" name="action" value="next">

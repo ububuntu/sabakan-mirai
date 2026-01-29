@@ -10,6 +10,9 @@ class SpiDetailData {
     // 履歴ID (FK)
     var spiHsId: String? = null
 
+    // 【重要】出題番号 (1~70) を管理するために追加
+    var questionNumber: Int = 0
+
     // 問題ID (FK)
     var spiId: String? = null
 

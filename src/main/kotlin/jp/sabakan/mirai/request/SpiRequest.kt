@@ -7,6 +7,12 @@ class SpiRequest {
     // SPI受検ID
     var spiId: String? = null
 
+    // SPI履歴ID
+    var spiHsId : String? = null
+
+    // 問題番号
+    var questionNumber: Int? = null
+
     // 問題文
     var spiContent: String? = null
 
@@ -35,7 +41,7 @@ class SpiRequest {
     var userId: String? = null
 
     // ユーザーの回答
-    var userAnswer: String? = null
+    var userAnswer: Int? = null
 
     // 正解の回答
     var correctAnswer: String? = null

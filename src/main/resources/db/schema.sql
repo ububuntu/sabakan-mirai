@@ -63,9 +63,6 @@ CREATE TABLE spi_m(
 CREATE TABLE spi_history_t(
     spi_hs_id             CHAR(37) PRIMARY KEY NOT NULL UNIQUE,
     user_id             CHAR(37) NOT NULL,
-    total_questions     INT NOT NULL,
-    correct_count       INT NOT NULL,
-    accuracy_rate       DECIMAL(5, 2),
     spi_hs_date           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_finished         BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES user_m(user_id)
@@ -73,11 +70,12 @@ CREATE TABLE spi_history_t(
 
 /* SPI回答テーブル */
 CREATE TABLE spi_detail_t(
-    spi_dl_id      CHAR(37) PRIMARY KEY NOT NULL UNIQUE,
-    spi_hs_id             CHAR(37) NOT NULL,
+    spi_dl_id           CHAR(37) PRIMARY KEY NOT NULL,
+    spi_hs_id           CHAR(37) NOT NULL,
+    question_number     INT NOT NULL,
     spi_id              CHAR(37) NOT NULL,
-    user_answer         INT,
-    is_correct          BOOLEAN NOT NULL,
+    user_answer         INT DEFAULT NULL,
+    is_correct          BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (spi_hs_id) REFERENCES spi_history_t(spi_hs_id),
     FOREIGN KEY (spi_id) REFERENCES spi_m(spi_id)
 );

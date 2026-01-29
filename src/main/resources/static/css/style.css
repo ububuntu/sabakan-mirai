@@ -722,3 +722,30 @@ footer nav.bottom {
         margin: 0 auto;
     }
 }
+
+/* ====== 通知ポップアップ (style.cssに追記) ====== */
+.modal-notice {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-180%);
+    width: 70%;
+    background-color: var(--primary);
+    color: #ffffff;
+    padding: 1rem 1.2rem;
+    border-radius: 20px;
+    z-index: 10000;
+    transition: transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+    font-size: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* 表示時のクラス */
+.modal-notice.is-visible {
+    transform: translateX(-50%) translateY(0);
+}

@@ -11,8 +11,61 @@
 <header th:replace="~{common/header :: siteHeader('indexHeader')}"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>SPI 過去問稽古場 | Mirai</title>
+    <link rel="stylesheet" th:href="@{/css/color.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+<header th:replace="~{common/header :: siteHeader('indexHeader')}"></header>
+<div th:replace="~{common/color :: svg-sprite}"></div>
+
 <main>
+    <div style="text-align: center; margin-top: 50px;">
+        <h2 class="title">SPI 受検履歴一覧</h2>
+
+        <div class="menu-item" th:if="${historyList == null || historyList.size() == 0}">
+            <p>履歴はありません。</p>
+        </div>
+
+        <table class="question-table" th:if="${historyList != null && historyList.size() > 0}" style="margin: 0 auto; width: 80%;">
+            <thead>
+            <tr>
+                <th class="no">実施日時</th>
+                <th class="judge">正解数</th>
+                <th class="beginning">詳細</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="hist : ${historyList}">
+                <td th:text="${#temporals.format(hist.spi_hs_date, 'yyyy/MM/dd HH:mm')}">2023/01/01</td>
+
+                <td>
+                    <span th:text="${hist.correct_count}">20</span> /
+                    <span th:text="${hist.total_questions}">70</span>
+                </td>
+
+                <td>
+                    <a th:href="@{/spi/result(id=${hist.spi_hs_id})}" class="button-small">詳細を見る</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 30px;">
+            <button class="button-center" onclick="location.href='/spi'">SPIトップへ戻る</button>
+        </div>
+    </div>
 </main>
+
+<footer th:replace="~{common/footer :: siteFooter}"></footer>
+
+</body>
+</html>
 
 <footer th:replace="~{common/footer :: siteFooter}"></footer>
 

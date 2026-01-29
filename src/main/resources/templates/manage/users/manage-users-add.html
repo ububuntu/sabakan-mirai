@@ -11,11 +11,11 @@
 <header th:replace="common/header :: siteHeader('manageHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
+    <div th:if="${message}" style="display:none;">
+        <p class="error-message-data" th:text="${message}"></p>
+    </div>
     <section class="menu" aria-label="システム統計">
         <p class="note">ユーザ追加</p>
-        <div th:if="${message}" >
-            <p th:text="${message}"></p>
-        </div>
         <form method="post" th:action="@{/manage/users/add}" th:object="${userRequest}">
 
             <div class="statistics">
@@ -66,5 +66,6 @@
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>
+<script th:src="@{/js/notice.js}"></script>
 </body>
 </html>

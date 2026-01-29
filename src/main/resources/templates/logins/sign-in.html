@@ -10,6 +10,7 @@
     <link rel="stylesheet" th:href="@{/css/sign.css}" />
 </head>
 <body>
+<div th:replace="~{common/color :: svg-sprite}"></div>
 <main class="auth-page">
     <section class="auth-header">
         <div class="app-icon-wrap">
@@ -19,8 +20,8 @@
         <p class="auth-app-tagline">あなたの就活の道をサポート</p>
     </section>
 
-    <div th:if="${errorMessage}" >
-        <p class="error-message" th:text="${errorMessage}"></p>
+    <div th:if="${message}" style="display:none;">
+        <p class="error-message-data" th:text="${message}"></p>
     </div>
 
     <form th:action="@{/login}" method="post" class="auth-form">
@@ -47,5 +48,6 @@
     </div>
 </main>
 <script th:src="@{/js/style.js}"></script>
+<script th:src="@{/js/notice.js}"></script>
 </body>
 </html>

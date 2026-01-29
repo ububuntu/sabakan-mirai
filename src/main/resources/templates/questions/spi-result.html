@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>SPI 結果表示 | Mirai</title>
     <link rel="stylesheet" th:href="@{/css/color.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
@@ -12,7 +12,7 @@
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
     <div class="menu-item">
-        <p class="title">正答率　:　30%</p>
+        <p class="title">正答率　:　<span th:text="${accuracyRate} + '%'">30%</span></p>
     </div>
     <p class="note">正誤リスト</p>
     <table class="question-table">
@@ -24,32 +24,22 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td class="no">1</td>
-                <td class="judge is-ok"></td>
-                <td class="beginning">問題文の冒頭...</td>
-            </tr>
-            <tr>
-                <td class="no">2</td>
-                <td class="judge is-ng"></td>
-                <td class="beginning">問題文の冒頭...</td>
-            </tr>
-            <tr>
-                <td class="no">3</td>
-                <td class="judge is-ok"></td>
-                <td class="beginning">問題文の冒頭...</td>
-            </tr>
-            <tr>
-                <td class="no">4</td>
-                <td class="judge is-ok"></td>
-                <td class="beginning">問題文の冒頭...</td>
-            </tr>
-            <tr>
-                <td class="no">5</td>
-                <td class="judge is-ok"></td>
-                <td class="beginning">問題文の冒頭...</td>
-            </tr>
+        <tr th:each="detail, stat : ${results}">
+            <td class="no" th:text="${detail.question_number}">1</td>
+
+            <td class="judge" th:if="${detail.user_answer == null}">
+                <span style="color: #999;">-</span>
+            </td>
+
+            <td class="judge" th:unless="${detail.user_answer == null}"
+                th:classappend="${detail.is_correct ? 'is-ok' : 'is-ng'}">
+                <span></span>
+            </td>
+
+            <td class="beginning" th:text="${detail.spi_content}">問題文...</td>
+        </tr>
         </tbody>
+        <div class="spacer" aria-hidden="true"></div>
     </table>
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
