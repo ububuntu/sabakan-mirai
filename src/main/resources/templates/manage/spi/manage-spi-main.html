@@ -16,13 +16,13 @@
         <p class="note">SPI問題管理</p>
         <div class="sort">
             <div class="radio">
-                <input type="radio" name="status" id="all" checked>
+                <input type="radio" name="status" id="all" th:checked="${selectedStatus == 'all'}" onchange="location.href='/manage/spi?status=all'">
                 <label for="all">すべて</label>
 
-                <input type="radio" name="status" id="active">
+                <input type="radio" name="status" id="active" th:checked="${selectedStatus == 'active'}" onchange="location.href='/manage/spi?status=active'">
                 <label for="active">言語</label>
 
-                <input type="radio" name="status" id="stop">
+                <input type="radio" name="status" id="stop" th:checked="${selectedStatus == 'stop'}" onchange="location.href='/manage/spi?status=stop'">
                 <label for="stop">非言語</label>
             </div>
         </div>
@@ -58,6 +58,6 @@
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>
-<button onclick="location.href='./spi/add'" class="fab-register">新規登録 ＋</button>
+<button onclick="location.href='/manage/spi/add'" class="fab-register">新規追加 ＋</button>
 </body>
 </html>

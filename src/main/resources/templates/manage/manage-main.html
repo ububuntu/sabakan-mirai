@@ -21,7 +21,7 @@
                 </svg>
                 <p class="stat-text">
                     <span class="stat-label">総ユーザー数</span>
-                    <span class="stat-value">1,234人</span>
+                    <span class="stat-value" th:text="${userCount}">1,234人</span>
                 </p>
             </div>
 
@@ -31,7 +31,7 @@
                 </svg>
                 <p class="stat-text">
                     <span class="stat-label">SPI問題数</span>
-                    <span class="stat-value">500問</span>
+                    <span class="stat-value" th:text="${spiCount}">500問</span>
                 </p>
             </div>
 
@@ -41,7 +41,7 @@
                 </svg>
                 <p class="stat-text">
                     <span class="stat-label">CAB/GAB問題数</span>
-                    <span class="stat-value">300問</span>
+                    <span class="stat-value" th:text="${cabgabCount}">300問</span>
                 </p>
             </div>
         </div>

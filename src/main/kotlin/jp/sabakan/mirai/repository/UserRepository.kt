@@ -129,6 +129,10 @@ class UserRepository {
         WHERE user_address = :userAddress
     """.trimIndent()
 
+    val countUsers = """
+        SELECT COUNT(*) FROM user_m
+    """.trimIndent()
+
     /**
      * ユーザ一覧を取得する
      *
@@ -314,5 +318,10 @@ class UserRepository {
         njdbc.update(deleteEs, params)
         njdbc.update(deleteGoal, params)
         njdbc.update(deleteUser, params)
+    }
+
+    fun countUsers(): Int {
+        val params = mapOf<String, Any?>()
+        return njdbc.queryForObject(countUsers, params, Int::class.java) ?: 0
     }
 }

@@ -99,6 +99,10 @@ class SpiRepository {
         DELETE FROM spi_m WHERE spi_id = :spiId
     """.trimIndent()
 
+    private val getSpiCount = """
+        SELECT COUNT(*) AS cnt FROM spi_m
+    """.trimIndent()
+
     // --- メソッドエリア ---
 
     fun getRandomQuestions(data: SpiData, limit: Int): List<Map<String, Any?>> {
@@ -217,5 +221,10 @@ class SpiRepository {
             "spiId" to data.spiId
         )
         return jdbc.update(deleteSpiMasterSql, params)
+    }
+
+    fun countSpi(): Int {
+        val params = emptyMap<String, Any>()
+        return jdbc.queryForObject(getSpiCount, params, Int::class.java) ?: 0
     }
 }

@@ -5,6 +5,7 @@ import jp.sabakan.mirai.data.UserData
 import jp.sabakan.mirai.request.SpiRequest
 import jp.sabakan.mirai.request.UserRequest
 import jp.sabakan.mirai.response.SpiResponse
+import jp.sabakan.mirai.service.CabGabService
 import jp.sabakan.mirai.service.SpiService
 import jp.sabakan.mirai.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,11 +28,19 @@ class ManageController {
     @Autowired
     lateinit var spiService: SpiService
 
+    @Autowired
+    lateinit var cabGabService: CabGabService
+
     //todo 管理
 
     // 管理メイン画面
     @GetMapping("/manage")
-    fun getManage(): String {
+    fun getManage(
+        model: Model
+    ): String {
+        model.addAttribute("userCount", userService.getUserCount())
+        model.addAttribute("spiCount", spiService.getSpiCount())
+        model.addAttribute("cabgabCount", cabGabService.getCabgabCount())
         return "/manage/manage-main"
     }
     // 管理メイン画面
@@ -168,89 +177,103 @@ class ManageController {
 
     //todo SPI
 
-    // SPIメイン画面
-//    @GetMapping("/manage/spi")
-//    fun getManageSpiMain(
-//        @RequestParam(name = "status", defaultValue = "all") status: String,
-//        model: Model
-//    ): String {
-//        // ステータスに応じてフィルタリング
-//        val allList = spiService.getAllSpi()
-//        val filteredList = when (status) {
-//            "active" -> allList.filter { it.spiCategory == "言語" }
-//            "stop"   -> allList.filter { it.spiCategory == "非言語" }
-//            else     -> allList // "all" または想定外の値なら全件表示
-//        }
-//        // フィルタリング結果をモデルにセット
-//        model.addAttribute("spiList", filteredList)
-//        model.addAttribute("selectedStatus", status)
-//
-//        return "manage/spi/manage-spi-main"
-//    }
-//    // SPIメイン画面
-//    @PostMapping("/manage/spi")
-//    fun postManageSpi(
-//
-//    ): String {
-//        return "/manage/spi/manage-spi-main"
-//    }
-//    // SPI変更画面
-//    @GetMapping("/manage/spi/edit")
-//    fun getManageSpiEdit(
-//        @RequestParam("spiId") spiId: String,
-//        model: Model
-//    ): String {
-//        val request = spiService.getSpiById(spiId)
-//
-//        model.addAttribute("spiRequest", request)
-//        return "manage/spi/manage-spi-edit"
-//    }
-//    // SPI変更画面
-//    @PostMapping("/manage/spi/edit")
-//    fun postManageSpiEdit(
-//        @ModelAttribute spiRequest: SpiRequest,
-//        redirectAttributes: RedirectAttributes
-//    ): String {
-//        // SPI更新処理を呼び出す
-//        val response = spiService.updateSpi(spiRequest)
-//
-//        // メッセージをFlashScopeに入れてリダイレクト
-//        redirectAttributes.addFlashAttribute("message", response.message)
-//        return "redirect:/manage/spi"
-//    }
-//    // SPI追加画面
-//    @GetMapping("/manage/spi/add")
-//    fun getManageSpiAdd(model: Model): String {
-//        // 空のフォームオブジェクトを渡す
-//        model.addAttribute("spiRequest", SpiRequest())
-//        return "manage/spi/manage-spi-add"
-//    }
-//    // SPI追加画面
-//    @PostMapping("/manage/spi/add")
-//    fun postManageSpiAdd(
-//        @ModelAttribute spiRequest: SpiRequest,
-//        redirectAttributes: RedirectAttributes
-//    ): String {
-//        // SPI追加処理を呼び出す
-//        val response = spiService.insertSpi(spiRequest)
-//
-//        // メッセージをFlashScopeに入れてリダイレクト
-//        redirectAttributes.addFlashAttribute("message", response.message)
-//        return "redirect:/manage/spi"
-//    }
-//    // SPI削除画面
-//    @PostMapping("/manage/spi/delete")
-//    fun postManageSpiDelete(
-//        @RequestParam("spiId") spiId: String,
-//        redirectAttributes: RedirectAttributes
-//    ): String {
-//        // SPI削除処理を呼び出す
-//        val response = spiService.deleteSpi(spiId)
-//
-//        // メッセージをFlashScopeに入れてリダイレクト
-//        redirectAttributes.addFlashAttribute("message", response.message)
-//        return "redirect:/manage/spi"
-//    }
+    // --- 一覧画面表示 ---
+    @GetMapping("/manage/spi")
+    fun getManageSpiMain(
+        @RequestParam(name = "status", defaultValue = "all") status: String,
+        model: Model
+    ): String {
+        // 全件取得
+        val allList = spiService.getAllSpi()
+
+        val filteredList = when (status) {
+            "active" -> allList.filter { it.spiCategory == "言語" }
+            "stop"   -> allList.filter { it.spiCategory == "非言語" }
+            else     -> allList
+        }
+
+        model.addAttribute("spiList", filteredList)
+        model.addAttribute("selectedStatus", status)
+
+        return "manage/spi/manage-spi-main"
+    }
+
+    // --- 検索・フィルタ用POST（GETへ流すだけでもOK） ---
+    @PostMapping("/manage/spi")
+    fun postManageSpi(
+        @RequestParam(name = "status", defaultValue = "all") status: String
+    ): String {
+        // 検索ボタン押下時などは、statusパラメータを付けてGETメソッドへリダイレクトするのが一般的です
+        return "redirect:/manage/spi?status=$status"
+    }
+
+    // --- 追加画面表示 ---
+    @GetMapping("/manage/spi/add")
+    fun getManageSpiAdd(model: Model): String {
+        // 空のフォームオブジェクトを渡す
+        model.addAttribute("spiRequest", SpiRequest())
+        return "manage/spi/manage-spi-add"
+    }
+
+    // --- 追加処理 ---
+    @PostMapping("/manage/spi/add")
+    fun postManageSpiAdd(
+        @ModelAttribute spiRequest: SpiRequest,
+        redirectAttributes: RedirectAttributes
+    ): String {
+        // Serviceの追加処理呼び出し
+        val response = spiService.insertSpi(spiRequest)
+
+        // 完了メッセージをセットして一覧へリダイレクト
+        redirectAttributes.addFlashAttribute("message", response.message)
+        return "redirect:/manage/spi"
+    }
+
+    // --- 編集画面表示 ---
+    @GetMapping("/manage/spi/edit")
+    fun getManageSpiEdit(
+        @RequestParam("spiId") spiId: String,
+        model: Model
+    ): String {
+        // Serviceから1件取得
+        val request = spiService.getSpiById(spiId)
+
+        // 存在しないID等の場合は一覧へ戻す（簡易ハンドリング）
+        if (request == null) {
+            return "redirect:/manage/spi"
+        }
+
+        model.addAttribute("spiRequest", request)
+        return "manage/spi/manage-spi-edit"
+    }
+
+    // --- 更新処理 ---
+    @PostMapping("/manage/spi/edit")
+    fun postManageSpiEdit(
+        @ModelAttribute spiRequest: SpiRequest,
+        redirectAttributes: RedirectAttributes
+    ): String {
+        // Serviceの更新処理呼び出し
+        val response = spiService.updateSpi(spiRequest)
+
+        // 完了メッセージをセットして一覧へリダイレクト
+        redirectAttributes.addFlashAttribute("message", response.message)
+        return "redirect:/manage/spi"
+    }
+
+    // --- 削除処理 ---
+    @PostMapping("/manage/spi/delete")
+    fun postManageSpiDelete(
+        @RequestParam("spiId") spiId: String,
+        redirectAttributes: RedirectAttributes
+    ): String {
+        // Serviceの削除処理呼び出し
+        val response = spiService.deleteSpi(spiId)
+
+        // 完了メッセージをセットして一覧へリダイレクト
+        redirectAttributes.addFlashAttribute("message", response.message)
+        return "redirect:/manage/spi"
+    }
 
     //todo CABGAB
 

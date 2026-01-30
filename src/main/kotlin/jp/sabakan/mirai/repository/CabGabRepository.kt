@@ -102,6 +102,10 @@ class CabGabRepository {
         DELETE FROM cabgab_detail_t WHERE cabgab_id = :cabgabId
     """.trimIndent()
 
+    val getCabgabCount = """
+        SELECT COUNT(*) FROM cabgab_m
+    """.trimIndent()
+
     /**
      * すべてのCabGab質問を取得する
      *
@@ -324,5 +328,9 @@ class CabGabRepository {
         // クエリを実行して更新件数を取得
         jdbc.update(deleteCabGabDetailSql, params)
         return jdbc.update(deleteCabGabSql, params)
+    }
+
+    fun getCabgabCount(): Int {
+        return jdbc.queryForObject(getCabgabCount, emptyMap<String, Any?>(), Int::class.java) ?: 0
     }
 }

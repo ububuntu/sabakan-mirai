@@ -186,4 +186,8 @@ class SpiService {
         }
         return response
     }
+
+    fun getSpiCount(): Int {
+        return spiRepository.countSpi()
+    }
 }

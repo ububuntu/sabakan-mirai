@@ -267,6 +267,10 @@ class CabGabService {
         return CabGabResponse().apply { message = MessageConfig.CABGAB_DELETE_SUCCESS }
     }
 
+    fun getCabgabCount(): Int {
+        return cabGabRepository.getCabgabCount()
+    }
+
     /**
      * 新しいCabGab IDを生成する (接頭辞 'C')
      */

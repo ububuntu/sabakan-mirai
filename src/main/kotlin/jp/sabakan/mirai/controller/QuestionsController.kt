@@ -26,7 +26,6 @@ class QuestionsController {
     lateinit var session: HttpSession
 
     // 問題数の定数化
-    val SPI_TOTAL_COUNT = 70
     val CABGAB_TOTAL_COUNT = 90
 
     // --- 1. 共通・メイン画面 ---
@@ -95,8 +94,6 @@ class QuestionsController {
         val request = SpiRequest().apply { spiHsId = hsId }
         val allQuestions = spiService.getExamResults(request)
 
-        // index(question_number)に一致する問題を取得
-        // カラム名はDB準拠(question_number)か、Map変換後の名前に注意
         val currentQuestion = allQuestions.find { it["question_number"] == index } ?: return "redirect:/spi/result?id=$hsId"
 
         model.addAttribute("question", currentQuestion)
@@ -171,7 +168,6 @@ class QuestionsController {
         return "questions/spi-result"
     }
 
-    // POSTは不要、もしくはGETへリダイレクト
     @PostMapping("/spi/result")
     fun postSpiResult(): String = "redirect:/spi"
 

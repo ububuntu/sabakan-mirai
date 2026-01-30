@@ -371,6 +371,10 @@ class UserService {
         userRepository.deleteUser(userId)
     }
 
+    fun getUserCount (): Int {
+        return userRepository.countUsers()
+    }
+
     /**
      * テーブルデータをエンティティリストに変換する
      *
