@@ -12,9 +12,11 @@
 <header th:replace="~{common/header :: siteHeader('indexHeader')}"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
-    <div th:if="${message}" style="display:none;">
-        <p class="error-message-data" th:text="${message}"></p>
-    </div>
+    <section class="menu">
+        <div th:if="${message}" style="display:none;">
+            <p class="error-message-data" th:text="${message}"></p>
+        </div>
+    </section>
 
     <!-- 現在の目標 -->
     <section class="menu" aria-label="目標セクション">

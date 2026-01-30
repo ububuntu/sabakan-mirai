@@ -7,7 +7,6 @@ import jp.sabakan.mirai.data.CabGabHistoryData
 import jp.sabakan.mirai.entity.CabGabEntity
 import jp.sabakan.mirai.repository.CabGabRepository
 import jp.sabakan.mirai.request.CabGabRequest
-import jp.sabakan.mirai.request.SpiRequest
 import jp.sabakan.mirai.response.CabGabResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

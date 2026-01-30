@@ -28,16 +28,6 @@ class UserService {
     lateinit var passwordEncoder: PasswordEncoder
 
     /**
-     * ユーザ一覧を取得する
-     *
-     * @return ユーザのリスト
-     */
-    fun getUserList(): List<UserEntity> {
-        val table = userRepository.getUserList()
-        return tableToListEntity(table)
-    }
-
-    /**
      * ユーザ情報を1件取得する
      *
      * @param userId ユーザID
@@ -119,50 +109,6 @@ class UserService {
             response.message = MessageConfig.USER_REGISTER_FAILED
         }
 
-        return response
-    }
-
-    /**
-     * ユーザ情報を更新する
-     *
-     * @param request ユーザ情報リクエスト
-     * @return ユーザ情報レスポンス
-     */
-    @Transactional(rollbackFor = [Exception::class])
-    fun updateUser(request: UserRequest): UserResponse {
-        val response = UserResponse()
-        // ユーザIDがnullの場合は処理を中断
-        val userId = request.userId ?: return response.apply { message = MessageConfig.USER_NOT_FOUND }
-
-        // 現在のパスワードを取得
-        val currentPassword = duplicatePassword(userId)
-        if (currentPassword == null) {
-            response.message = MessageConfig.USER_NOT_FOUND
-            return response
-        }
-
-        // ユーザ情報更新
-        val data = UserData().apply {
-            this.userId = request.userId
-            this.userName = request.userName
-            this.userAddress = request.userAddress
-            this.userRole = request.userRole
-            this.isValid = request.isValid
-
-            this.password = if (request.password.isNullOrEmpty()) {
-                currentPassword
-            } else {
-                passwordEncoder.encode(request.password)
-            }
-        }
-
-        // ユーザ情報更新処理を実行
-        try {
-            userRepository.updateUser(data)
-            response.message = MessageConfig.USER_UPDATE_SUCCESS
-        } catch (e: DataIntegrityViolationException) {
-            response.message = MessageConfig.USER_UPDATE_FAILED
-        }
         return response
     }
 

@@ -20,10 +20,11 @@
 
     </section>
 
-    <div th:if="${message}" style="display:none;">
-        <p class="error-message-data" th:text="${message}"></p>
-    </div>
-
+    <section class="menu">
+        <div th:if="${message}" style="display:none;">
+            <p class="error-message-data" th:text="${message}"></p>
+        </div>
+    </section>
     <form th:action="@{/signup}" method="post" class="auth-form" th:object="${userRequest}">
 
         <div class="auth-input-group">

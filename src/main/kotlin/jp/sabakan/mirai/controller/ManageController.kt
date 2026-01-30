@@ -1,10 +1,8 @@
 package jp.sabakan.mirai.controller
 
 import jp.sabakan.mirai.MessageConfig
-import jp.sabakan.mirai.data.UserData
 import jp.sabakan.mirai.request.SpiRequest
 import jp.sabakan.mirai.request.UserRequest
-import jp.sabakan.mirai.response.SpiResponse
 import jp.sabakan.mirai.service.CabGabService
 import jp.sabakan.mirai.service.SpiService
 import jp.sabakan.mirai.service.UserService

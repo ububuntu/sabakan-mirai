@@ -19,11 +19,11 @@
         <h1 class="auth-app-title">Mirai</h1>
         <p class="auth-app-tagline">あなたの就活の道をサポート</p>
     </section>
-
-    <div th:if="${message}" style="display:none;">
-        <p class="error-message-data" th:text="${message}"></p>
-    </div>
-
+    <section class="menu">
+        <div th:if="${message}" style="display:none;">
+            <p class="error-message-data" th:text="${message}"></p>
+        </div>
+    </section>
     <form th:action="@{/login}" method="post" class="auth-form">
         <div class="auth-input-group">
             <label for="email">メールアドレス</label>
