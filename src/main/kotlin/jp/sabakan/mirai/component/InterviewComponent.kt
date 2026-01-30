@@ -1,5 +1,6 @@
 package jp.sabakan.mirai.component
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -12,7 +13,8 @@ import java.util.concurrent.CompletableFuture
 @Component
 class InterviewComponent(
     private val restTemplate: RestTemplate,
-    private val baseUrl: String = "http://192.168.1.100:5000"
+    @Value("\${interview.api.url:http://localhost:5000}")
+    private val baseUrl: String
 ) {
     /**
      * 非同期呼び出しを行うユーティリティメソッド
@@ -79,17 +81,40 @@ class InterviewComponent(
         restTemplate.getForEntity("$baseUrl/interview/audio", ByteArray::class.java).body
     }
 
-    /**
+     /**
      * 面接分析を停止する
      *
      * @return CompletableFuture<String?>
      */
-    fun stopAnalysis(): CompletableFuture<String?> = asyncCall(null) {
-        val headers = HttpHeaders().apply {
-            contentType = MediaType.APPLICATION_JSON
+    fun stopAnalysis(): CompletableFuture<String?> {
+        return CompletableFuture.supplyAsync {
+            try {
+                println("=== Flask API呼び出し開始 ===")
+                println("URL: $baseUrl/interview/stop")
+
+                val headers = HttpHeaders().apply {
+                    contentType = MediaType.APPLICATION_JSON
+                }
+                val request = HttpEntity(emptyMap<String, String>(), headers)
+
+                val response = restTemplate.postForEntity(
+                    "$baseUrl/interview/stop",
+                    request,
+                    String::class.java
+                )
+
+                println("=== Flask API応答 ===")
+                println("Status: ${response.statusCode}")
+                println("Body: ${response.body}")
+
+                response.body
+            } catch (e: Exception) {
+                println("=== Flask API呼び出しエラー ===")
+                println("エラー: ${e.message}")
+                e.printStackTrace()
+                throw e  // ← エラーを再スローする
+            }
         }
-        val request = HttpEntity(emptyMap<String, String>(), headers)
-        restTemplate.postForEntity("$baseUrl/interview/stop", request, String::class.java).body
     }
 
     /**

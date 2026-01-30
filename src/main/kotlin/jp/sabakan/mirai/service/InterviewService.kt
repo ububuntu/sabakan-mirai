@@ -155,6 +155,24 @@ class InterviewService(
     }
 
     /**
+     * userIdからsessionIdを取得する
+     */
+    fun getSessionIdByUserId(userId: String): String? {
+        return sessionIdMap[userId]
+    }
+
+    /**
+     * 面接セッションを停止し、結果とコメントを生成する（userId版）
+     */
+    fun stopInterviewSessionByUserId(userId: String): CompletableFuture<Map<String, Any?>> {
+        val sessionId = sessionIdMap[userId]
+            ?: throw IllegalArgumentException("ユーザー $userId のセッションが見つかりません")
+
+        logger.info("面接セッション停止: userId=$userId, sessionId=$sessionId")
+        return stopInterviewSession(sessionId)
+    }
+
+    /**
      * 面接セッションを開始する
      */
     fun startInterviewSession(userId: String, request: Map<String, Any>): CompletableFuture<String> {
@@ -182,6 +200,74 @@ class InterviewService(
     }
 
     /**
+     * 分析結果から各項目の点数を計算する（3項目のみ）
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun calculateScores(report: Map<String, Any>): Map<String, Int> {
+        // 表情点数 (0-100)
+        val expressionScore = calculateExpressionScore(report)
+
+        // 視線点数 (0-100)
+        val eyesScore = calculateEyesScore(report)
+
+        // 姿勢点数 (0-100)
+        val postureScore = calculatePostureScore(report)
+
+        return mapOf(
+            "expression" to expressionScore,
+            "eyes" to eyesScore,
+            "posture" to postureScore
+        )
+    }
+
+    /**
+     * 姿勢の詳細コメントを生成（どの項目がダメかを明示）
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun generatePostureDetailComment(report: Map<String, Any>): String {
+        val posture = report["posture"] as? Map<String, Any> ?: return "姿勢データが取得できませんでした"
+
+        val faceCentered = posture["face_centered"] as? Map<String, Any>
+        val faceStraight = posture["face_straight"] as? Map<String, Any>
+        val shouldersLevel = posture["shoulders_level"] as? Map<String, Any>
+
+        val issues = mutableListOf<String>()
+
+        // 顔が中央にあるかチェック
+        if (faceCentered != null) {
+            val success = (faceCentered["success"] as? Number)?.toInt() ?: 0
+            val fail = (faceCentered["fail"] as? Number)?.toInt() ?: 0
+            if (fail > success) {
+                issues.add("顔が中央にありません")
+            }
+        }
+
+        // 顔が傾いていないかチェック
+        if (faceStraight != null) {
+            val success = (faceStraight["success"] as? Number)?.toInt() ?: 0
+            val fail = (faceStraight["fail"] as? Number)?.toInt() ?: 0
+            if (fail > success) {
+                issues.add("顔が傾いています")
+            }
+        }
+
+        // 肩が水平かチェック
+        if (shouldersLevel != null) {
+            val success = (shouldersLevel["success"] as? Number)?.toInt() ?: 0
+            val fail = (shouldersLevel["fail"] as? Number)?.toInt() ?: 0
+            if (fail > success) {
+                issues.add("肩が水平ではありません")
+            }
+        }
+
+        return if (issues.isEmpty()) {
+            "姿勢は良好ですが、さらなる改善が可能です。"
+        } else {
+            "緊張から表情が硬くなる場面がありました。${issues.joinToString("、")}。正しい姿勢を意識しましょう。"
+        }
+    }
+
+    /**
      * 面接セッションを停止し、結果とコメントを生成する
      */
     fun stopInterviewSession(sessionId: String): CompletableFuture<Map<String, Any?>> {
@@ -197,18 +283,21 @@ class InterviewService(
             // コメントを生成（4項目のみ）
             val comments = generateComments(scores, report)
 
-            // セッション情報をクリーンアップ
-            questionLists.remove(sessionId)
-            currentQuestionIndices.remove(sessionId)
-            sessionIdMap.values.remove(sessionId)
-
-            // 結果を保存（一時的）
+            // 結果を保存（クリーンアップ前に保存）
             val result = mapOf(
+                "sessionId" to sessionId,  // sessionIdも含める
                 "scores" to scores,
                 "comments" to comments,
                 "report" to report
             )
             sessionAnalysisResults[sessionId] = result
+
+            // セッション情報をクリーンアップ
+            questionLists.remove(sessionId)
+            currentQuestionIndices.remove(sessionId)
+
+            // userIdとsessionIdの紐付けも削除（逆引き）
+            sessionIdMap.entries.removeIf { it.value == sessionId }
 
             logger.info("面接セッション停止完了: sessionId=$sessionId, scores=$scores")
             result
@@ -236,28 +325,6 @@ class InterviewService(
             logger.error("分析結果のパースに失敗しました", e)
             emptyMap()
         }
-    }
-
-    /**
-     * 分析結果から各項目の点数を計算する（4項目のみ）
-     */
-    @Suppress("UNCHECKED_CAST")
-    private fun calculateScores(report: Map<String, Any>): Map<String, Int> {
-        // 表情点数 (0-100)
-        val expressionScore = calculateExpressionScore(report)
-
-        // 視線点数 (0-100)
-        val eyesScore = calculateEyesScore(report)
-
-        // 姿勢点数 (0-100)
-        val postureScore = calculatePostureScore(report)
-
-
-        return mapOf(
-            "expression" to expressionScore,
-            "eyes" to eyesScore,
-            "posture" to postureScore
-        )
     }
 
     /**
@@ -315,7 +382,13 @@ class InterviewService(
         val expressionScore = scores["expression"] ?: 0
         val eyesScore = scores["eyes"] ?: 0
         val postureScore = scores["posture"] ?: 0
-        val speechSpeedScore = scores["speechSpeed"] ?: 0
+
+        // 発話速度の実データを取得（点数計算はしない）
+        @Suppress("UNCHECKED_CAST")
+        val speech = report["speech"] as? Map<String, Any>
+        val charsPerMinute = (speech?.get("chars_per_minute") as? Number)?.toInt() ?: 0
+
+        logger.info("発話速度データ: charsPerMinute=$charsPerMinute")
 
         // 姿勢の詳細コメント生成（点数が低い場合のみ詳細化）
         val postureComment = if (postureScore < 70) {
@@ -324,60 +397,12 @@ class InterviewService(
             commentGenerator.generatePostureComment(postureScore)
         }
 
-        // 4項目の評価結果を生成
-        return commentGenerator.generateEvaluationResults(
-            expressionScore,
-            eyesScore,
-            postureScore,
-            speechSpeedScore
+        return mapOf(
+            "表情" to commentGenerator.generateExpressionComment(expressionScore),
+            "視線" to commentGenerator.generateEyesComment(eyesScore),
+            "姿勢" to postureComment,
+            "発話速度" to commentGenerator.generateSpeechSpeedComment(charsPerMinute)
         )
-    }
-
-    /**
-     * 姿勢の詳細コメントを生成（どの項目がダメかを明示）
-     */
-    @Suppress("UNCHECKED_CAST")
-    private fun generatePostureDetailComment(report: Map<String, Any>): String {
-        val posture = report["posture"] as? Map<String, Any> ?: return "姿勢データが取得できませんでした"
-
-        val faceCentered = posture["face_centered"] as? Map<String, Any>
-        val faceStraight = posture["face_straight"] as? Map<String, Any>
-        val shouldersLevel = posture["shoulders_level"] as? Map<String, Any>
-
-        val issues = mutableListOf<String>()
-
-        // 顔が中央にあるかチェック
-        if (faceCentered != null) {
-            val success = (faceCentered["success"] as? Number)?.toInt() ?: 0
-            val fail = (faceCentered["fail"] as? Number)?.toInt() ?: 0
-            if (fail > success) {
-                issues.add("顔が中央にありません")
-            }
-        }
-
-        // 顔が傾いていないかチェック
-        if (faceStraight != null) {
-            val success = (faceStraight["success"] as? Number)?.toInt() ?: 0
-            val fail = (faceStraight["fail"] as? Number)?.toInt() ?: 0
-            if (fail > success) {
-                issues.add("顔が傾いています")
-            }
-        }
-
-        // 肩が水平かチェック
-        if (shouldersLevel != null) {
-            val success = (shouldersLevel["success"] as? Number)?.toInt() ?: 0
-            val fail = (shouldersLevel["fail"] as? Number)?.toInt() ?: 0
-            if (fail > success) {
-                issues.add("肩が水平ではありません")
-            }
-        }
-
-        return if (issues.isEmpty()) {
-            "姿勢は良好ですが、さらなる改善が可能です。"
-        } else {
-            "緊張から表情が硬くなる場面がありました。${issues.joinToString("、")}。正しい姿勢を意識しましょう。"
-        }
     }
 
     /**
@@ -425,6 +450,45 @@ class InterviewService(
      */
     fun getSessionResult(sessionId: String): Map<String, Any>? {
         return sessionAnalysisResults[sessionId]
+    }
+
+    /**
+     * セッションの分析結果を取得する（userId版）
+     */
+    fun getSessionResultByUserId(userId: String): Map<String, Any>? {
+        val sessionId = sessionIdMap[userId] ?: run {
+            logger.warn("ユーザー $userId のセッションが見つかりません")
+            return null
+        }
+        return sessionAnalysisResults[sessionId]
+    }
+
+    /**
+     * ユーザーの最新の面接結果を取得する
+     */
+    fun getLatestResultByUserId(userId: String): Map<String, Any>? {
+        logger.info("最新の面接結果取得: userId=$userId")
+
+        // まず現在のセッションから取得を試みる
+        val sessionId = sessionIdMap[userId]
+        if (sessionId != null) {
+            val result = sessionAnalysisResults[sessionId]
+            if (result != null) {
+                logger.info("現在のセッション結果を返却: sessionId=$sessionId")
+                return result
+            }
+        }
+
+        // 現在のセッションになければ、最後に保存された結果を探す
+        val latestResult = sessionAnalysisResults.values.lastOrNull()
+
+        if (latestResult != null) {
+            logger.info("保存済み結果を返却")
+            return latestResult
+        }
+
+        logger.warn("面接結果が見つかりません: userId=$userId")
+        return null
     }
 
     // ==================== 質問管理（デフォルトセッション対応） ====================

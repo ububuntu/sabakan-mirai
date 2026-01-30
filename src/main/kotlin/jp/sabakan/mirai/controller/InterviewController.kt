@@ -43,12 +43,18 @@ class InterviewViewController {
 /**
  * 面接API用Controller
  */
-@Controller
+@RestController
 @RequestMapping("/interview/api")
 class InterviewApiController(
     private val interviewService: InterviewService
 ) {
     private val logger = LoggerFactory.getLogger(InterviewApiController::class.java)
+
+    // ★デバッグ用エンドポイント★
+    @GetMapping("/test")
+    fun testEndpoint(): String {
+        return "エンドポイントは動作しています"
+    }
 
     // ========================================
     // GET リクエスト
@@ -131,6 +137,46 @@ class InterviewApiController(
         }
     }
 
+    @GetMapping("/sessions/result")
+    fun getSessionResultByUser(
+        principal: Principal?
+    ): ResponseEntity<Map<String, Any>> {
+        logger.info("★★★ getSessionResultByUser が呼ばれました ★★★")
+        val userId = principal?.name ?: "anonymous"
+        logger.info("userId: $userId")
+
+        return try {
+            // interviewServiceから最新の面接結果を取得
+            val result = interviewService.getLatestResultByUserId(userId)
+
+            if (result != null) {
+                logger.info("面接結果取得成功: userId=$userId")
+                ResponseEntity.ok(
+                    mapOf(
+                        "status" to "success",
+                        "data" to result
+                    )
+                )
+            } else {
+                logger.warn("面接結果が見つかりません: userId=$userId")
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    mapOf(
+                        "status" to "error",
+                        "message" to "面接結果が見つかりません。先に面接を完了してください。"
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            logger.error("面接結果取得エラー: userId=$userId", e)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                mapOf(
+                    "status" to "error",
+                    "message" to "面接結果の取得に失敗しました: ${e.message}"
+                )
+            )
+        }
+    }
+
     @GetMapping("/sessions/{sessionId}/result")
     @ResponseBody
     fun getSessionResult(
@@ -204,9 +250,54 @@ class InterviewApiController(
             }
     }
 
-    @PostMapping("/sessions/{sessionId}/stop")
+    @PostMapping("/sessions/stop")
     @ResponseBody
     fun stopInterviewSession(
+        principal: Principal?
+    ): CompletableFuture<ResponseEntity<Map<String, Any?>>> {
+        val userId = principal?.name ?: "anonymous"
+        logger.info("面接セッション停止リクエスト: userId=$userId")
+
+        return interviewService.stopInterviewSessionByUserId(userId)
+            .thenApply<ResponseEntity<Map<String, Any?>>> { result ->
+                @Suppress("UNCHECKED_CAST")
+                val sessionId = result["sessionId"] as? String
+                logger.info("面接セッション停止成功: userId=$userId, sessionId=$sessionId")
+
+                // 点数とコメントを抽出
+                @Suppress("UNCHECKED_CAST")
+                val scores = result["scores"] as? Map<String, Int> ?: emptyMap()
+                @Suppress("UNCHECKED_CAST")
+                val comments = result["comments"] as? Map<String, String> ?: emptyMap()
+
+                // 点数をString型に変換
+                val scoresStr = scores.mapValues { it.value.toString() }
+
+                ResponseEntity.ok(
+                    mapOf(
+                        "status" to "success",
+                        "sessionId" to sessionId,
+                        "scores" to scoresStr,
+                        "comments" to comments,
+                        "message" to "面接セッションを停止しました"
+                    )
+                )
+            }
+            .exceptionally { e ->
+                logger.error("面接セッション停止エラー: userId=$userId", e)
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    mapOf(
+                        "status" to "error",
+                        "message" to "面接セッションの停止に失敗しました: ${e.message}"
+                    )
+                )
+            }
+    }
+
+    // 既存のsessionId指定版も残しておく（互換性のため）
+    @PostMapping("/sessions/{sessionId}/stop")
+    @ResponseBody
+    fun stopInterviewSessionById(
         @PathVariable sessionId: String
     ): CompletableFuture<ResponseEntity<Map<String, Any?>>> {
         logger.info("面接セッション停止リクエスト: sessionId=$sessionId")

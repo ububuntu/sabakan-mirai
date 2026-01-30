@@ -1,3 +1,103 @@
+// ========================================
+// 音声監視機能
+// ========================================
+
+let voiceMonitoringInterval = null;
+let audioContext = null;
+let analyser = null;
+let silenceTimer = null;
+const SILENCE_THRESHOLD = 5000; // 5秒
+
+/**
+ * 音声監視を開始（無音検知でタイマー起動）
+ */
+function startVoiceMonitoring(stream) {
+    try {
+        console.log('🎤 音声監視を開始します');
+
+        // AudioContextを作成
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        const microphone = audioContext.createMediaStreamSource(stream);
+
+        microphone.connect(analyser);
+        analyser.fftSize = 256;
+
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        let isSpeaking = false;
+
+        // 100msごとに音声レベルをチェック
+        voiceMonitoringInterval = setInterval(() => {
+            analyser.getByteFrequencyData(dataArray);
+
+            // 平均音量を計算
+            const average = dataArray.reduce((a, b) => a + b) / bufferLength;
+
+            // 音声検出しきい値（調整可能）
+            const VOICE_THRESHOLD = 30;
+
+            if (average > VOICE_THRESHOLD) {
+                // 音声を検出
+                if (!isSpeaking) {
+                    console.log('🗣️ 発話開始');
+                    isSpeaking = true;
+                }
+
+                // 無音タイマーをリセット
+                if (silenceTimer) {
+                    clearTimeout(silenceTimer);
+                    silenceTimer = null;
+                }
+            } else {
+                // 無音を検出
+                if (isSpeaking && !silenceTimer) {
+                    console.log('🤐 発話終了、無音タイマー開始');
+                    isSpeaking = false;
+
+                    // 5秒後に次の質問へ
+                    silenceTimer = setTimeout(() => {
+                        console.log('⏰ 無音タイムアウト - 次の質問へ');
+                        nextQuestion();
+                    }, SILENCE_THRESHOLD);
+                }
+            }
+        }, 100);
+
+        console.log('✅ 音声監視が正常に開始されました');
+
+    } catch (error) {
+        console.error('❌ 音声監視の開始に失敗:', error);
+    }
+}
+
+/**
+ * 音声監視を停止
+ */
+function stopVoiceMonitoring() {
+    console.log('⏹️ 音声監視を停止します');
+
+    if (voiceMonitoringInterval) {
+        clearInterval(voiceMonitoringInterval);
+        voiceMonitoringInterval = null;
+    }
+
+    if (silenceTimer) {
+        clearTimeout(silenceTimer);
+        silenceTimer = null;
+    }
+
+    if (audioContext) {
+        audioContext.close();
+        audioContext = null;
+    }
+
+    analyser = null;
+
+    console.log('✅ 音声監視が停止されました');
+}
+
 /**
  * WebM音声をWAV形式に変換するユーティリティクラス
  */
@@ -334,59 +434,6 @@ class AnalysisAPIClient {
 }
 
 // ========================================
-// 音声検出とタイマー管理
-// ========================================
-
-// 音声検出の設定
-let recognizer;
-let silenceTimer = null;
-let isSpeaking = false;
-let isInterviewFinished = false;
-const SILENCE_THRESHOLD = 5000;
-
-// 面接開始時
-function startInterview() {
-    setupVoiceRecognition();
-    startVoiceMonitoring();
-}
-
-function setupVoiceRecognition() {
-    recognizer = new webkitSpeechRecognition();
-    recognizer.continuous = true;
-    recognizer.interimResults = true;
-
-    recognizer.onresult = function(event) {
-        console.log('🗣️ 音声検出');
-        resetSilenceTimer();
-        // 音声処理...
-    };
-
-    recognizer.onend = function() {
-        if (!isInterviewFinished) {
-            console.log('音声認識終了、タイマー開始');
-            startSilenceTimer();
-            recognizer.start(); // 再開
-        }
-    };
-}
-
-function resetSilenceTimer() {
-    if (silenceTimer) {
-        console.log('⏱️ タイマーリセット');
-        clearTimeout(silenceTimer);
-        silenceTimer = null;
-    }
-}
-
-function startSilenceTimer() {
-    resetSilenceTimer();
-    silenceTimer = setTimeout(function() {
-        console.log('⏰ 無音タイムアウト!');
-        nextQuestion();
-    }, SILENCE_THRESHOLD);
-}
-
-// ========================================
 // メインの面接処理
 // ========================================
 
@@ -399,7 +446,33 @@ let cameraStream;
  */
 async function startCameraAndMicrophone() {
     try {
+        console.log('=== 面接初期化開始 ===');
+
+        // ★★★ 先にセッションを作成 ★★★
+        console.log('📡 セッション作成中...');
+        const sessionResponse = await fetch('/interview/api/sessions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        });
+
+        const sessionData = await sessionResponse.json();
+        console.log('📡 セッション応答:', sessionData);
+
+        if (sessionData.status === 'success' && sessionData.sessionId) {
+            interviewSessionId = sessionData.sessionId;
+            localStorage.setItem('interviewSessionId', sessionData.sessionId);
+            console.log('✅ セッションID保存成功:', interviewSessionId);
+        } else {
+            console.error('❌ セッション作成失敗:', sessionData);
+            alert('セッションの作成に失敗しました。ページをリロードしてください。');
+            return;
+        }
+
         // カメラを起動
+        console.log('📹 カメラ起動中...');
         cameraStream = await navigator.mediaDevices.getUserMedia({
             video: {
                 width: { ideal: 1280 },
@@ -416,6 +489,7 @@ async function startCameraAndMicrophone() {
         }
 
         // マイクマネージャーを初期化
+        console.log('🎤 マイク初期化中...');
         microphoneManager = new MicrophoneManager('/interview/api');
         apiClient = new AnalysisAPIClient('/interview/api');
 
@@ -424,11 +498,7 @@ async function startCameraAndMicrophone() {
         if (micStarted) {
             updateMicStatus('録音中', '#dc3545');
 
-            let silenceTimer = null;
-            let isSpeaking = false;
-            const SILENCE_THRESHOLD = 5000;
-
-            // ★★★ 音声監視を開始（タイマー機能） ★★★
+            // 音声監視を開始（タイマー機能）
             if (microphoneManager.stream) {
                 startVoiceMonitoring(microphoneManager.stream);
             }
@@ -438,12 +508,16 @@ async function startCameraAndMicrophone() {
         }
 
         // 分析を開始
+        console.log('🔬 AI分析開始中...');
         const result = await apiClient.startAnalysis();
-        console.log('✅ 分析開始:', result);
+        console.log('✅ 分析開始完了:', result);
+
+        console.log('=== 面接初期化完了 ===');
 
     } catch (error) {
         console.error('❌ 起動エラー:', error);
         updateMicStatus('マイクエラー', '#dc3545');
+        alert('面接の初期化に失敗しました: ' + error.message);
     }
 }
 
@@ -495,6 +569,8 @@ function setupMicrophoneEvents() {
  */
 async function stopInterview() {
     try {
+        console.log('=== 面接停止処理開始 ===');
+
         // 音声監視を停止
         stopVoiceMonitoring();
 
@@ -509,20 +585,50 @@ async function stopInterview() {
             cameraStream = null;
         }
 
-        // 分析を停止
-        if (apiClient) {
-            const result = await apiClient.stopAnalysis();
-            console.log('分析結果:', result);
+        // 📡 面接停止APIを呼ぶ（sessionId不要、userId版）
+        console.log('📡 面接停止API呼び出し: /interview/api/sessions/stop');
+
+        const response = await fetch('/interview/api/sessions/stop', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('📡 APIレスポンスステータス:', response.status);
+
+        const result = await response.json();
+        console.log('=== API レスポンス ===');
+        console.log(result);
+
+        // 結果をlocalStorageに保存
+        if (result.status === 'success') {
+            // データ構造を整形して保存
+            const resultData = {
+                scores: result.scores,
+                comments: result.comments
+            };
+
+            localStorage.setItem('interviewResult', JSON.stringify(resultData));
+            console.log('✅ 結果をlocalStorageに保存しました');
+            console.log('保存したデータ:', resultData);
+        } else {
+            console.warn('⚠️ API応答がエラーです:', result);
+            alert('結果の取得に失敗しました: ' + (result.message || '不明なエラー'));
         }
 
         console.log('✅ 面接を正常に停止しました');
 
-        // 結果ページへ遷移
-        location.href = './interview-result';
+        // 少し待ってから遷移
+        setTimeout(() => {
+            location.href = '/interview/result';
+        }, 500);
 
     } catch (error) {
         console.error('❌ 停止処理エラー:', error);
-        location.href = './interview-result';
+        alert('面接停止中にエラーが発生しました: ' + error.message);
+        // エラーでも結果ページに遷移
+        location.href = '/interview/result';
     }
 }
 
@@ -611,8 +717,6 @@ function nextQuestion() {
         silenceTimer = null;
     }
 
-    isSpeaking = false;
-
     fetch('/interview/api/next-question', {
         method: 'POST',
         headers: {
@@ -673,7 +777,6 @@ function nextQuestion() {
  * 面接画面の初期化
  */
 async function initializeInterview() {
-
     try {
         setupMicrophoneEvents();
         await startCameraAndMicrophone();
@@ -695,7 +798,6 @@ window.addEventListener('load', function() {
 
 // 質問読み込み（確実に実行）
 setTimeout(function() {
-
     var questionElement = document.querySelector(".question");
     var progressElement = document.querySelector(".progress");
 
@@ -710,13 +812,13 @@ setTimeout(function() {
 window.addEventListener('beforeunload', function() {
     cleanup();
 });
+
 // ========================================
 // デバッグ用：強制的に実行
 // ========================================
 
 // 即座に実行
 setTimeout(function() {
-
     // 要素の存在確認
     var questionElement = document.querySelector(".question");
     var progressElement = document.querySelector(".progress");
@@ -727,7 +829,6 @@ setTimeout(function() {
             return response.json();
         })
         .then(function(data) {
-
             if (questionElement) {
                 questionElement.textContent = data.question;
             } else {

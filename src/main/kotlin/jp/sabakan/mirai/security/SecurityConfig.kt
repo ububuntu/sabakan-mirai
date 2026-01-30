@@ -29,6 +29,7 @@ class SecurityConfig {
             // 1. 認可（アクセス制御）設定
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers("/login", "/signup/**", "/css/**", "/js/**", "/img/**").permitAll()
+                auth.requestMatchers("/interview/api/**").authenticated()
                 // 管理者専用ページ (ADMIN)
                 auth.requestMatchers("/manage/**").hasRole("ADMIN")
                 // hasAnyRoleは可変長引数を受け取るためカンマ区切りでOK
