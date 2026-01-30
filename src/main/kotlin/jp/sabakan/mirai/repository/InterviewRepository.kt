@@ -1,7 +1,6 @@
 package jp.sabakan.mirai.repository
 
 import jp.sabakan.mirai.data.InterviewData
-import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
@@ -15,8 +14,6 @@ class InterviewRepository(
     private val jdbc: JdbcTemplate,
     private val namedJdbc: NamedParameterJdbcTemplate
 ) {
-    private val logger = LoggerFactory.getLogger(InterviewRepository::class.java)
-
     companion object {
         // SQLクエリ定義
         private const val SELECT_INTERVIEWS = """
@@ -123,16 +120,11 @@ class InterviewRepository(
      * @return 面接履歴のリスト
      */
     fun getInterviews(data: InterviewData): List<Map<String, Any?>> {
-        logger.debug("面接履歴取得: userId=${data.userId}")
-
         val paramMap = mapOf("userId" to data.userId)
 
         return try {
-            val result = namedJdbc.queryForList(SELECT_INTERVIEWS, paramMap)
-            logger.debug("面接履歴取得成功: ${result.size}件")
-            result
+            namedJdbc.queryForList(SELECT_INTERVIEWS, paramMap)
         } catch (e: Exception) {
-            logger.error("面接履歴取得エラー: userId=${data.userId}", e)
             throw e
         }
     }
@@ -144,8 +136,6 @@ class InterviewRepository(
      * @return 影響を受けた行数
      */
     fun insertInterview(data: InterviewData): Int {
-        logger.debug("面接履歴登録: interviewId=${data.interviewId}, userId=${data.userId}")
-
         val paramMap = mapOf(
             "interviewId" to data.interviewId,
             "userId" to data.userId,
@@ -158,11 +148,8 @@ class InterviewRepository(
         )
 
         return try {
-            val rowsAffected = namedJdbc.update(INSERT_INTERVIEW, paramMap)
-            logger.info("面接履歴登録成功: interviewId=${data.interviewId}")
-            rowsAffected
+            namedJdbc.update(INSERT_INTERVIEW, paramMap)
         } catch (e: Exception) {
-            logger.error("面接履歴登録エラー: interviewId=${data.interviewId}", e)
             throw e
         }
     }
@@ -174,15 +161,12 @@ class InterviewRepository(
      * @return 面接データ（存在しない場合はnull）
      */
     fun getInterviewById(interviewId: String): Map<String, Any?>? {
-        logger.debug("面接履歴取得: interviewId=$interviewId")
-
         val paramMap = mapOf("interviewId" to interviewId)
 
         return try {
             val results = namedJdbc.queryForList(SELECT_INTERVIEW_BY_ID, paramMap)
             results.firstOrNull()
         } catch (e: Exception) {
-            logger.error("面接履歴取得エラー: interviewId=$interviewId", e)
             null
         }
     }
@@ -194,8 +178,6 @@ class InterviewRepository(
      * @return 影響を受けた行数
      */
     fun updateInterview(data: InterviewData): Int {
-        logger.debug("面接履歴更新: interviewId=${data.interviewId}")
-
         val paramMap = mapOf(
             "interviewId" to data.interviewId,
             "interviewExpression" to data.interviewExpression,
@@ -207,11 +189,8 @@ class InterviewRepository(
         )
 
         return try {
-            val rowsAffected = namedJdbc.update(UPDATE_INTERVIEW, paramMap)
-            logger.info("面接履歴更新成功: interviewId=${data.interviewId}, rows=$rowsAffected")
-            rowsAffected
+            namedJdbc.update(UPDATE_INTERVIEW, paramMap)
         } catch (e: Exception) {
-            logger.error("面接履歴更新エラー: interviewId=${data.interviewId}", e)
             throw e
         }
     }
@@ -223,16 +202,11 @@ class InterviewRepository(
      * @return 影響を受けた行数
      */
     fun deleteInterview(interviewId: String): Int {
-        logger.debug("面接履歴削除: interviewId=$interviewId")
-
         val paramMap = mapOf("interviewId" to interviewId)
 
         return try {
-            val rowsAffected = namedJdbc.update(DELETE_INTERVIEW, paramMap)
-            logger.info("面接履歴削除成功: interviewId=$interviewId, rows=$rowsAffected")
-            rowsAffected
+            namedJdbc.update(DELETE_INTERVIEW, paramMap)
         } catch (e: Exception) {
-            logger.error("面接履歴削除エラー: interviewId=$interviewId", e)
             throw e
         }
     }
@@ -246,14 +220,11 @@ class InterviewRepository(
      * @return 面接履歴件数
      */
     fun countInterviewsByUser(userId: String): Int {
-        logger.debug("面接履歴件数取得: userId=$userId")
-
         val paramMap = mapOf("userId" to userId)
 
         return try {
             namedJdbc.queryForObject(COUNT_INTERVIEWS_BY_USER, paramMap, Int::class.java) ?: 0
         } catch (e: Exception) {
-            logger.error("面接履歴件数取得エラー: userId=$userId", e)
             0
         }
     }
@@ -266,8 +237,6 @@ class InterviewRepository(
      * @return 面接履歴のリスト
      */
     fun getRecentInterviews(userId: String, limit: Int = 10): List<Map<String, Any?>> {
-        logger.debug("最近の面接履歴取得: userId=$userId, limit=$limit")
-
         val paramMap = mapOf(
             "userId" to userId,
             "limit" to limit
@@ -276,7 +245,6 @@ class InterviewRepository(
         return try {
             namedJdbc.queryForList(SELECT_RECENT_INTERVIEWS, paramMap)
         } catch (e: Exception) {
-            logger.error("最近の面接履歴取得エラー: userId=$userId", e)
             emptyList()
         }
     }
@@ -288,8 +256,6 @@ class InterviewRepository(
      * @return 存在する場合true
      */
     fun existsById(interviewId: String): Boolean {
-        logger.debug("面接ID存在確認: interviewId=$interviewId")
-
         val sql = "SELECT COUNT(*) FROM interview_t WHERE interview_id = :interviewId"
         val paramMap = mapOf("interviewId" to interviewId)
 
@@ -297,7 +263,6 @@ class InterviewRepository(
             val count = namedJdbc.queryForObject(sql, paramMap, Int::class.java) ?: 0
             count > 0
         } catch (e: Exception) {
-            logger.error("面接ID存在確認エラー: interviewId=$interviewId", e)
             false
         }
     }

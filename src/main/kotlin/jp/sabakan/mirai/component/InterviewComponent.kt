@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
 import java.lang.Exception
 import java.util.concurrent.CompletableFuture
+import kotlin.math.abs
 
 @Component
 class InterviewComponent(
@@ -81,38 +82,53 @@ class InterviewComponent(
         restTemplate.getForEntity("$baseUrl/interview/audio", ByteArray::class.java).body
     }
 
-     /**
-     * 面接分析を停止する
+    /**
+     * 面接分析の点数結果を取得する
      *
-     * @return CompletableFuture<String?>
+     * @return CompletableFuture<InterviewScoreResult?>
      */
-    fun stopAnalysis(): CompletableFuture<String?> {
+    fun getScoreResult(): CompletableFuture<InterviewScoreResult?> = asyncCall(null) {
+        val response = restTemplate.getForEntity(
+            "$baseUrl/interview/score",
+            InterviewScoreResult::class.java
+        )
+        response.body
+    }
+
+    /**
+     * 面接分析の点数結果データクラス
+     */
+    data class InterviewScoreResult(
+        val expressionScore: Int,
+        val eyesScore: Int,
+        val postureScore: Int,
+        val speechSpeedScore: Int,
+        val totalScore: Int
+    )
+
+    /**
+     * 面接分析を停止して点数を取得する
+     *
+     * @return CompletableFuture<InterviewScoreResult?>
+     */
+    fun stopAnalysis(): CompletableFuture<InterviewScoreResult?> {
         return CompletableFuture.supplyAsync {
             try {
-                println("=== Flask API呼び出し開始 ===")
-                println("URL: $baseUrl/interview/stop")
-
                 val headers = HttpHeaders().apply {
                     contentType = MediaType.APPLICATION_JSON
+                    accept = listOf(MediaType.APPLICATION_JSON)
                 }
                 val request = HttpEntity(emptyMap<String, String>(), headers)
 
                 val response = restTemplate.postForEntity(
                     "$baseUrl/interview/stop",
                     request,
-                    String::class.java
+                    InterviewScoreResult::class.java
                 )
-
-                println("=== Flask API応答 ===")
-                println("Status: ${response.statusCode}")
-                println("Body: ${response.body}")
 
                 response.body
             } catch (e: Exception) {
-                println("=== Flask API呼び出しエラー ===")
-                println("エラー: ${e.message}")
-                e.printStackTrace()
-                throw e  // ← エラーを再スローする
+                throw e
             }
         }
     }
@@ -147,6 +163,28 @@ class InterviewComponent(
 @Component
 class InterviewCommentGenerator {
 
+    companion object {
+        const val OPTIMAL_MIN = 251
+        const val OPTIMAL_MAX = 350
+        const val OPTIMAL_CENTER = (OPTIMAL_MIN + OPTIMAL_MAX) / 2
+    }
+
+    /**
+     * 1分間あたりの文字数から発話速度の点数を計算
+     *
+     * @param charsPerMinute 1分間あたりの文字数
+     * @return 発話速度の点数（0-100）
+     */
+    fun calculateSpeechSpeedScore(charsPerMinute: Int): Int {
+        return when {
+            charsPerMinute in OPTIMAL_MIN..OPTIMAL_MAX -> 100
+            charsPerMinute in (OPTIMAL_MIN - 50)..(OPTIMAL_MAX + 50) -> 80
+            charsPerMinute in (OPTIMAL_MIN - 75)..(OPTIMAL_MAX + 75) -> 60
+            charsPerMinute in (OPTIMAL_MIN - 100)..(OPTIMAL_MAX + 100) -> 40
+            else -> 20
+        }
+    }
+
     /**
      * 表情評価に基づいてコメントを生成
      *
@@ -175,7 +213,7 @@ class InterviewCommentGenerator {
             score >= 80 -> "アイコンタクトは良好です。圧迫感のない、ちょうどよい視線です。"
             score >= 70 -> "アイコンタクトは平均的です。話すときは、画面ではなくカメラ付近を見る意識をしてみましょう。"
             score >= 60 -> "視線が不安定な場面がありました。画面との距離と姿勢を整えると、視線が安定しやすくなります。"
-            else -> "緊張から表情が硬くなる場面がありました。"
+            else -> "視線が不安定な場面がありました。"
         }
     }
 
@@ -191,7 +229,7 @@ class InterviewCommentGenerator {
             score >= 80 -> "姿勢は良好です。長時間でも崩れにくい姿勢が取れています。"
             score >= 70 -> "姿勢は平均的です。背もたれに頼りすぎず、軽く背筋を伸ばす意識を持ってみてください。"
             score >= 60 -> "姿勢が崩れる場面がありました。画面の高さを調整すると、無理のない姿勢になります。"
-            else -> "緊張から表情が硬くなる場面がありました。"
+            else -> "姿勢が崩れる場面がありました。"
         }
     }
 

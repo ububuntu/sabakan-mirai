@@ -13,8 +13,6 @@ const SILENCE_THRESHOLD = 5000; // 5秒
  */
 function startVoiceMonitoring(stream) {
     try {
-        console.log('🎤 音声監視を開始します');
-
         // AudioContextを作成
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioContext.createAnalyser();
@@ -41,7 +39,6 @@ function startVoiceMonitoring(stream) {
             if (average > VOICE_THRESHOLD) {
                 // 音声を検出
                 if (!isSpeaking) {
-                    console.log('🗣️ 発話開始');
                     isSpeaking = true;
                 }
 
@@ -53,22 +50,18 @@ function startVoiceMonitoring(stream) {
             } else {
                 // 無音を検出
                 if (isSpeaking && !silenceTimer) {
-                    console.log('🤐 発話終了、無音タイマー開始');
                     isSpeaking = false;
 
                     // 5秒後に次の質問へ
                     silenceTimer = setTimeout(() => {
-                        console.log('⏰ 無音タイムアウト - 次の質問へ');
                         nextQuestion();
                     }, SILENCE_THRESHOLD);
                 }
             }
         }, 100);
 
-        console.log('✅ 音声監視が正常に開始されました');
-
     } catch (error) {
-        console.error('❌ 音声監視の開始に失敗:', error);
+        // エラー処理
     }
 }
 
@@ -76,8 +69,6 @@ function startVoiceMonitoring(stream) {
  * 音声監視を停止
  */
 function stopVoiceMonitoring() {
-    console.log('⏹️ 音声監視を停止します');
-
     if (voiceMonitoringInterval) {
         clearInterval(voiceMonitoringInterval);
         voiceMonitoringInterval = null;
@@ -94,8 +85,6 @@ function stopVoiceMonitoring() {
     }
 
     analyser = null;
-
-    console.log('✅ 音声監視が停止されました');
 }
 
 /**
@@ -119,14 +108,11 @@ class AudioConverter {
             const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
 
             // 16kHzにリサンプリング
-            console.log(`🔄 リサンプリング中: ${audioBuffer.sampleRate}Hz → 16000Hz`);
             const resampled = await this.resampleTo16k(audioBuffer);
-            console.log('✅ リサンプリング完了');
 
             // WAV形式に変換
             return this.audioBufferToWav(resampled);
         } catch (error) {
-            console.error('WAV変換エラー:', error);
             throw error;
         }
     }
@@ -156,7 +142,7 @@ class AudioConverter {
      */
     static audioBufferToWav(audioBuffer) {
         const numberOfChannels = audioBuffer.numberOfChannels;
-        const sampleRate = audioBuffer.sampleRate;// PCM
+        const sampleRate = audioBuffer.sampleRate;
         const bitDepth = 16;
 
         // インターリーブ処理（ステレオの場合、左右のチャンネルを交互に配置）
@@ -190,8 +176,8 @@ class AudioConverter {
 
         // "fmt " サブチャンク
         this.writeString(view, offset, 'fmt '); offset += 4;
-        view.setUint32(offset, 16, true); offset += 4; // サブチャンクサイズ
-        view.setUint16(offset, 1, true); offset += 2; // オーディオフォーマット (PCM)
+        view.setUint32(offset, 16, true); offset += 4;
+        view.setUint16(offset, 1, true); offset += 2;
         view.setUint16(offset, numberOfChannels, true); offset += 2;
         view.setUint32(offset, sampleRate, true); offset += 4;
         view.setUint32(offset, byteRate, true); offset += 4;
@@ -293,11 +279,9 @@ class MicrophoneManager {
                 }
             }, 5000);
 
-            console.log('🎤 録音を開始しました');
             return true;
 
         } catch (error) {
-            console.error('マイクアクセスエラー:', error);
             this.dispatchEvent('recordingError', { error: error.message });
             return false;
         }
@@ -325,11 +309,9 @@ class MicrophoneManager {
             this.isRecording = false;
             this.dispatchEvent('recordingStopped');
 
-            console.log('⏹️ 録音を停止しました');
             return true;
 
         } catch (error) {
-            console.error('録音停止エラー:', error);
             return false;
         }
     }
@@ -341,9 +323,7 @@ class MicrophoneManager {
         return new Promise(async (resolve, reject) => {
             try {
                 // WebMをWAVに変換
-                console.log('🔄 WAV形式に変換中...');
                 const wavBlob = await AudioConverter.convertWebMToWav(audioBlob);
-                console.log('✅ WAV変換完了');
 
                 // Base64に変換
                 const reader = new FileReader();
@@ -359,12 +339,10 @@ class MicrophoneManager {
                         });
 
                         const data = await response.json();
-                        console.log('✅ 音声送信成功 (WAV形式):', data);
                         this.dispatchEvent('audioSent', data);
                         resolve(data);
 
                     } catch (error) {
-                        console.error('❌ 音声送信エラー:', error);
                         this.dispatchEvent('audioSendError', { error: error.message });
                         reject(error);
                     }
@@ -374,7 +352,6 @@ class MicrophoneManager {
                 reader.readAsDataURL(wavBlob);
 
             } catch (error) {
-                console.error('❌ WAV変換エラー:', error);
                 this.dispatchEvent('audioConvertError', { error: error.message });
                 reject(error);
             }
@@ -446,10 +423,7 @@ let cameraStream;
  */
 async function startCameraAndMicrophone() {
     try {
-        console.log('=== 面接初期化開始 ===');
-
-        // ★★★ 先にセッションを作成 ★★★
-        console.log('📡 セッション作成中...');
+        // セッションを作成
         const sessionResponse = await fetch('/interview/api/sessions', {
             method: 'POST',
             headers: {
@@ -459,20 +433,16 @@ async function startCameraAndMicrophone() {
         });
 
         const sessionData = await sessionResponse.json();
-        console.log('📡 セッション応答:', sessionData);
 
         if (sessionData.status === 'success' && sessionData.sessionId) {
             interviewSessionId = sessionData.sessionId;
             localStorage.setItem('interviewSessionId', sessionData.sessionId);
-            console.log('✅ セッションID保存成功:', interviewSessionId);
         } else {
-            console.error('❌ セッション作成失敗:', sessionData);
             alert('セッションの作成に失敗しました。ページをリロードしてください。');
             return;
         }
 
         // カメラを起動
-        console.log('📹 カメラ起動中...');
         cameraStream = await navigator.mediaDevices.getUserMedia({
             video: {
                 width: { ideal: 1280 },
@@ -485,11 +455,9 @@ async function startCameraAndMicrophone() {
         const videoElement = document.getElementById('input_video');
         if (videoElement) {
             videoElement.srcObject = cameraStream;
-            console.log('✅ カメラが正常に起動しました');
         }
 
         // マイクマネージャーを初期化
-        console.log('🎤 マイク初期化中...');
         microphoneManager = new MicrophoneManager('/interview/api');
         apiClient = new AnalysisAPIClient('/interview/api');
 
@@ -503,19 +471,13 @@ async function startCameraAndMicrophone() {
                 startVoiceMonitoring(microphoneManager.stream);
             }
         } else {
-            console.warn('⚠️ マイクの起動に失敗しました');
             updateMicStatus('エラー', '#dc3545');
         }
 
         // 分析を開始
-        console.log('🔬 AI分析開始中...');
         const result = await apiClient.startAnalysis();
-        console.log('✅ 分析開始完了:', result);
-
-        console.log('=== 面接初期化完了 ===');
 
     } catch (error) {
-        console.error('❌ 起動エラー:', error);
         updateMicStatus('マイクエラー', '#dc3545');
         alert('面接の初期化に失敗しました: ' + error.message);
     }
@@ -538,29 +500,26 @@ function updateMicStatus(text, color) {
 function setupMicrophoneEvents() {
     window.addEventListener('microphone:recordingStarted', () => {
         updateMicStatus('録音中', '#dc3545');
-        console.log('🎤 録音開始');
     });
 
     window.addEventListener('microphone:recordingStopped', () => {
         updateMicStatus('停止中', '#666');
-        console.log('⏹️ 録音停止');
     });
 
     window.addEventListener('microphone:audioSent', (e) => {
-        console.log('📤 音声データ送信完了:', e.detail);
+        // 音声送信完了
     });
 
     window.addEventListener('microphone:recordingError', (e) => {
-        console.error('❌ 録音エラー:', e.detail.error);
         updateMicStatus('エラー', '#dc3545');
     });
 
     window.addEventListener('microphone:audioSendError', (e) => {
-        console.error('❌ 音声送信エラー:', e.detail.error);
+        // 音声送信エラー
     });
 
     window.addEventListener('microphone:audioConvertError', (e) => {
-        console.error('❌ WAV変換エラー:', e.detail.error);
+        // WAV変換エラー
     });
 }
 
@@ -569,8 +528,6 @@ function setupMicrophoneEvents() {
  */
 async function stopInterview() {
     try {
-        console.log('=== 面接停止処理開始 ===');
-
         // 音声監視を停止
         stopVoiceMonitoring();
 
@@ -585,9 +542,7 @@ async function stopInterview() {
             cameraStream = null;
         }
 
-        // 📡 面接停止APIを呼ぶ（sessionId不要、userId版）
-        console.log('📡 面接停止API呼び出し: /interview/api/sessions/stop');
-
+        // 面接停止APIを呼ぶ
         const response = await fetch('/interview/api/sessions/stop', {
             method: 'POST',
             headers: {
@@ -595,29 +550,19 @@ async function stopInterview() {
             }
         });
 
-        console.log('📡 APIレスポンスステータス:', response.status);
-
         const result = await response.json();
-        console.log('=== API レスポンス ===');
-        console.log(result);
 
         // 結果をlocalStorageに保存
         if (result.status === 'success') {
-            // データ構造を整形して保存
             const resultData = {
                 scores: result.scores,
                 comments: result.comments
             };
 
             localStorage.setItem('interviewResult', JSON.stringify(resultData));
-            console.log('✅ 結果をlocalStorageに保存しました');
-            console.log('保存したデータ:', resultData);
         } else {
-            console.warn('⚠️ API応答がエラーです:', result);
             alert('結果の取得に失敗しました: ' + (result.message || '不明なエラー'));
         }
-
-        console.log('✅ 面接を正常に停止しました');
 
         // 少し待ってから遷移
         setTimeout(() => {
@@ -625,7 +570,6 @@ async function stopInterview() {
         }, 500);
 
     } catch (error) {
-        console.error('❌ 停止処理エラー:', error);
         alert('面接停止中にエラーが発生しました: ' + error.message);
         // エラーでも結果ページに遷移
         location.href = '/interview/result';
@@ -655,9 +599,8 @@ function cleanup() {
             microphoneManager.cleanup();
         }
 
-        console.log('✅ クリーンアップ完了');
     } catch (error) {
-        console.error('クリーンアップエラー:', error);
+        // クリーンアップエラー
     }
 }
 
@@ -669,34 +612,23 @@ function cleanup() {
  * 現在の質問を取得して表示
  */
 function loadCurrentQuestion() {
-    console.log('📋 質問読み込み開始');
-
     fetch('/interview/api/current-question')
         .then(function(response) {
-            console.log('✅ ステータス:', response.status);
             return response.json();
         })
         .then(function(data) {
-            console.log('📊 取得データ:', data);
             var questionElement = document.querySelector(".question");
             var progressElement = document.querySelector(".progress");
 
             if (questionElement) {
                 questionElement.textContent = data.question;
-                console.log('✅ 質問表示完了:', data.question);
-            } else {
-                console.error('❌ .question 要素が見つかりません');
             }
 
             if (progressElement) {
                 progressElement.value = data.progress;
-                console.log('✅ 進捗表示完了:', data.progress + '%');
-            } else {
-                console.error('❌ .progress 要素が見つかりません');
             }
         })
         .catch(function(error) {
-            console.error('❌ エラー:', error);
             var questionElement = document.querySelector(".question");
             if (questionElement) {
                 questionElement.textContent = '質問の読み込みに失敗しました';
@@ -708,11 +640,8 @@ function loadCurrentQuestion() {
  * 次の質問に進む
  */
 function nextQuestion() {
-    console.log('➡️ 次の質問へ');
-
     // 無音タイマーをリセット
     if (silenceTimer) {
-        console.log('⏱️ タイマーをクリア');
         clearTimeout(silenceTimer);
         silenceTimer = null;
     }
@@ -724,12 +653,9 @@ function nextQuestion() {
         }
     })
         .then(function(response) {
-            console.log('✅ ステータス:', response.status);
             return response.json();
         })
         .then(function(data) {
-            console.log('📊 次の質問データ:', data);
-
             var questionElement = document.querySelector(".question");
             var progressElement = document.querySelector(".progress");
 
@@ -749,7 +675,6 @@ function nextQuestion() {
 
                 // 音声監視を停止
                 stopVoiceMonitoring();
-                console.log('✅ 面接終了');
             } else {
                 if (questionElement) {
                     questionElement.textContent = data.question;
@@ -757,11 +682,9 @@ function nextQuestion() {
                 if (progressElement) {
                     progressElement.value = data.progress;
                 }
-                console.log('✅ 次の質問表示完了');
             }
         })
         .catch(function(error) {
-            console.error('❌ エラー:', error);
             var questionElement = document.querySelector(".question");
             if (questionElement) {
                 questionElement.textContent = '質問の読み込みに失敗しました';
@@ -787,7 +710,7 @@ async function initializeInterview() {
         }
 
     } catch (error) {
-        console.error('❌ 初期化エラー:', error);
+        // 初期化エラー
     }
 }
 
@@ -803,10 +726,8 @@ setTimeout(function() {
 
     if (questionElement && progressElement) {
         loadCurrentQuestion();
-    } else {
-        console.error('❌ 要素が見つかりません');
     }
-}, 1500); // 1.5秒後に確実に実行
+}, 1500);
 
 // ページを離れる時のクリーンアップ
 window.addEventListener('beforeunload', function() {
@@ -831,17 +752,13 @@ setTimeout(function() {
         .then(function(data) {
             if (questionElement) {
                 questionElement.textContent = data.question;
-            } else {
-                console.error('★ 質問要素が見つかりません！');
             }
 
             if (progressElement) {
                 progressElement.value = data.progress;
-            } else {
-                console.error('★ 進捗要素が見つかりません！');
             }
         })
         .catch(function(error) {
-            console.error('★ エラー発生:', error);
+            // エラー発生
         });
-}, 2000); // 2秒後に実行
+}, 2000);
