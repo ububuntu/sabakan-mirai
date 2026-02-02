@@ -2,8 +2,10 @@ package jp.sabakan.mirai.controller
 
 import jp.sabakan.mirai.request.GoalRequest
 import jp.sabakan.mirai.request.UserRequest
+import jp.sabakan.mirai.security.LoginUserDetails
 import jp.sabakan.mirai.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,15 +19,25 @@ class MiraiController {
 
     // ホーム画面
     @GetMapping("/index")
-    fun getIndex(model: Model): String {
-        // ダミーユーザIDでユーザ情報と目標情報を取得
-        val DUMMY_USER_ID = "test-user-id"
+    fun getIndex(
+        @AuthenticationPrincipal userDetails: LoginUserDetails,
+        session: jakarta.servlet.http.HttpSession,
+        model: Model
+    ): String {
+        val msg = session.getAttribute("message")
+        if (msg != null) {
+            model.addAttribute("message", msg)
+            session.removeAttribute("message")
+        }
+
+        // ユーザーIDを取得
+        val userId = userDetails.getUserEntity().userId
         val userRequest = UserRequest().apply {
-            userId = DUMMY_USER_ID
+            this.userId = userId
         }
         val user = userService.getOneUserList(userRequest)
         val goalRequest = GoalRequest().apply {
-            userId = DUMMY_USER_ID
+            this.userId = userId
         }
 
         // 目標情報を取得

@@ -1,5 +1,8 @@
 package jp.sabakan.mirai.security
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import jp.sabakan.mirai.MessageConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -8,9 +11,10 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.core.Authentication
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 
 @Configuration
 @EnableWebSecurity
@@ -50,7 +54,8 @@ class SecurityConfig {
                     .usernameParameter("userAddress") // HTMLフォームのname属性
                     .passwordParameter("password")    // HTMLフォームのname属性
                     .defaultSuccessUrl("/index", true) // 成功時の遷移先
-                    .failureUrl("/login?error=true")
+                    .successHandler(authenticationSuccessHandler()) // 認証成功ハンドラ
+                    .failureUrl("/login?error=true") // 失敗時の遷移先
                     .permitAll()
             }
             // 3. ログアウト設定
@@ -77,9 +82,6 @@ class SecurityConfig {
                     .httpStrictTransportSecurity { hsts ->
                         hsts.includeSubDomains(true).maxAgeInSeconds(2592000)
                     }
-                    .contentSecurityPolicy { csp->
-                        csp.policyDirectives("script-src 'self'; object-src 'none';")
-                    }
             }
 
         // 開発環境用のH2コンソール対応
@@ -102,5 +104,28 @@ class SecurityConfig {
             .userDetailsService(userDetailsService)
             .passwordEncoder(PasswordEncoderConfig().passwordEncoder())
         return authenticationManagerBuilder.build()
+    }
+
+    @Bean
+    fun authenticationSuccessHandler(): AuthenticationSuccessHandler {
+        return object : SimpleUrlAuthenticationSuccessHandler() {
+            override fun onAuthenticationSuccess(
+                request: HttpServletRequest,
+                response: HttpServletResponse,
+                authentication: Authentication
+            ) {
+                // Sessionから直接FlashMap相当の情報をセットする
+                val session = request.getSession(false)
+                if (session != null) {
+                    // FlashAttributesの代わりにセッションへ一時的に格納
+                    session.setAttribute("message", MessageConfig.LOGIN_SUCCESS)
+                }
+
+                // indexへリダイレクト（親クラスの機能を利用）
+                defaultTargetUrl = "/index"
+                isAlwaysUseDefaultTargetUrl = true
+                super.onAuthenticationSuccess(request, response, authentication)
+            }
+        }
     }
 }

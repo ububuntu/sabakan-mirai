@@ -92,7 +92,7 @@ public class MessageConfig {
         // M313: Cab/Gab問題の削除に失敗しました
         const val CABGAB_DELETE_FAILED = "Cab/Gab問題の削除に失敗しました"
         // M314: Cab/Gab問題の更新に成功しました
-        const val CABGAB_UPDATE_SUCCESS = "Cab/Gab問題의更新に成功しました"
+        const val CABGAB_UPDATE_SUCCESS = "Cab/Gab問題の更新に成功しました"
         // M315: Cab/Gab問題の更新に失敗しました
         const val CABGAB_UPDATE_FAILED = "Cab/Gab問題の更新に失敗しました"
 

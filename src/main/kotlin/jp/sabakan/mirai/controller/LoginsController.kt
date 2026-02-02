@@ -1,5 +1,6 @@
 package jp.sabakan.mirai.controller
 
+import jp.sabakan.mirai.MessageConfig
 import jp.sabakan.mirai.request.UserRequest
 import jp.sabakan.mirai.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,11 +30,24 @@ class LoginsController {
      */
     @GetMapping("/login")
     fun login(
+        @RequestParam(value = "error", required = false) error: String?,
         @RequestParam(value = "logout", required = false) logout: String?,
+        @RequestParam(value = "passwordChanged", required = false) passwordChanged: String?,
         model: Model
     ): String {
+        // ログイン失敗時 (SecurityConfigの .failureUrl("/login?error=true") と連動)
+        if (error != null) {
+            model.addAttribute("message", MessageConfig.LOGIN_FAILED)
+        }
+
+        // ログアウト成功時 (SecurityConfigの .logoutSuccessUrl("/login?logout=true") と連動)
         if (logout != null) {
-            model.addAttribute("message", "ログアウトしました。")
+            model.addAttribute("message", MessageConfig.LOGOUT_SUCCESS)
+        }
+
+        // パスワード変更成功時 (UserControllerのリダイレクトと連動)
+        if (passwordChanged != null) {
+            model.addAttribute("message", MessageConfig.PASSWORD_CHANGE_SUCCESS)
         }
         return "logins/sign-in"
     }
@@ -45,6 +59,7 @@ class LoginsController {
     fun signUp(model: Model): String {
         // フォームバインディング用の空オブジェクトを渡す
         model.addAttribute("userRequest", UserRequest())
+        model.addAttribute("message", MessageConfig.USER_REGISTERED)
         return "logins/sign-up"
     }
 
@@ -67,7 +82,7 @@ class LoginsController {
         // UserServiceに findUserByEmail がある前提
         val existingUser = userService.getUserByEmail(userRequest.userAddress ?: "")
         if (existingUser != null) {
-            model.addAttribute("errorMessage", "このメールアドレスは既に登録されています")
+            model.addAttribute("errorMessage", MessageConfig.USER_REGISTER_FAILED)
             return "logins/sign-up"
         }
 
@@ -85,13 +100,13 @@ class LoginsController {
             userService.insertUser(userRequest)
 
             // 5. 成功時のリダイレクト
-            redirectAttributes.addFlashAttribute("message", "登録が完了しました。ログインしてください。")
+            redirectAttributes.addFlashAttribute("message", MessageConfig.USER_REGISTERED)
             return "redirect:/login"
 
         } catch (e: Exception) {
             // エラーハンドリング
             e.printStackTrace()
-            model.addAttribute("errorMessage", "登録処理中にエラーが発生しました")
+            model.addAttribute("errorMessage", MessageConfig.USER_REGISTER_FAILED)
             return "logins/sign-up"
         }
     }

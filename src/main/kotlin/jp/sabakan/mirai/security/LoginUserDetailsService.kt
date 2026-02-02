@@ -1,5 +1,6 @@
 package jp.sabakan.mirai.security
 
+import jp.sabakan.mirai.MessageConfig
 import jp.sabakan.mirai.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails
@@ -15,12 +16,12 @@ class LoginUserDetailsService : UserDetailsService {
 
     override fun loadUserByUsername(username: String): UserDetails {
         if (username.isNullOrBlank()) {
-            throw UsernameNotFoundException("ユーザー名が入力されていません")
+            throw UsernameNotFoundException(MessageConfig.USERNAME_NOT_BLANK_ERROR)
         }
 
         // ユーザ情報の取得 (UserServiceに追加したメソッドを使用)
         val userEntity = service.getUserByEmail(username)
-            ?: throw UsernameNotFoundException("ユーザが見つかりません: $username")
+            ?: throw UsernameNotFoundException(MessageConfig.USER_NOT_FOUND)
 
         // UserDetailsの実装クラスを返す
         return LoginUserDetails(userEntity)
