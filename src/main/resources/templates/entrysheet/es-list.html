@@ -10,7 +10,14 @@
 <header th:replace="common/header :: siteHeader('esListHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
+    <!-- エラー表示 -->
+    <section class="menu">
+        <div th:if="${message}" style="display:none;">
+            <p class="error-message-data" th:text="${message}"></p>
+        </div>
+    </section>
 
+    <!-- ページ内容 -->
     <p class="note">作成済みエントリーシート</p>
     <p class="desc">全<span th:text="${esList != null ? esList.size() : 0}">0</span>件</p>
 
@@ -37,5 +44,6 @@
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>
+<script th:src="@{/js/notice.js}"></script>
 </body>
 </html>
