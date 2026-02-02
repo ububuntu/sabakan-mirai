@@ -2,6 +2,7 @@ package jp.sabakan.mirai.request
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import jp.sabakan.mirai.MessageConfig
 import lombok.Data
@@ -14,25 +15,27 @@ class UserRequest {
 
     // ユーザネーム
     @field:NotBlank(message = MessageConfig.USERNAME_NOT_BLANK_ERROR)
-    @field:Size(max = 50, message = MessageConfig.LENGTH_MAXIMUM_ERROR)
+    @field:Size(max = 50, message = MessageConfig.PASSWORD_LENGTH_ERROR)
+    @field:Pattern(regexp = "^[^<>{}\\[\\]]*$", message = MessageConfig.INVALID_CHARACTER_ERROR)
     var userName: String? = null
 
     // ユーザアドレス
     @field:NotBlank(message = MessageConfig.EMAIL_NOT_BLANK_ERROR)
     @field:Email(message = MessageConfig.EMAIL_INVALID_FORMAT_ERROR)
-    @field:Size(max = 100, message = MessageConfig.LENGTH_MAXIMUM_ERROR)
+    @field:Size(max = 100, message = MessageConfig.PASSWORD_LENGTH_ERROR)
     var userAddress: String? = null
 
     // パスワード
-    @field:Size(max = 100, message = MessageConfig.LENGTH_MAXIMUM_ERROR)
+    @field:Size(min = 8, max = 100, message = MessageConfig.PASSWORD_LENGTH_ERROR)
+    @field:Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z]).*$", message = MessageConfig.PASSWORD_INPUT_ERROR)
     var password: String? = null
 
     // 旧パスワード
-    @field:Size(max = 100, message = MessageConfig.LENGTH_MAXIMUM_ERROR)
+    @field:Size(max = 100, message = MessageConfig.PASSWORD_LENGTH_ERROR)
     var oldPassword: String? = null
 
     // パスワード確認用
-    @field:Size(max = 100, message = MessageConfig.LENGTH_MAXIMUM_ERROR)
+    @field:Size(max = 100, message = MessageConfig.PASSWORD_LENGTH_ERROR)
     var passwordConfirm: String? = null
 
     // 権限

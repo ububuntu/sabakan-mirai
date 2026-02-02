@@ -65,6 +65,22 @@ class SecurityConfig {
             .exceptionHandling { exceptions ->
                 exceptions.accessDeniedHandler(CustomAccessDeniedHandler())
             }
+            // 5. セッション管理
+            .sessionManagement { session ->
+                session
+                    .maximumSessions(1)
+                    .maxSessionsPreventsLogin(false)
+            }
+            // 6. セキュリティヘッダー設定
+            .headers { headers ->
+                headers
+                    .httpStrictTransportSecurity { hsts ->
+                        hsts.includeSubDomains(true).maxAgeInSeconds(2592000)
+                    }
+                    .contentSecurityPolicy { csp->
+                        csp.policyDirectives("script-src 'self'; object-src 'none';")
+                    }
+            }
 
         // 開発環境用のH2コンソール対応
         if ("dev" == activeProfile) {

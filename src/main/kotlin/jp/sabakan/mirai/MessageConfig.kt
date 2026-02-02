@@ -20,12 +20,6 @@ public class MessageConfig {
         // M004: ユーザ情報の更新に失敗しました
         const val USER_UPDATE_FAILED = "ユーザ情報の更新に失敗しました"
 
-        // M005: ユーザ情報の削除が完了しました
-        const val USER_DELETE_SUCCESS = "ユーザ情報の削除が完了しました"
-
-        // M006: ユーザ情報の削除に失敗しました
-        const val USER_DELETE_FAILED = "ユーザ情報の削除に失敗しました"
-
         // M007: ユーザ情報の取得に失敗しました
         const val USER_NOT_FOUND = "ユーザ情報が見つかりません"
 
@@ -50,11 +44,17 @@ public class MessageConfig {
         // M012: パスワードの変更に失敗しました
         const val PASSWORD_CHANGE_FAILED = "パスワードの変更に失敗しました"
 
+        // M013: パスワード入力内容エラー
+        const val PASSWORD_INPUT_ERROR = "パスワードは英字と数字を含む8文字以上で入力してください"
+
         // M013: 未入力エラー
         const val NOT_BLANK_ERROR = "必須項目が未入力です"
 
-        // M014: 文字数制限超過エラー
-        const val LENGTH_MAXIMUM_ERROR = "入力が長すぎます"
+        // M014: 文字数制限エラー
+        const val PASSWORD_LENGTH_ERROR = "パスワードは8文字以上100文字以内で入力してください"
+
+        // M015: 不正文字エラー
+        const val INVALID_CHARACTER_ERROR = "不正な文字が含まれています"
 
         // M015: 必須入力エラー(ユーザ名)
         const val USERNAME_NOT_BLANK_ERROR = "ユーザ名は必須です"

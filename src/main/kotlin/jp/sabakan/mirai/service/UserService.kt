@@ -60,7 +60,7 @@ class UserService {
         } else {
             // 入力がある場合は部分一致検索 (%で囲む)
             val data = UserData().apply {
-                this.keyword = "%"+request.keyword+"%"
+                this.keyword = "%${request.keyword}%"
             }
             table = userRepository.getUserListByName(data)
         }
