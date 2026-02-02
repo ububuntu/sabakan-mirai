@@ -1,6 +1,7 @@
 package jp.sabakan.mirai.controller
 
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import jp.sabakan.mirai.MessageConfig
 import jp.sabakan.mirai.request.GoalRequest
@@ -9,6 +10,8 @@ import jp.sabakan.mirai.security.LoginUserDetails
 import jp.sabakan.mirai.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.validation.BindingResult
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import kotlin.apply
 
 @Controller
 class UserController {
@@ -85,11 +89,11 @@ class UserController {
     @PostMapping("/user/repassword")
     fun postRepassword(
         @Valid @ModelAttribute userRequest: UserRequest,
-        bindingResult: BindingResult,
         model: Model,
         redirectAttributes: RedirectAttributes,
         @AuthenticationPrincipal userDetails: LoginUserDetails,
-        request: HttpServletRequest // 追加：ServletRequestを受け取る
+        request: HttpServletRequest,
+        httpResponse: HttpServletResponse
     ): String {
         userRequest.userId = userDetails.getUserEntity().userId
 
@@ -97,8 +101,16 @@ class UserController {
 
         if (response.message == MessageConfig.PASSWORD_CHANGE_SUCCESS) {
             // パスワード変更成功時のみログアウト処理を実行
-            // TODO セッションの破棄方法について再検討
-            request.logout()
+            val auth = SecurityContextHolder.getContext().authentication
+            if (auth != null) {
+                val logoutHandler = SecurityContextLogoutHandler()
+                logoutHandler.setInvalidateHttpSession(true)
+                logoutHandler.setClearAuthentication(true)
+                logoutHandler.logout(request, httpResponse, auth)
+            }
+
+            SecurityContextLogoutHandler().logout(request, httpResponse, auth)
+
             redirectAttributes.addFlashAttribute("message", response.message)
             return "redirect:/login?passwordChanged=true"
         } else {
