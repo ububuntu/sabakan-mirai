@@ -11,6 +11,14 @@
 <header th:replace="common/header :: siteHeader('esMainHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
+    <!-- エラー表示 -->
+    <section class="menu">
+        <div th:if="${message}" style="display:none;">
+            <p class="error-message-data" th:text="${message}"></p>
+        </div>
+    </section>
+
+    <!-- ページ内容 -->
     <section class="menu" aria-label="メニュー">
         <a class="note">ESを作成してみよう</a>
 
@@ -70,5 +78,6 @@
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>
+<script th:src="@{/js/notice.js}"></script>
 </body>
 </html>

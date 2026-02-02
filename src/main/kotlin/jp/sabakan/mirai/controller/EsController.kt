@@ -80,6 +80,8 @@ class EsController {
 
         // 保存時のみバリデーションチェックを適用
         if (action == "save" && bindingResult.hasErrors()) {
+            val response = esService.saveEs(esRequest)
+            model.addAttribute("message", response.message)
             return "entrysheet/es-creation"
         }
 
@@ -89,8 +91,10 @@ class EsController {
             "checkActivities" -> model.addAttribute("activitiesResult", ecComponent.analyzeMessage(esRequest.esContentActivities ?: ""))
             "checkStwe" -> model.addAttribute("stweResult", ecComponent.analyzeMessage(esRequest.esContentStwe ?: ""))
             "save" -> {
-                esService.saveEs(esRequest)
-                return "redirect:/es/list"
+                val response = esService.saveEs(esRequest)
+                model.addAttribute("message", response.message)
+//                return "redirect:/es/list"
+                return "entrysheet/es-list"
             }
         }
 
@@ -100,35 +104,33 @@ class EsController {
 
     // ES編集画面 (GET)
     @GetMapping("/es/edit")
-    fun getEsEdit(
-        @RequestParam esId: String,
-        @AuthenticationPrincipal userDetails: LoginUserDetails,
-        model: Model
-    ): String {
+    fun getEsEdit(@RequestParam esId: String, @AuthenticationPrincipal userDetails: LoginUserDetails, model: Model): String {
         val userId = userDetails.getUserEntity().userId
-
         val request = EsRequest().apply {
             this.esId = esId
             this.userId = userId
         }
 
-        // 1. Serviceから取得
         val result = esService.getEsDetail(request)
 
-        // 2. 【修正ポイント】型を具体的に指定してチェックする
-        if (result is List<*> && result.isNotEmpty()) {
-            // result[0] を EsRequest 型として明示的に扱う
-            val esDetail = result[0] as? EsRequest
-            if (esDetail != null) {
-                model.addAttribute("esRequest", esDetail)
-            } else {
-                return "redirect:/es/list"
+        // result[0] は EsEntity なので、一度 Entity として取り出す
+        val entity = if (result is List<*> && result.isNotEmpty()) result[0] as? EsEntity else null
+
+        if (entity != null) {
+            // 画面(form)で使う EsRequest に値をコピーする
+            val esRequest = EsRequest().apply {
+                this.esId = entity.esId
+                this.esOccupation = entity.esOccupation
+                this.esContentReason = entity.esContentReason
+                this.esContentSelfpr = entity.esContentSelfpr
+                this.esContentActivities = entity.esContentActivities
+                this.esContentStwe = entity.esContentStwe
             }
-        } else {
-            return "redirect:/es/list"
+            model.addAttribute("esRequest", esRequest)
+            return "entrysheet/es-edit"
         }
 
-        return "entrysheet/es-edit"
+        return "redirect:/es/list"
     }
 
     // ES編集画面 (POST)
@@ -157,15 +159,18 @@ class EsController {
             "checkActivities" -> model.addAttribute("activitiesResult", ecComponent.analyzeMessage(esRequest.esContentActivities ?: ""))
             "checkStwe" -> model.addAttribute("stweResult", ecComponent.analyzeMessage(esRequest.esContentStwe ?: ""))
             "save" -> {
-                esService.saveEs(esRequest)
-                return "redirect:/es/list"
+                val response = esService.saveEs(esRequest)
+                model.addAttribute("message", response.message)
+//                return "redirect:/es/list"
+                return "entrysheet/es-list"
             }
             "delete" -> {
-                esService.deleteEs(esRequest)
-                return "redirect:/es/list"
+                val response = esService.deleteEs(esRequest)
+                model.addAttribute("message", response.message)
+                return "entrysheet/es-list"
+//                return "redirect:/es/list"
             }
         }
-
         model.addAttribute("esRequest", esRequest)
         return "entrysheet/es-edit"
     }

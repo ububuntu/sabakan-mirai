@@ -59,7 +59,8 @@ class EsService {
      *
      * @param request ESリクエスト
      */
-    fun saveEs(request: EsRequest) {
+    fun saveEs(request: EsRequest): EsResponse {
+        val response = EsResponse()
         val data = EsData().apply {
             userId = request.userId
             esOccupation = request.esOccupation
@@ -69,15 +70,29 @@ class EsService {
             esContentStwe = request.esContentStwe
         }
 
-        if (request.esId.isNullOrEmpty()) {
-            // 新規作成
-            data.esId = toCreateEsId() // UUID生成など
-            esRepository.insertEs(data)
-        } else {
-            // 更新
-            data.esId = request.esId
-            esRepository.updateEs(data)
+        try {
+            if (request.esId.isNullOrEmpty()) {
+                // --- 新規作成の保存処理 ---
+                data.esId = toCreateEsId()
+                esRepository.insertEs(data)
+                response.message = MessageConfig.ES_INSERT_SUCCESS
+            } else {
+                // --- 更新の保存処理 ---
+                data.esId = request.esId
+                esRepository.updateEs(data)
+                response.message = MessageConfig.ES_UPDATE_SUCCESS
+            }
+        } catch (e: Exception) {
+            // エラー発生時：新規か更新かでメッセージを出し分ける
+            if (request.esId.isNullOrEmpty()) {
+                // 新規作成保存処理失敗
+                response.message = MessageConfig.ES_INSERT_FAILED
+            } else {
+                // 更新保存処理９ｔ失敗
+                response.message = MessageConfig.ES_UPDATE_FAILED
+            }
         }
+        return response
     }
 
     /**
