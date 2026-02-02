@@ -33,12 +33,17 @@ class SecurityConfig {
             // 1. 認可（アクセス制御）設定
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers("/login", "/signup/**", "/css/**", "/js/**", "/img/**").permitAll()
-                auth.requestMatchers("/interview/api/**").authenticated()
                 // 管理者専用ページ (ADMIN)
                 auth.requestMatchers("/manage/**").hasRole("ADMIN")
                 // hasAnyRoleは可変長引数を受け取るためカンマ区切りでOK
-                auth.requestMatchers("/notice").hasAnyRole("USER", "ADMIN")
+                auth.requestMatchers("/").hasAnyRole("USER", "ADMIN")
                 auth.requestMatchers("/user/**").authenticated()
+                auth.requestMatchers("/interview/**").authenticated()
+                auth.requestMatchers("/es/**").authenticated()
+                auth.requestMatchers("/goal/**").authenticated()
+                auth.requestMatchers("/questions/**").authenticated()
+                auth.requestMatchers("/spi/**").authenticated()
+                auth.requestMatchers("/cabgab/**").authenticated()
 
                 if ("dev" == activeProfile) {
                     auth.requestMatchers("/h2-console/**").permitAll()

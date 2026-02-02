@@ -54,11 +54,6 @@
     padding: 0.5rem;
     border-radius: 4px;
 }
-/* エラー時の見た目例 */
-.error-text {
-    color: var(--danger);
-    background: rgba(239, 68, 68, 0.1);
-}
 
 /* ====== フォーム要素 ====== */
 .auth-form {

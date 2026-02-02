@@ -749,3 +749,19 @@ footer nav.bottom {
 .modal-notice.is-visible {
     transform: translateX(-50%) translateY(0);
 }
+
+/* ビューポート未対応ブラウザ用のスタイル調整 */
+@media screen and (max-width: 1280px) {
+    .no-viewport .modal-notice {
+        width: 90%;
+        max-width: 900px;
+        font-size: 2rem;
+        margin: 0;
+        padding: 1.2rem;
+        border-radius: 60px;
+    }
+    .no-viewport .modal-notice.is-visible {
+        top: 60px;
+        background-color: var(--primary);
+    }
+}

@@ -7,13 +7,13 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 
-<body>
+<body class="no-viewport">
 
 <header th:replace="~{common/header :: siteHeader('indexHeader')}"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
     <section class="menu">
-        <div th:if="${message}" style="display:none;">
+        <div th:if="${message}" class="menu-item" style="display:none;">
             <p class="error-message-data" th:text="${message}"></p>
         </div>
     </section>
