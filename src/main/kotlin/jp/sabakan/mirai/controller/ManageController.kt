@@ -362,4 +362,9 @@ class ManageController {
         redirectAttributes.addFlashAttribute("message", response.message)
         return "redirect:/manage/cabgab"
     }
+
+    @GetMapping("/idiot")
+    fun getIdiot(): String {
+        return "/idiot"
+    }
 }

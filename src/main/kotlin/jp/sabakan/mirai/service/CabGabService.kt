@@ -20,7 +20,7 @@ class CabGabService {
 
     @Transactional
     fun startExam(request: CabGabRequest): String {
-        val hsId = "S"+UUID.randomUUID().toString()
+        val hsId = "C"+UUID.randomUUID().toString()
 
         // 1. 履歴ヘッダ作成
         val history = CabGabHistoryData().apply {
@@ -29,12 +29,13 @@ class CabGabService {
         }
         cabgabRepository.insertHistory(history)
 
-        // 2. 問題ランダム抽出 (言語40問、非言語30問)
-        // 引数はDataクラスに詰めて渡す
-        val verbal = cabgabRepository.getRandomQuestions(CabGabData().apply { cabgabCategory = "言語" }, 40)
-        val nonVerbal = cabgabRepository.getRandomQuestions(CabGabData().apply { cabgabCategory = "非言語" }, 30)
+        // 2. 問題ランダム抽出 (言語30問、計数30問、暗号30問)
+        val verbal = cabgabRepository.getRandomQuestions(CabGabData().apply { cabgabCategory = "言語" }, 30)
+        val math = cabgabRepository.getRandomQuestions(CabGabData().apply { cabgabCategory = "計数" }, 30)
+        val crypto = cabgabRepository.getRandomQuestions(CabGabData().apply { cabgabCategory = "暗号" }, 30)
 
-        val allQuestions = verbal + nonVerbal
+        // リストを結合 (計90問)
+        val allQuestions = verbal + math + crypto
 
         // 3. 70問分の明細枠(detail)を先に作成
         allQuestions.forEachIndexed { index, q ->

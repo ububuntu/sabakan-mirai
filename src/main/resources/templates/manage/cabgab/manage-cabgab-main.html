@@ -11,58 +11,45 @@
 <header th:replace="common/header :: siteHeader('manageHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
-    <!-- CAB/GABメイン画面 -->
-    <section class="menu" aria-label="CAB/GAB問題リスト">
-        <p class="note">CAB/GAB問題管理</p>
+    <!-- CABGABメイン画面 -->
+    <section class="menu" aria-label="CABGAB管理メニュー">
+        <p class="note">CABGAB問題管理</p>
         <div class="sort">
             <div class="radio">
-                <!-- ラジオボタンのcssがボタン選択によって変化する事を確かめるために仮でnameやidをつけています -->
-                <input type="radio" name="status" id="all" checked>
+                <input type="radio" name="status" id="all" th:checked="${selectedStatus == 'all'}" onchange="location.href='/manage/cabgab?status=all'">
                 <label for="all">すべて</label>
 
-                <input type="radio" name="status" id="active">
+                <input type="radio" name="status" id="active" th:checked="${selectedStatus == 'active'}" onchange="location.href='/manage/cabgab?status=active'">
                 <label for="active">言語</label>
 
-                <input type="radio" name="status" id="stop">
+                <input type="radio" name="status" id="stop" th:checked="${selectedStatus == 'stop'}" onchange="location.href='/manage/cabgab?status=stop'">
                 <label for="stop">非言語</label>
             </div>
         </div>
     </section>
 
-    <section class="menu" aria-label="CAB/GAB問題管理">
-        <div class="statistics box" onclick="location.href='./cabgab/edit'">
-            <label class="category">非言語</label>
-            <p class="note">例題) 6250÷325を計算しなさい</p>
-            <div class="menu-item">
-                <div class="img selectIcon">A</div>
-                <div class="texts">
-                    <p class="title">19.23</p>
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="img selectIcon">B</div>
-                <div class="texts">
-                    <p class="title">18.43</p>
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="img selectIcon">C</div>
-                <div class="texts">
-                    <p class="title">21.93</p>
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="img selectIcon">D</div>
-                <div class="texts">
-                    <p class="title">18.93</p>
-                </div>
-            </div>
-            <div class="meta">
-                <p class="note">解答：A</p>
-            </div>
-        </div>
-    </section>
+    <section class="menu" aria-label="問題一覧">
 
+        <div th:if="${cabgabList == null or cabgabList.isEmpty()}" class="note">
+            <p>登録されている問題はありません。</p>
+        </div>
+
+        <th:block th:unless="${cabgabList == null or cabgabList.isEmpty()}">
+
+            <div th:each="cabgab : ${cabgabList}"
+                 class="statistics box"
+                 style="cursor: pointer;"
+                 th:onclick="|location.href='@{/manage/cabgab/edit(cabgabId=${cabgab.cabgabId})}'|">
+
+                <span class="category" th:text="${cabgab.cabgabCategory}">言語</span>
+
+                <p class="note" th:text="${cabgab.cabgabContent}">
+                    ここに問題文が表示されます...
+                </p>
+            </div>
+
+        </th:block>
+    </section>
     <div class="spacer" aria-hidden="true"></div>
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>

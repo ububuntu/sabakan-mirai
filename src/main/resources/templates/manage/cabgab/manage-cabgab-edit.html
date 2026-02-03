@@ -13,58 +13,70 @@
 <main>
     <!-- システム統計 -->
     <section class="menu" aria-label="システム統計">
-        <p class="note">CAB/GAB変更</p>
+        <p class="note">CABGAB変更</p>
         <div class="statistics">
-            <div class="form-row">
-                <label class="form-label" for="cabgab_content">問題文</label>
-                <input type="text" id="cabgab_content" name="cabgabContent" placeholder="問題文を入力">
-            </div>
+            <form method="post" th:action="@{/manage/cabgab/edit}" th:object="${cabgabRequest}">
 
-            <div class="form-row">
-                <label class="form-label" for="cabgab_answer1">選択肢：A</label>
-                <input type="text" id="cabgab_answer1" name="cabgabAnswer1" placeholder="選択肢Aを入力">
-            </div>
+                <input type="hidden" name="cabgabId" th:field="*{cabgabId}" />
 
-            <div class="form-row">
-                <label class="form-label" for="cabgab_answer2">選択肢：B</label>
-                <input type="text" id="cabgab_answer2" name="cabgabAnswer2" placeholder="選択肢Bを入力">
-            </div>
+                <div class="form-row">
+                    <label class="form-label" for="cabgab_content">問題文</label>
+                    <input type="text" id="cabgab_content" th:field="*{cabgabContent}" placeholder="問題文を入力">
+                </div>
 
-            <div class="form-row">
-                <label class="form-label" for="cabgab_answer3">選択肢：C</label>
-                <input type="text" id="cabgab_answer3" name="cabgabAnswer3" placeholder="選択肢Cを入力">
-            </div>
+                <div class="form-row">
+                    <label class="form-label" for="cabgab_answer1">選択肢：A</label>
+                    <input type="text" id="cabgab_answer1" th:field="*{cabgabAnswer1}" placeholder="選択肢Aを入力">
+                </div>
 
-            <div class="form-row">
-                <label class="form-label" for="cabgab_answer4">選択肢：D</label>
-                <input type="text" id="cabgab_answer4" name="cabgabAnswer4" placeholder="選択肢Dを入力">
-            </div>
+                <div class="form-row">
+                    <label class="form-label" for="cabgab_answer2">選択肢：B</label>
+                    <input type="text" id="cabgab_answer2" th:field="*{cabgabAnswer2}" placeholder="選択肢Bを入力">
+                </div>
 
-            <div class="form-row">
-                <label class="form-label" for="cabgab_correct_answer">解答</label>
-                <select id="cabgab_correct_answer" name="cabgabCorrectAnswer">
-                    <option>A</option>
-                    <option>B</option>
-                    <option>C</option>
-                    <option>D</option>
-                </select>
-            </div>
+                <div class="form-row">
+                    <label class="form-label" for="cabgab_answer3">選択肢：C</label>
+                    <input type="text" id="cabgab_answer3" th:field="*{cabgabAnswer3}" placeholder="選択肢Cを入力">
+                </div>
 
-            <div class="form-row">
-                <label class="form-label" for="cabgab_category">分野</label>
-                <select id="cabgab_category" name="cabgabCorrectCategory">
-                    <option>言語</option>
-                    <option>非言語</option>
-                </select>
-            </div>
+                <div class="form-row">
+                    <label class="form-label" for="cabgab_answer4">選択肢：D</label>
+                    <input type="text" id="cabgab_answer4" th:field="*{cabgabAnswer4}" placeholder="選択肢Dを入力">
+                </div>
 
-            <!-- 送信ボタン -->
-            <button onclick="location.href='/manage/cabgab'" class="button-center button-primary" type="submit">
-                保存
-            </button>
+                <div class="form-row">
+                    <label class="form-label" for="cabgab_correct_answer">解答</label>
+                    <select id="cabgab_correct_answer" th:field="*{cabgabCorrectAnswer}">
+                        <option value="1">A</option>
+                        <option value="2">B</option>
+                        <option value="3">C</option>
+                        <option value="4">D</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label class="form-label" for="cabgab_category">分野</label>
+                    <select id="cabgab_category" th:field="*{cabgabCategory}">
+                        <option value="言語">言語</option>
+                        <option value="非言語">非言語</option>
+                    </select>
+                </div>
+
+                <button class="button-center button-primary" type="submit">
+                    保存
+                </button>
+            </form>
+            <form method="post" th:action="@{/manage/cabgab/delete}" style="margin-top: 1.5rem;"
+                  onsubmit="return confirm('本当にこの問題を削除してもよろしいですか？');">
+
+                <input type="hidden" name="cabgabId" th:value="${cabgabRequest.cabgabId}" />
+
+                <button class="button-center button-danger" type="submit">
+                    削除
+                </button>
+            </form>
         </div>
     </section>
-
     <div class="spacer" aria-hidden="true"></div>
 </main>
 <script th:src="@{/js/style.js}"></script>

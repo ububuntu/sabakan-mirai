@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>とても静かな場所</title>
+  <link rel="stylesheet" th:href="@{css/idiot.css}">
+</head>
+<body>
+<div id="click-overlay" class="hidden"></div>
+
+<div id="bg-waves">
+  <div id="wave-container"></div>
+</div>
+
+<div id="stage">
+  <div id="fishing-area">
+    <div id="fishing-rod" class="sway-waiting">
+      <pre id="rod-aa">
+ \\
+  \\
+   \\
+    \\
+     \\
+      \\
+       \\
+      </pre>
+      <div id="fishing-line">
+        <pre id="line-aa">
+|
+|
+|
+|
+|
+|
+|
+|
+{?}
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <div id="ui">
+    <p id="status">ようこそ、くつろいでいってよ。</p>
+  </div>
+</div>
+<script th:src="@{js/idiot.js}"></script>
+</body>
+</html>

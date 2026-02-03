@@ -37,8 +37,8 @@
                 <p class="desc" th:text="|作成日:${#dates.format(user.createdAt, 'yyyy/MM/dd')}|">作成日</p>
             </div>
             <div class="meta">
-                <span class="role admin" th:if="${user.userRole == '管理者'}">管理者</span>
-                <span class="role user" th:if="${user.userRole == '利用者'}">利用者</span>
+                <span class="role admin" th:if="${user.userRole == 'admin' || user.userRole == 'ADMIN'}">管理者</span>
+                <span class="role user" th:if="${user.userRole == 'user' || user.userRole == 'USER'}">利用者</span>
                 <span class="status active" th:if="${user.isValid}">利用中</span>
                 <span class="status stop" th:unless="${user.isValid}">停止中</span>
             </div>

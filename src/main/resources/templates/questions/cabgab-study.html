@@ -18,40 +18,52 @@
         </p>
 
         <div class="menu-item">
-            <p class="title" th:text="${question.cabGabContent}">問題文</p>
+            <p class="title" th:text="${question.cabgab_content}">問題文がここに表示されます</p>
         </div>
 
         <label class="menu-item choice-label" for="ans1">
-            <input type="radio" id="ans1" name="answer" value="1" required>
-            <span class="note" th:text="${question.cabGabAnswer1}">選択肢1</span>
+            <svg class="icon icon-with-bg" width="48" height="48"><use href="#es"></use></svg>
+            <input type="radio" id="ans1" name="answer" value="1" required
+                   th:checked="${question.user_answer == 1}">
+            <span class="note" th:text="${question.cabgab_answer1}">選択肢1</span>
         </label>
 
         <label class="menu-item choice-label" for="ans2">
-            <input type="radio" id="ans2" name="answer" value="2">
-            <span class="note" th:text="${question.cabGabAnswer2}">選択肢2</span>
+            <svg class="icon icon-with-bg" width="48" height="48"><use href="#es"></use></svg>
+            <input type="radio" id="ans2" name="answer" value="2"
+                   th:checked="${question.user_answer == 2}">
+            <span class="note" th:text="${question.cabgab_answer2}">選択肢2</span>
         </label>
 
         <label class="menu-item choice-label" for="ans3">
-            <input type="radio" id="ans3" name="answer" value="3">
-            <span class="note" th:text="${question.cabGabAnswer3}">選択肢3</span>
+            <svg class="icon icon-with-bg" width="48" height="48"><use href="#es"></use></svg>
+            <input type="radio" id="ans3" name="answer" value="3"
+                   th:checked="${question.user_answer == 3}">
+            <span class="note" th:text="${question.cabgab_answer3}">選択肢3</span>
         </label>
 
         <label class="menu-item choice-label" for="ans4">
-            <input type="radio" id="ans4" name="answer" value="4">
-            <span class="note" th:text="${question.cabGabAnswer4}">選択肢4</span>
+            <svg class="icon icon-with-bg" width="48" height="48"><use href="#es"></use></svg>
+            <input type="radio" id="ans4" name="answer" value="4"
+                   th:checked="${question.user_answer == 4}">
+            <span class="note" th:text="${question.cabgab_answer4}">選択肢4</span>
         </label>
 
-        <input type="hidden" name="cabGabId" th:value="${question.cabGabId}" />
+        <input type="hidden" name="cabgabId" th:value="${question.cabgab_id}" />
         <input type="hidden" name="currentIndex" th:value="${currentIndex}" />
 
         <button class="button-center" type="submit" name="action" value="next">
-            <span th:text="${currentIndex == totalCount} ? '結果を見る' : '次の問題'">次の問題</span>
+            <span th:text="${currentIndex == 70} ? '結果を見る' : '次の問題'">次の問題</span>
         </button>
 
         <button class="button-center" type="submit" name="action" value="suspend" formnovalidate>
             中断して戻る
         </button>
+        <button class="button-center" type="submit" name="action" value="finish" formnovalidate>
+            ここで終了して採点する
+        </button>
     </form>
+    <div class="spacer" aria-hidden="true"></div>
 </main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>
