@@ -1,7 +1,6 @@
 package jp.sabakan.mirai.data
 
 import lombok.Data
-import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Data
