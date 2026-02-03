@@ -363,8 +363,8 @@ class ManageController {
         return "redirect:/manage/cabgab"
     }
 
-    @GetMapping("/idiot")
-    fun getIdiot(): String {
-        return "/idiot"
+    @GetMapping("/fish")
+    fun getfishing(): String {
+        return "/sea"
     }
 }

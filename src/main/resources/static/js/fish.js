@@ -3,10 +3,16 @@ const clickOverlay = document.getElementById('click-overlay');
 const statusText = document.getElementById('status');
 const waveContainer = document.getElementById('wave-container');
 
-const fishList = ["アジ >ﾟ)))彡", "マグロ >°))))彡", "長靴 (ﾟ∀ﾟ)!!", "粗大ゴミ [ゴミ箱]"];
+// レアリティ設定
+const rarities = [
+    { name: "Common", chance: 0.50, color: "#aaa", list: ["長靴", "空き缶", "流木", "スパゲッティコード"] },
+    { name: "Uncommon", chance: 0.35, color: "#fff", list: ["アジ >ﾟ)))彡", "イワシ >ﾟ))彡", "メダカ >ﾟ)彡", "イカ くコ:彡", "シーラカンス >ﾟ))))彡"] },
+    { name: "Rare", chance: 0.14, color: "#0af", list: ["ERROR: 404 Not Found", "ノーチラス号", "地球", "AlloyDB"] },
+    { name: "Legendary", chance: 0.01, color: "#f0f", list: ["ビットコイン"] }
+];
+
 let escapeTimer = null;
 
-// ランダムな波を生成
 function createWave() {
     const wave = document.createElement('div');
     wave.className = 'random-wave';
@@ -19,17 +25,16 @@ function createWave() {
 }
 
 function startWaiting() {
-    const waitTime = Math.random() * 5000 + 2000;
+    const waitTime = Math.random() * 27000 + 3000;
     setTimeout(() => {
-        // HIT発生
         rodContainer.classList.replace('sway-waiting', 'sway-hit');
         statusText.innerText = "！！！ 画面をタップ ！！！";
         statusText.style.color = "#ff0";
-
-        // 画面全体のクリックを有効化
         clickOverlay.classList.remove('hidden');
 
-        escapeTimer = setTimeout(missed, 2500);
+        // 逃走までの時間もランダム (0.4s 〜 4.0s)
+        const reactionLimit = Math.random() * 3600 + 400;
+        escapeTimer = setTimeout(missed, reactionLimit);
 
         clickOverlay.onclick = () => {
             clearTimeout(escapeTimer);
@@ -39,9 +44,31 @@ function startWaiting() {
 }
 
 function caught() {
-    const result = fishList[Math.floor(Math.random() * fishList.length)];
+    // 確率計算
+    const rand = Math.random();
+    let cumulativeChance = 0;
+    let selectedRarity = rarities[0];
+
+    for (const r of rarities) {
+        cumulativeChance += r.chance;
+        if (rand < cumulativeChance) {
+            selectedRarity = r;
+            break;
+        }
+    }
+
+    const result = selectedRarity.list[Math.floor(Math.random() * selectedRarity.list.length)];
+
+    // 演出
     statusText.innerText = `【釣果】 ${result}`;
-    statusText.style.color = "#0f0";
+    statusText.style.color = selectedRarity.color;
+
+    // レジェンダリー（root）の場合は画面を揺らす演出
+    if (selectedRarity.name === "Legendary") {
+        document.body.style.animation = "screen-shake 0.5s ease-in-out";
+        setTimeout(() => document.body.style.animation = "", 500);
+    }
+
     processNext();
 }
 
