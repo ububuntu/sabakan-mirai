@@ -5,13 +5,16 @@ import lombok.Data
 @Data
 class CabGabDetailData {
     // 明細ID (PK)
-    var cabGabDlId: String? = null
+    var cabgabDlId: String? = null
 
     // 履歴ID (FK)
-    var cabGabHsId: String? = null
+    var cabgabHsId: String? = null
+
+    // 【重要】出題番号 (1~70) を管理するために追加
+    var questionNumber: Int = 0
 
     // 問題ID (FK)
-    var cabGabId: String? = null
+    var cabgabId: String? = null
 
     // ユーザーの回答 (1~4)
     var userAnswer: Int? = null

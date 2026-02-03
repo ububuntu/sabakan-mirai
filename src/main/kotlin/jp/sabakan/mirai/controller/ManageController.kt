@@ -1,6 +1,7 @@
 package jp.sabakan.mirai.controller
 
 import jp.sabakan.mirai.MessageConfig
+import jp.sabakan.mirai.request.CabGabRequest
 import jp.sabakan.mirai.request.SpiRequest
 import jp.sabakan.mirai.request.UserRequest
 import jp.sabakan.mirai.service.CabGabService
@@ -38,7 +39,7 @@ class ManageController {
     ): String {
         model.addAttribute("userCount", userService.getUserCount())
         model.addAttribute("spiCount", spiService.getSpiCount())
-        model.addAttribute("cabgabCount", cabGabService.getCabgabCount())
+        model.addAttribute("cabgabCount", cabGabService.getCabGabCount())
         return "/manage/manage-main"
     }
     // 管理メイン画面
@@ -275,34 +276,100 @@ class ManageController {
 
     //todo CABGAB
 
-    // CAB/GABメイン画面
+//todo CABGAB
+
+    // --- 一覧画面表示 ---
     @GetMapping("/manage/cabgab")
-    fun getManageCabgab(): String {
-        return "/manage/cabgab/manage-cabgab-main"
+    fun getManageCabgab(
+        @RequestParam(name = "status", defaultValue = "all") status: String,
+        model: Model
+    ): String {
+        // 全件取得
+        val allList = cabGabService.getAllCabGab()
+
+        // SPIのフィルタリングロジックを参考に、必要に応じてカテゴリ分け
+        val filteredList = when (status) {
+            "cab"  -> allList.filter { it.cabgabCategory == "CAB" }
+            "gab"  -> allList.filter { it.cabgabCategory == "GAB" }
+            else   -> allList
+        }
+
+        model.addAttribute("cabgabList", filteredList)
+        model.addAttribute("selectedStatus", status)
+
+        return "manage/cabgab/manage-cabgab-main"
     }
-    // CAB/GABメイン画面
+
+    // --- 検索・フィルタ用POST ---
     @PostMapping("/manage/cabgab")
-    fun postManageCabgab(): String {
-        return "/manage/cabgab/manage-cabgab-main"
+    fun postManageCabgab(
+        @RequestParam(name = "status", defaultValue = "all") status: String
+    ): String {
+        return "redirect:/manage/cabgab?status=$status"
     }
-    // CAB/GAB変更画面
-    @GetMapping("/manage/cabgab/edit")
-    fun getManageCabgabEdit(): String {
-        return "/manage/cabgab/manage-cabgab-edit"
-    }
-    // CAB/GAB変更画面
-    @PostMapping("/manage/cabgab/edit")
-    fun postManageCabgabEdit(): String {
-        return "/manage/cabgab/manage-cabgab-edit"
-    }
-    // CAB/GAB追加画面
+
+    // --- 追加画面表示 ---
     @GetMapping("/manage/cabgab/add")
-    fun getManageCabgabAdd(): String {
-        return "/manage/cabgab/manage-cabgab-add"
+    fun getManageCabgabAdd(model: Model): String {
+        // 空のRequestオブジェクトを渡す（クラス名はプロジェクトの定義に合わせてください）
+        model.addAttribute("cabgabRequest", CabGabRequest())
+        return "manage/cabgab/manage-cabgab-add"
     }
-    // CAB/GAB追加画面
+
+    // --- 追加処理 ---
     @PostMapping("/manage/cabgab/add")
-    fun postManageCabgabAdd(): String {
-        return "/manage/cabgab/manage-cabgab-add"
+    fun postManageCabgabAdd(
+        @ModelAttribute cabgabRequest: CabGabRequest,
+        redirectAttributes: RedirectAttributes
+    ): String {
+        // Serviceの追加処理呼び出し
+        val response = cabGabService.insertCabGab(cabgabRequest)
+
+        // 完了メッセージをセットして一覧へリダイレクト
+        redirectAttributes.addFlashAttribute("message", response.message)
+        return "redirect:/manage/cabgab"
+    }
+
+    // --- 編集画面表示 ---
+    @GetMapping("/manage/cabgab/edit")
+    fun getManageCabgabEdit(
+        @RequestParam("cabgabId") cabgabId: String,
+        model: Model
+    ): String {
+        // Serviceから1件取得
+        val request = cabGabService.getCabGabById(cabgabId)
+
+        if (request == null) {
+            return "redirect:/manage/cabgab"
+        }
+
+        model.addAttribute("cabgabRequest", request)
+        return "manage/cabgab/manage-cabgab-edit"
+    }
+
+    // --- 更新処理 ---
+    @PostMapping("/manage/cabgab/edit")
+    fun postManageCabgabEdit(
+        @ModelAttribute cabgabRequest: CabGabRequest,
+        redirectAttributes: RedirectAttributes
+    ): String {
+        // Serviceの更新処理呼び出し
+        val response = cabGabService.updateCabGab(cabgabRequest)
+
+        redirectAttributes.addFlashAttribute("message", response.message)
+        return "redirect:/manage/cabgab"
+    }
+
+    // --- 削除処理 ---
+    @PostMapping("/manage/cabgab/delete")
+    fun postManageCabgabDelete(
+        @RequestParam("cabgabId") cabgabId: String,
+        redirectAttributes: RedirectAttributes
+    ): String {
+        // Serviceの削除処理呼び出し
+        val response = cabGabService.deleteCabGab(cabgabId)
+
+        redirectAttributes.addFlashAttribute("message", response.message)
+        return "redirect:/manage/cabgab"
     }
 }

@@ -12,13 +12,15 @@
 <div th:replace="~{common/color :: svg-sprite}"></div>
 
 <main>
-    <div class="menu" aria-label="CABGAB">
-        <section onclick="location.href='./cabgab'" class="menu-item">
-            <svg class="icon icon-with-bg" width="48" height="48">
-                <use href="#file"></use>
-            </svg>
-            <div class="texts">
-                <p class="title">CAB・GAB 模擬試験 (全90問)</p>
+    <div style="text-align: center; margin-top: 50px;">
+        <section class="menu" aria-label="CABGAB">
+            <div onclick="location.href='./cabgab'" class="menu-item">
+                <svg class="icon icon-with-bg" width="48" height="48">
+                    <use href="#file"></use>
+                </svg>
+                <div class="texts">
+                    <p class="title">CAB・GAB 模擬試験 (全90問)</p>
+                </div>
             </div>
         </section>
         <form class="menu" action="/cabgab/start" method="post">
@@ -46,15 +48,18 @@
                     続きから再開
                 </button>
             </th:block>
-
+        </form>
+        <section class="menu">
             <button class="button-center" type="button" onclick="location.href='/cabgab/history'">
                 過去の結果一覧へ
             </button>
-        </form>
+        </section>
     </div>
     <div class="spacer" aria-hidden="true"></div>
 </main>
+
 <footer th:replace="common/footer :: siteFooter"></footer>
+
 <script th:src="@{/js/style.js}"></script>
 </body>
 </html>

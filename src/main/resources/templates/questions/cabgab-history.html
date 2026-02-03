@@ -11,27 +11,43 @@
 <div th:replace="~{common/color :: svg-sprite}"></div>
 
 <main>
-    <div class="menu">
-        <p class="note">過去の実施結果</p>
-        <table class="question-table">
+    <div style="text-align: center; margin-top: 50px;">
+        <h2 class="title">CABGAB 受検履歴一覧</h2>
+
+        <div class="menu-item" th:if="${historyList == null || historyList.size() == 0}">
+            <p>履歴はありません。</p>
+        </div>
+
+        <table class="question-table" th:if="${historyList != null && historyList.size() > 0}" style="margin: 0 auto; width: 80%;">
             <thead>
             <tr>
-                <th>実施日</th>
-                <th>正答率</th>
-                <th>正解数</th>
+                <th class="no">実施日時</th>
+                <th class="judge">正解数</th>
+                <th class="beginning">詳細</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="history : ${histories}">
-                <td th:text="${#temporals.format(history.cabGabHsDate, 'yyyy/MM/dd HH:mm')}">2024/01/01</td>
-                <td th:text="${history.accuracyRate} + '%'">80%</td>
-                <td th:text="${history.correctCount} + ' / ' + ${history.totalQuestions}">40 / 50</td>
+            <tr th:each="hist : ${historyList}">
+                <td th:text="${#temporals.format(hist.cabgab_hs_date, 'yyyy/MM/dd HH:mm')}">2023/01/01</td>
+
+                <td>
+                    <span th:text="${hist.correct_count}">20</span> /
+                    <span th:text="${hist.total_questions}">70</span>
+                </td>
+
+                <td>
+                    <a th:href="@{/cabgab/result(id=${hist.cabgab_hs_id})}" class="button-small">詳細を見る</a>
+                </td>
             </tr>
             </tbody>
         </table>
-        <button class="button-center" onclick="location.href='/cabgab'">戻る</button>
+
+        <div class="menu" style="margin-top: 30px;">
+            <button class="button-center" onclick="location.href='/cabgab'">CABGABトップへ戻る</button>
+        </div>
     </div>
 </main>
+
 <footer th:replace="~{common/footer :: siteFooter}"></footer>
 </body>
 </html>

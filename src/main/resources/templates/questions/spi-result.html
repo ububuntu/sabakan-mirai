@@ -24,24 +24,27 @@
             </tr>
         </thead>
         <tbody>
-        <tr th:each="detail, stat : ${results}">
-            <td class="no" th:text="${detail.question_number}">1</td>
+            <tr th:each="detail, stat : ${results}">
+                <td class="no" th:text="${detail.question_number}">1</td>
 
-            <td class="judge" th:if="${detail.user_answer == null}">
-                <span style="color: #999;">-</span>
-            </td>
+                <td class="judge" th:if="${detail.user_answer == null}">
+                    <span style="color: #999;">-</span>
+                </td>
 
-            <td class="judge" th:unless="${detail.user_answer == null}"
-                th:classappend="${detail.is_correct ? 'is-ok' : 'is-ng'}">
-                <span></span>
-            </td>
+                <td class="judge" th:unless="${detail.user_answer == null}"
+                    th:classappend="${detail.is_correct ? 'is-ok' : 'is-ng'}">
+                    <span></span>
+                </td>
 
-            <td class="beginning" th:text="${detail.spi_content}">問題文...</td>
-        </tr>
+                <td class="beginning" th:text="${detail.spi_content}">問題文...</td>
+            </tr>
         </tbody>
-        <div class="spacer" aria-hidden="true"></div>
     </table>
+    <section class="menu">
+        <button class="button-center" onclick="location.href='/spi'">トップへ戻る</button>
+    </section>
 </main>
+<div class="spacer" aria-hidden="true"></div>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>
 </body>

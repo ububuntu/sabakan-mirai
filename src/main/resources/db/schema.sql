@@ -96,9 +96,6 @@ CREATE TABLE cabgab_m(
 CREATE TABLE cabgab_history_t(
      cabgab_hs_id             CHAR(37) PRIMARY KEY NOT NULL UNIQUE,
      user_id             CHAR(37) NOT NULL,
-     total_questions     INT NOT NULL,
-     correct_count       INT NOT NULL,
-     accuracy_rate       DECIMAL(5, 2),
      cabgab_hs_date           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
      is_finished         BOOLEAN DEFAULT FALSE,
      FOREIGN KEY (user_id) REFERENCES user_m(user_id)
@@ -108,6 +105,7 @@ CREATE TABLE cabgab_history_t(
 CREATE TABLE cabgab_detail_t(
     cabgab_dl_id      CHAR(37) PRIMARY KEY NOT NULL UNIQUE,
     cabgab_hs_id             CHAR(37) NOT NULL,
+    question_number     INT NOT NULL,
     cabgab_id              CHAR(37) NOT NULL,
     user_answer         INT,
     is_correct          BOOLEAN NOT NULL,

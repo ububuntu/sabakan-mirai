@@ -4,38 +4,44 @@ import lombok.Data
 
 @Data
 class CabGabRequest {
-    // Cab・Gab受検ID
-    var cabGabId: String? = null
+    // SPI受検ID
+    var cabgabId: String? = null
+
+    // SPI履歴ID
+    var cabgabHsId : String? = null
+
+    // 問題番号
+    var questionNumber: Int? = null
 
     // 問題文
-    var cabGabContent: String? = null
+    var cabgabContent: String? = null
 
     // 選択肢1
-    var cabGabAnswer1: String? = null
+    var cabgabAnswer1: String? = null
 
     // 選択肢2
-    var cabGabAnswer2: String? = null
+    var cabgabAnswer2: String? = null
 
     // 選択肢3
-    var cabGabAnswer3: String? = null
+    var cabgabAnswer3: String? = null
 
     // 選択肢4
-    var cabGabAnswer4: String? = null
+    var cabgabAnswer4: String? = null
 
     // 正解番号
-    var cabGabCorrectAnswer: Int? = null
+    var cabgabCorrectAnswer: Int? = null
 
     // 問題種別
-    var cabGabCategory: String? = null
+    var cabgabCategory: String? = null
 
     // 回答結果ID
-    var cabGabResultId: String? = null
+    var cabgabResultId: String? = null
 
     // ユーザーID
     var userId: String? = null
 
     // ユーザーの回答
-    var userAnswer: String? = null
+    var userAnswer: Int? = null
 
     // 正解の回答
     var correctAnswer: String? = null
@@ -43,7 +49,7 @@ class CabGabRequest {
     // 回答日時
     var answerDate: String? = null
 
-    // 90問分の回答を一括送信するためのリクエスト
+    // 70問分の回答を一括送信するためのリクエスト
     @Data
     class CabGabExamRequest {
         var userId: String? = null
@@ -53,7 +59,7 @@ class CabGabRequest {
     // 1問ごとの回答内容
     @Data
     class CabGabAnswerItem {
-        var cabGabId: String? = null
+        var cabgabId: String? = null
         var userAnswer: Int? = null
     }
 }

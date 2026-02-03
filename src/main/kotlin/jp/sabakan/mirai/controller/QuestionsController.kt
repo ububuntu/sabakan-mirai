@@ -20,12 +20,9 @@ class QuestionsController {
     @Autowired
     lateinit var spiService: SpiService
     @Autowired
-    lateinit var cabGabService: CabGabService
+    lateinit var cabgabService: CabGabService
     @Autowired
     lateinit var session: HttpSession
-
-    // 問題数の定数化
-    val CABGAB_TOTAL_COUNT = 90
 
     // --- 1. 共通・メイン画面 ---
 
@@ -186,100 +183,90 @@ class QuestionsController {
     }
 
     // --- 3. CAB/GAB 制御ロジック ---
-
-    /**
-     * CAB/GAB メイン画面表示
-     */
+    // --- 1. SPI メイン画面 (GET /cabgab) ---
     @GetMapping("/cabgab")
-    fun getQuestionCabgabMain(
+    fun getCabGabMain(
         model: Model,
         @AuthenticationPrincipal userDetails: LoginUserDetails
     ): String {
         val userId = userDetails.getUserEntity().userId
-        val request = CabGabRequest().apply {
-            this.userId = userId
-        }
+        val request = CabGabRequest().apply { this.userId = userId }
 
-        val inProgressId = cabGabService.getInProgressCabGabId(request)
+        // 続きからボタンの表示制御
+        val inProgressId = cabgabService.getInProgressCabGabId(request)
         model.addAttribute("hasInProgress", inProgressId != null)
+
         return "questions/cabgab-main"
     }
 
-    /**
-     * CAB/GAB 試験開始処理
-     */
+    // --- 2. SPI 試験開始 (POST /cabgab/start) ---
     @PostMapping("/cabgab/start")
     fun startCabGabExam(
         @RequestParam mode: String,
         @RequestParam(required = false) middleIndex: Int?,
         @AuthenticationPrincipal userDetails: LoginUserDetails
     ): String {
-        var userId = userDetails.getUserEntity().userId
-        val request = CabGabRequest().apply {
-            this.userId = userId
-        }
+        val userId = userDetails.getUserEntity().userId
+        val request = CabGabRequest().apply { this.userId = userId }
 
-        var examId: String? = null
+        var hsId: String? = null
         var startIndex = 1
 
         when (mode) {
-            "new_start" -> {
-                examId = cabGabService.startNewCabGab(request)
-                startIndex = 1
-            }
-            "new_middle" -> {
-                examId = cabGabService.startNewCabGab(request)
-                startIndex = middleIndex ?: 1
+            "new", "new_middle" -> {
+                // 新規開始
+                hsId = cabgabService.startExam(request)
+                startIndex = if (mode == "new_middle") middleIndex ?: 1 else 1
             }
             "resume" -> {
-                examId = cabGabService.getInProgressCabGabId(request)
-                if (examId != null) {
-                    startIndex = cabGabService.getCurrentCabGabIndex(examId)
-                } else {
-                    return "redirect:/cabgab"
-                }
+                // 続きから
+                hsId = cabgabService.getInProgressCabGabId(request)
+                // 本来はどこまで解いたか判定するロジックが必要だが、一旦1問目or任意実装
+                startIndex = 1
             }
         }
-        session.setAttribute("currentCabGabExamId", examId)
+
+        if (hsId == null) return "redirect:/cabgab"
+
+        session.setAttribute("currentCabGabExamId", hsId)
         return "redirect:/cabgab/study?index=$startIndex"
     }
 
-    /**
-     * CAB/GAB 学習（問題回答）画面表示
-     */
+    // --- 3. SPI 問題画面 (GET /cabgab/study) ---
     @GetMapping("/cabgab/study")
-    fun getQuestionCabgabStudy(
-        @RequestParam(name = "index") index: Int,
-        model: Model
-    ): String {
-        val examId = session.getAttribute("currentCabGabExamId") as? String ?: return "redirect:/cabgab"
-        val targetCategory = if (index <= 40) "言語" else "非言語"
+    fun getCabGabStudy(@RequestParam("index") index: Int, model: Model): String {
+        val hsId = session.getAttribute("currentCabGabExamId") as? String ?: return "redirect:/cabgab"
 
-        val request = CabGabRequest().apply { cabGabCategory = targetCategory }
-        val response = cabGabService.getCabGab(request)
-        val questionList = response.cabGabs
+        val request = CabGabRequest().apply { cabgabHsId = hsId }
+        val allQuestions = cabgabService.getExamResults(request)
 
-        if (questionList.isNullOrEmpty()) return "redirect:/cabgab"
+        val currentQuestion = allQuestions.find { it["question_number"] == index } ?: return "redirect:/cabgab/result?id=$hsId"
 
-        model.addAttribute("question", questionList[0])
+        model.addAttribute("question", currentQuestion)
         model.addAttribute("currentIndex", index)
-        model.addAttribute("totalCount", CABGAB_TOTAL_COUNT)
-        model.addAttribute("progress", (index.toDouble() / CABGAB_TOTAL_COUNT * 100).toInt())
+        model.addAttribute("totalCount", 70)
+        // 進捗率
+        model.addAttribute("progress", (index.toDouble() / 70 * 100).toInt())
 
         return "questions/cabgab-study"
     }
 
-    /**
-     * CAB/GAB 回答送信・中断・終了処理
-     */
+    // --- 4. SPI 回答送信 (POST /cabgab/study) ---
     @PostMapping("/cabgab/study")
-    fun postQuestionCabgabStudy(
+    fun postCabGabStudy(
         @RequestParam currentIndex: Int,
-        @RequestParam cabGabId: String,
-        @RequestParam(required = false) answer: Int?,
+        @RequestParam cabgabId: String,
+        @RequestParam(required = false) answer: Int?, // HTML側valueが1~4ならInt
         @RequestParam action: String
     ): String {
-        val examId = session.getAttribute("currentCabGabExamId") as? String ?: return "redirect:/cabgab"
+        val hsId = session.getAttribute("currentCabGabExamId") as? String ?: return "redirect:/cabgab"
+
+        val request = CabGabRequest().apply {
+            this.cabgabHsId = hsId
+            this.questionNumber = currentIndex
+            this.cabgabId = cabgabId
+            this.userAnswer = answer
+        }
 
         when (action) {
             "suspend" -> {
@@ -287,38 +274,61 @@ class QuestionsController {
                 return "redirect:/cabgab"
             }
             "finish" -> {
-                cabGabService.finishCabGab(examId)
+                cabgabService.saveAnswer(request)
+                cabgabService.finishExam(request)
                 session.removeAttribute("currentCabGabExamId")
-                return "redirect:/cabgab/result"
+                return "redirect:/cabgab/result?id=$hsId"
             }
             "next" -> {
-                if (answer != null) {
-                    cabGabService.saveOneCabGabAnswer(examId, cabGabId, answer)
-                }
-
+                cabgabService.saveAnswer(request)
                 val nextIndex = currentIndex + 1
-                if (nextIndex > CABGAB_TOTAL_COUNT) {
-                    cabGabService.finishCabGab(examId)
+                return if (nextIndex > 70) {
+                    cabgabService.finishExam(request)
                     session.removeAttribute("currentCabGabExamId")
-                    return "redirect:/cabgab/result"
+                    "redirect:/cabgab/result?id=$hsId"
+                } else {
+                    "redirect:/cabgab/study?index=$nextIndex"
                 }
-                return "redirect:/cabgab/study?index=$nextIndex"
             }
         }
         return "redirect:/cabgab"
     }
 
-    // --- 4. 結果・履歴表示 ---
-    // -- CAB/GAB 結果・履歴 --
+    // --- 5. SPI 結果画面 (GET /cabgab/result) ---
     @GetMapping("/cabgab/result")
-    fun getQuestionCabgabResult(): String = "questions/cabgab-result"
+    fun getCabGabResult(@RequestParam("id") hsId: String, model: Model): String {
+        val request = CabGabRequest().apply { cabgabHsId = hsId }
+        val results = cabgabService.getExamResults(request) // 全70問の明細を取得
+
+        // 正答率計算 (回答したもののみを母数とする場合)
+        val answeredList = results.filter { it["user_answer"] != null }
+        val correctCount = answeredList.count { it["is_correct"] == true }
+
+        val accuracyRate = if (answeredList.isNotEmpty()) {
+            (correctCount.toDouble() / answeredList.size * 100).toInt()
+        } else 0
+
+        model.addAttribute("results", results)
+        model.addAttribute("accuracyRate", accuracyRate)
+
+        return "questions/cabgab-result"
+    }
 
     @PostMapping("/cabgab/result")
-    fun postQuestionCabgabResult(): String = "questions/cabgab-result"
+    fun postCabGabResult(): String = "redirect:/cabgab"
 
+    // --- 6. SPI 履歴画面 (GET /cabgab/history) ---
     @GetMapping("/cabgab/history")
-    fun getCabgabHistory(): String = "questions/cabgab-history"
+    fun getCabGabHistory(
+        model: Model,
+        @AuthenticationPrincipal userDetails: LoginUserDetails
+    ): String {
+        val userId = userDetails.getUserEntity().userId
+        val request = CabGabRequest().apply { this.userId = userId }
 
-    @PostMapping("/cabgab/history")
-    fun postCabgabHistory(): String = "questions/cabgab-history"
+        val historyList = cabgabService.getHistoryList(request)
+        model.addAttribute("historyList", historyList)
+
+        return "questions/cabgab-history"
+    }
 }

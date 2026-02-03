@@ -10,7 +10,7 @@
 <header th:replace="common/header :: siteHeader('cabgabStudyHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
-    <form class="menu" action="/cabgab/study" method="post">
+    <form class="menu" th:action="@{/cabgab/study}" method="post">
         <progress class="progress" max="100" th:value="${progress}"></progress>
 
         <p class="progress-text">

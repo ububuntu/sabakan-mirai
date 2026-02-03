@@ -5,26 +5,26 @@ import lombok.Data
 @Data
 class CabGabData {
     // CAB/GAB受検ID
-    var cabGabId: String? = null
+    var cabgabId: String? = null
 
     // 問題文
-    var cabGabContent: String? = null
+    var cabgabContent: String? = null
 
     // 選択肢1
-    var cabGabAnswer1: String? = null
+    var cabgabAnswer1: String? = null
 
     // 選択肢2
-    var cabGabAnswer2: String? = null
+    var cabgabAnswer2: String? = null
 
     // 選択肢3
-    var cabGabAnswer3: String? = null
+    var cabgabAnswer3: String? = null
 
     // 選択肢4
-    var cabGabAnswer4: String? = null
+    var cabgabAnswer4: String? = null
 
     // 正解番号
-    var cabGabCorrectAnswer: Int? = null
+    var cabgabCorrectAnswer: Int? = null
 
     // 問題種別
-    var cabGabCategory: String? = null
+    var cabgabCategory: String? = null
 }

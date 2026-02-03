@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>CABGAB 結果表示 | Mirai</title>
     <link rel="stylesheet" th:href="@{/css/color.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
@@ -12,25 +12,39 @@
 <div th:replace="~{common/color :: svg-sprite}"></div>
 <main>
     <div class="menu-item">
-        <p class="title" th:text="'正答率　:　' + ${result.accuracyRate} + '%'">正答率 : 0%</p>
+        <p class="title">正答率　:　<span th:text="${accuracyRate} + '%'">30%</span></p>
     </div>
     <p class="note">正誤リスト</p>
     <table class="question-table">
         <thead>
-        <tr>
-            <th class="no">問題</th>
-            <th class="judge">正誤</th>
-        </tr>
+            <tr>
+                <th class="no">問題</th>
+                <th class="judge">正誤</th>
+                <th class="beginning">内容</th>
+            </tr>
         </thead>
         <tbody>
-        <tr th:each="detail, stat : ${details}">
-            <td class="no" th:text="${stat.count}">1</td>
-            <td class="judge" th:classappend="${detail.isCorrect} ? 'is-ok' : 'is-ng'"></td>
-        </tr>
+            <tr th:each="detail, stat : ${results}">
+                <td class="no" th:text="${detail.question_number}">1</td>
+
+                <td class="judge" th:if="${detail.user_answer == null}">
+                    <span style="color: #999;">-</span>
+                </td>
+
+                <td class="judge" th:unless="${detail.user_answer == null}"
+                    th:classappend="${detail.is_correct ? 'is-ok' : 'is-ng'}">
+                    <span></span>
+                </td>
+
+                <td class="beginning" th:text="${detail.cabgab_content}">問題文...</td>
+            </tr>
         </tbody>
     </table>
-    <button class="button-center" onclick="location.href='/cabgab'">トップへ戻る</button>
+    <section class="menu">
+        <button class="button-center" onclick="location.href='/cabgab'">トップへ戻る</button>
+    </section>
 </main>
+<div class="spacer" aria-hidden="true"></div>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>
 </body>

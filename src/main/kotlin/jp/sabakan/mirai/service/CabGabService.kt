@@ -4,294 +4,190 @@ import jp.sabakan.mirai.MessageConfig
 import jp.sabakan.mirai.data.CabGabData
 import jp.sabakan.mirai.data.CabGabDetailData
 import jp.sabakan.mirai.data.CabGabHistoryData
-import jp.sabakan.mirai.entity.CabGabEntity
 import jp.sabakan.mirai.repository.CabGabRepository
 import jp.sabakan.mirai.request.CabGabRequest
 import jp.sabakan.mirai.response.CabGabResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.math.BigDecimal
-import java.math.RoundingMode
 import java.util.UUID
 
 @Service
 class CabGabService {
+
     @Autowired
-    lateinit var cabGabRepository: CabGabRepository
+    lateinit var cabgabRepository: CabGabRepository
 
-    /**
-     * 新しいCabGab試験を開始する
-     *
-     * @param userId ユーザーID
-     * @return 新しいCabGab試験ID
-     */
     @Transactional
-    fun startNewCabGab(request: CabGabRequest): String? {
-        val userId = request.userId ?: return null
-        // 新しいCabGab試験IDを生成
-        val historyId = UUID.randomUUID().toString()
+    fun startExam(request: CabGabRequest): String {
+        val hsId = "S"+UUID.randomUUID().toString()
 
-        // CabGab履歴データを作成
-        val historyData = CabGabHistoryData().apply {
-            cabGabHsId = historyId
-            this.userId = userId
-            totalQuestions = 50 // CabGabの標準問題数など、運用に合わせて調整
-            correctCount = 0
-            accuracyRate = BigDecimal.ZERO
-            cabGabHsDate = java.time.LocalDateTime.now()
+        // 1. 履歴ヘッダ作成
+        val history = CabGabHistoryData().apply {
+            cabgabHsId = hsId
+            userId = request.userId
+        }
+        cabgabRepository.insertHistory(history)
+
+        // 2. 問題ランダム抽出 (言語40問、非言語30問)
+        // 引数はDataクラスに詰めて渡す
+        val verbal = cabgabRepository.getRandomQuestions(CabGabData().apply { cabgabCategory = "言語" }, 40)
+        val nonVerbal = cabgabRepository.getRandomQuestions(CabGabData().apply { cabgabCategory = "非言語" }, 30)
+
+        val allQuestions = verbal + nonVerbal
+
+        // 3. 70問分の明細枠(detail)を先に作成
+        allQuestions.forEachIndexed { index, q ->
+            val detail = CabGabDetailData().apply {
+                cabgabDlId = UUID.randomUUID().toString()
+                cabgabHsId = hsId
+                questionNumber = index + 1
+                cabgabId = q["cabgab_id"] as String
+            }
+            cabgabRepository.insertDetail(detail)
         }
 
-        // Repositoryを使って履歴を保存
-        cabGabRepository.insertHistory(historyData)
-
-        return historyId
+        // 生成した試験IDを返す
+        return hsId
     }
 
-    /**
-     * すべてのCabGab質問を取得する
-     */
-    fun getAllCabGab(): List<CabGabEntity> {
-        val table: List<Map<String, Any?>> = cabGabRepository.getAllCabGab()
-        return tableToListEntity(table)
+    @Transactional
+    fun saveAnswer(request: CabGabRequest) {
+        // 現在の問題の正解を取得するために検索
+        val searchData = CabGabHistoryData().apply { cabgabHsId = request.cabgabHsId }
+        val results = cabgabRepository.findDetailsWithQuestion(searchData)
+
+        // 対象の問題を探す
+        val currentQ = results.find { it["question_number"] == request.questionNumber }
+        val correctAnswer = currentQ?.get("cabgab_correct_answer") as? Int
+
+        // ユーザーの回答をInt変換
+        val userAnsInt = request.userAnswer
+
+        // 更新用データの作成
+        val detail = CabGabDetailData().apply {
+            cabgabHsId = request.cabgabHsId
+            questionNumber = request.questionNumber ?: 0
+            userAnswer = userAnsInt
+            // 正解と一致しているか判定
+            isCorrect = (correctAnswer != null && userAnsInt == correctAnswer)
+        }
+
+        cabgabRepository.updateDetailAnswer(detail)
     }
 
-    /**
-     * 指定CabGab IDの質問を取得する
-     */
-    fun getCabGabById(cabGabId: String): CabGabRequest {
-        val data = CabGabData().apply {
-            this.cabGabId = cabGabId
+    @Transactional
+    fun finishExam(request: CabGabRequest) {
+        val data = CabGabHistoryData().apply { cabgabHsId = request.cabgabHsId }
+        cabgabRepository.updateHistoryFinished(data)
+    }
+
+    fun getExamResults(request: CabGabRequest): List<Map<String, Any?>> {
+        val data = CabGabHistoryData().apply { cabgabHsId = request.cabgabHsId }
+        return cabgabRepository.findDetailsWithQuestion(data)
+    }
+
+    fun getInProgressCabGabId(request: CabGabRequest): String? {
+        val data = CabGabHistoryData().apply { userId = request.userId }
+        return cabgabRepository.findInProgressId(data)
+    }
+
+    fun getHistoryList(request: CabGabRequest): List<Map<String, Any?>> {
+        val data = CabGabHistoryData().apply { userId = request.userId }
+        return cabgabRepository.findHistoryByUserId(data)
+    }
+
+    fun getAllCabGab(): List<CabGabRequest> {
+        val list = cabgabRepository.findAllCabGab()
+        // Map -> CabGabRequest 変換
+        return list.map { row ->
+            CabGabRequest().apply {
+                cabgabId = row["cabgab_id"] as? String
+                cabgabContent = row["cabgab_content"] as? String
+                cabgabAnswer1 = row["cabgab_answer1"] as? String
+                cabgabAnswer2 = row["cabgab_answer2"] as? String
+                cabgabAnswer3 = row["cabgab_answer3"] as? String
+                cabgabAnswer4 = row["cabgab_answer4"] as? String
+                cabgabCorrectAnswer = (row["cabgab_correct_answer"] as? Number)?.toInt()
+                cabgabCategory = row["cabgab_category"] as? String
+            }
         }
+    }
 
-        val table: List<Map<String, Any?>> = cabGabRepository.getCabGabById(data)
-
-        if (table.isEmpty()) {
-            throw IllegalArgumentException("指定されたIDの問題が見つかりません: $cabGabId")
-        }
-
-        val row = table[0]
+    fun getCabGabById(cabgabId: String): CabGabRequest? {
+        val data = CabGabData().apply { this.cabgabId = cabgabId }
+        val row = cabgabRepository.findCabGabById(data) ?: return null
 
         return CabGabRequest().apply {
-            this.cabGabId = row["cabgab_id"] as? String
-            cabGabContent = row["cabgab_content"] as? String
-            cabGabAnswer1 = row["cabgab_answer1"] as? String
-            cabGabAnswer2 = row["cabgab_answer2"] as? String
-            cabGabAnswer3 = row["cabgab_answer3"] as? String
-            cabGabAnswer4 = row["cabgab_answer4"] as? String
-            cabGabCorrectAnswer = row["cabgab_correct_answer"] as? Int
-            cabGabCategory = row["cabgab_category"] as? String
+            this.cabgabId = row["cabgab_id"] as? String
+            cabgabContent = row["cabgab_content"] as? String
+            cabgabAnswer1 = row["cabgab_answer1"] as? String
+            cabgabAnswer2 = row["cabgab_answer2"] as? String
+            cabgabAnswer3 = row["cabgab_answer3"] as? String
+            cabgabAnswer4 = row["cabgab_answer4"] as? String
+            cabgabCorrectAnswer = (row["cabgab_correct_answer"] as? Number)?.toInt()
+            cabgabCategory = row["cabgab_category"] as? String
         }
     }
 
-    /**
-     * CabGab質問を新規登録する
-     */
+    @Transactional
     fun insertCabGab(request: CabGabRequest): CabGabResponse {
+        val response = CabGabResponse()
         val data = CabGabData().apply {
-            cabGabId = toCreateId()
-            cabGabContent = request.cabGabContent
-            cabGabAnswer1 = request.cabGabAnswer1
-            cabGabAnswer2 = request.cabGabAnswer2
-            cabGabAnswer3 = request.cabGabAnswer3
-            cabGabAnswer4 = request.cabGabAnswer4
-            cabGabCorrectAnswer = request.cabGabCorrectAnswer
-            cabGabCategory = request.cabGabCategory
+            cabgabId = UUID.randomUUID().toString()
+            cabgabContent = request.cabgabContent
+            cabgabAnswer1 = request.cabgabAnswer1
+            cabgabAnswer2 = request.cabgabAnswer2
+            cabgabAnswer3 = request.cabgabAnswer3
+            cabgabAnswer4 = request.cabgabAnswer4
+            cabgabCorrectAnswer = request.cabgabCorrectAnswer
+            cabgabCategory = request.cabgabCategory
         }
-
-        val insertCount = cabGabRepository.insertCabGab(data)
-
-        if (insertCount == 0) {
-            return CabGabResponse().apply {
-                message = MessageConfig.CABGAB_INSERT_FAILED
-            }
+        try{
+            cabgabRepository.insertCabGabMaster(data)
+            response.message = MessageConfig.SPI_INSERT_SUCCESS
+        } catch (e: Exception) {
+            response.message = MessageConfig.SPI_INSERT_FAILED
         }
-
-        return CabGabResponse().apply {
-            message = MessageConfig.CABGAB_INSERT_SUCCESS
-        }
+        return response
     }
 
-    /**
-     * 指定カテゴリーのCabGab質問を取得する
-     */
-    fun getCabGab(request: CabGabRequest): CabGabResponse {
-        val data = CabGabData().apply {
-            cabGabCategory = request.cabGabCategory
-        }
-
-        val table: List<Map<String, Any?>> = cabGabRepository.getCabGab(data)
-        val list: List<CabGabEntity> = tableToListEntity(table)
-
-        return CabGabResponse().apply {
-            cabGabs = list
-            message = null
-        }
-    }
-
-    /**
-     * 進行中のCabGab試験IDを取得する
-     */
-    fun getInProgressCabGabId(request: CabGabRequest): String? {
-        val userId = request.userId ?: return null
-        return cabGabRepository.getUnfinishedCabGabHsId(userId)
-    }
-
-    /**
-     * 現在の質問インデックスを取得する
-     */
-    fun getCurrentCabGabIndex(examId: String): Int {
-        val answeredCount = cabGabRepository.countDetailsByHistoryId(examId)
-        return answeredCount + 1
-    }
-
-    /**
-     * CabGabの1つの回答を保存する
-     */
     @Transactional
-    fun saveOneCabGabAnswer(examId: String, cabGabId: String, userAnswer: Int) {
-        val correctAnswer = cabGabRepository.getCorrectAnswer(cabGabId)
-        val isCorrect = (correctAnswer != null && correctAnswer == userAnswer)
-
-        val detailData = CabGabDetailData().apply {
-            cabGabDlId = UUID.randomUUID().toString()
-            cabGabHsId = examId
-            this.cabGabId = cabGabId
-            this.userAnswer = userAnswer
-            this.isCorrect = isCorrect
-        }
-
-        cabGabRepository.insertDetail(detailData)
-    }
-
-    /**
-     * CabGab試験を完了し、結果を更新する
-     */
-    @Transactional
-    fun finishCabGab(cabGabHsId: String) {
-        val results: List<Boolean> = cabGabRepository.findDetailsByHistoryId(cabGabHsId)
-        val totalAnswered = results.size
-        val correctCount = results.count { it }
-
-        val accuracyRate = if (totalAnswered > 0) {
-            BigDecimal(correctCount)
-                .divide(BigDecimal(totalAnswered), 2, RoundingMode.HALF_UP)
-                .multiply(BigDecimal("100"))
-        } else {
-            BigDecimal.ZERO
-        }
-
-        cabGabRepository.updateExamResult(cabGabHsId, correctCount, accuracyRate)
-    }
-
-    /**
-     * まとめてCabGab試験結果を登録する
-     */
-    @Transactional
-    fun registerCabGabResult(request: CabGabRequest.CabGabExamRequest): CabGabHistoryData {
-        val historyId = UUID.randomUUID().toString()
-        val historyData = CabGabHistoryData().apply {
-            cabGabHsId = historyId
-            userId = request.userId
-            totalQuestions = request.answers?.size ?: 0
-            correctCount = 0
-            cabGabHsDate = java.time.LocalDateTime.now()
-        }
-
-        request.answers?.forEach { answerItem ->
-            val currentCabGabId = answerItem.cabGabId ?: return@forEach
-            val userAns = answerItem.userAnswer
-
-            val correctAnswer = cabGabRepository.getCorrectAnswer(currentCabGabId)
-            val isCorrect = (correctAnswer != null && correctAnswer == userAns)
-
-            if (isCorrect) historyData.correctCount++
-
-            val detailData = CabGabDetailData().apply {
-                cabGabDlId = UUID.randomUUID().toString()
-                cabGabHsId = historyId
-                cabGabId = currentCabGabId
-                userAnswer = userAns
-                this.isCorrect = isCorrect
-            }
-            cabGabRepository.insertDetail(detailData)
-        }
-
-        historyData.accuracyRate = if (historyData.totalQuestions > 0) {
-            historyData.correctCount.toBigDecimal()
-                .divide(historyData.totalQuestions.toBigDecimal(), 2, RoundingMode.HALF_UP)
-                .multiply(BigDecimal("100"))
-        } else {
-            BigDecimal.ZERO
-        }
-
-        cabGabRepository.insertHistory(historyData)
-        return historyData
-    }
-
-    /**
-     * CabGab質問を更新する
-     */
     fun updateCabGab(request: CabGabRequest): CabGabResponse {
+        val response = CabGabResponse()
         val data = CabGabData().apply {
-            cabGabId = request.cabGabId
-            cabGabContent = request.cabGabContent
-            cabGabAnswer1 = request.cabGabAnswer1
-            cabGabAnswer2 = request.cabGabAnswer2
-            cabGabAnswer3 = request.cabGabAnswer3
-            cabGabAnswer4 = request.cabGabAnswer4
-            cabGabCorrectAnswer = request.cabGabCorrectAnswer
-            cabGabCategory = request.cabGabCategory
+            cabgabId = request.cabgabId // IDは画面から渡ってきたものを使用
+            cabgabContent = request.cabgabContent
+            cabgabAnswer1 = request.cabgabAnswer1
+            cabgabAnswer2 = request.cabgabAnswer2
+            cabgabAnswer3 = request.cabgabAnswer3
+            cabgabAnswer4 = request.cabgabAnswer4
+            cabgabCorrectAnswer = request.cabgabCorrectAnswer
+            cabgabCategory = request.cabgabCategory
         }
-
-        val updateCount = cabGabRepository.updateCabGab(data)
-
-        if (updateCount == 0) {
-            return CabGabResponse().apply { message = MessageConfig.CABGAB_UPDATE_FAILED }
+        try {
+            cabgabRepository.updateCabGabMaster(data)
+            response.message = MessageConfig.SPI_UPDATE_SUCCESS
+        } catch (e: Exception) {
+            response.message = MessageConfig.SPI_UPDATE_FAILED
         }
-
-        return CabGabResponse().apply { message = MessageConfig.CABGAB_UPDATE_SUCCESS }
+        return response
     }
 
-    /**
-     * CabGab質問を削除する
-     */
-    fun deleteCabGab(cabGabId: String): CabGabResponse {
-        val deleteCount = cabGabRepository.deleteCabGab(cabGabId)
-
-        if (deleteCount == 0) {
-            return CabGabResponse().apply { message = MessageConfig.CABGAB_DELETE_FAILED }
+    @Transactional
+    fun deleteCabGab(cabgabId: String): CabGabResponse {
+        val response = CabGabResponse()
+        val data = CabGabData().apply { this.cabgabId = cabgabId }
+        try {
+            cabgabRepository.deleteCabGabMaster(data)
+            response.message = MessageConfig.SPI_DELETE_SUCCESS
+        } catch (e: Exception) {
+            response.message = MessageConfig.SPI_DELETE_FAILED
         }
-
-        return CabGabResponse().apply { message = MessageConfig.CABGAB_DELETE_SUCCESS }
+        return response
     }
 
-    fun getCabgabCount(): Int {
-        return cabGabRepository.getCabgabCount()
-    }
-
-    /**
-     * 新しいCabGab IDを生成する (接頭辞 'C')
-     */
-    private fun toCreateId(): String {
-        return "C${UUID.randomUUID()}"
-    }
-
-    /**
-     * テーブルデータをCabGabEntityリストに変換する
-     */
-    fun tableToListEntity(table: List<Map<String, Any?>>): List<CabGabEntity> {
-        return table.map { row ->
-            CabGabEntity().apply {
-                cabGabId = row["cabgab_id"] as String?
-                cabGabContent = row["cabgab_content"] as String?
-                cabGabAnswer1 = row["cabgab_answer1"] as String?
-                cabGabAnswer2 = row["cabgab_answer2"] as String?
-                cabGabAnswer3 = row["cabgab_answer3"] as String?
-                cabGabAnswer4 = row["cabgab_answer4"] as String?
-                cabGabCorrectAnswer = (row["cabgab_correct_answer"] as? Number)?.toInt()
-                cabGabCategory = row["cabgab_category"] as String?
-            }
-        }
+    fun getCabGabCount(): Int {
+        return cabgabRepository.countCabGab()
     }
 }
