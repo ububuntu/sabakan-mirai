@@ -65,7 +65,6 @@
             </div>
         </div>
 
-        <!--FIXME 管理者のみ実行可能に変更予定 -->
         <div sec:authorize="hasRole('ADMIN')" onclick="location.href='./manage'" class="menu-item">
             <svg class="icon icon-with-bg icon-manage" width="48" height="48">
                 <use href="#settings"></use>

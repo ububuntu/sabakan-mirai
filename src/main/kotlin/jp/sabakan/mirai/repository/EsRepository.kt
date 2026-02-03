@@ -1,9 +1,7 @@
 package jp.sabakan.mirai.repository
 
 import jp.sabakan.mirai.data.EsData
-import jp.sabakan.mirai.request.EsRequest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 

@@ -30,8 +30,6 @@ class ManageController {
     @Autowired
     lateinit var cabGabService: CabGabService
 
-    //todo 管理
-
     // 管理メイン画面
     @GetMapping("/manage")
     fun getManage(
@@ -57,8 +55,6 @@ class ManageController {
     fun postManageLogs(): String {
         return "/manage/manage-logs"
     }
-
-    //todo ユーザ
 
     // ユーザー管理画面
     @GetMapping("/manage/users")
@@ -174,8 +170,6 @@ class ManageController {
 
     }
 
-    //todo SPI
-
     // --- 一覧画面表示 ---
     @GetMapping("/manage/spi")
     fun getManageSpiMain(
@@ -273,10 +267,6 @@ class ManageController {
         redirectAttributes.addFlashAttribute("message", response.message)
         return "redirect:/manage/spi"
     }
-
-    //todo CABGAB
-
-//todo CABGAB
 
     // --- 一覧画面表示 ---
     @GetMapping("/manage/cabgab")
