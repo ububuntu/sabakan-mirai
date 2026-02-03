@@ -110,3 +110,42 @@ body {
 
 .hidden { display: none; }
 #status { font-weight: bold; margin-top: 20px; min-height: 1.5em; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+/* イベント用オブジェクトの共通設定 */
+.event-object {
+    position: absolute;
+    white-space: pre;
+    font-family: Consolas, Monaco, monospace;
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* 汽車 (SL) */
+@keyframes sl-move {
+    from { right: -500px; }
+    to { right: 120%; }
+}
+
+/* 跳ねる動き（魚・イカ共通） */
+@keyframes jump-move {
+    0% {
+        transform: translate(-10vw, 0) rotate(-20deg);
+        opacity: 0;
+    }
+    10% { opacity: 1; }
+    50% {
+        transform: translate(45vw, -250px) rotate(0deg);
+    }
+    90% { opacity: 1; }
+    100% {
+        transform: translate(110vw, 50px) rotate(20deg);
+        opacity: 0;
+    }
+}
+
+/* イカ専用：跳ねながら回転する */
+@keyframes squid-jump {
+    0% { transform: translate(-10vw, 0) rotate(0deg); opacity: 0; }
+    50% { transform: translate(45vw, -300px) rotate(180deg); }
+    100% { transform: translate(110vw, 0) rotate(360deg); opacity: 0; }
+}

@@ -90,5 +90,73 @@ function resetGame() {
     startWaiting();
 }
 
+function triggerRandomEvent() {
+    const eventRand = Math.random();
+
+    if (eventRand < 0.1) {
+        spawnSL(); // 10%で汽車
+    } else if (eventRand < 0.4) {
+        spawnJumpingSchool(); // 30%で群れが出現
+    }
+
+    // 次のイベント抽選 (10秒〜20秒おき)
+    setTimeout(triggerRandomEvent, Math.random() * 10000 + 10000);
+}
+
+// 汽車 (SL)
+function spawnSL() {
+    const sl = document.createElement('div');
+    sl.className = 'event-object';
+    sl.style.bottom = "10px";
+    sl.style.color = "#888";
+    sl.style.fontSize = "12px";
+    sl.style.animation = "sl-move 10s linear forwards";
+    sl.innerText = `
+          ====        ________                ___________
+      _D _|  |_______/        \__I_I_____===__|_________|
+       |(_)---  |   H\________/ |   |        =|___ ___|      _________________
+       /     |  |   H  |  |     |   |         ||_| |_||     _|                \_____A
+      |      |  |   H  |__--------------------| [___] |   =|                        |
+      | ________|___H__/__|_____/[][]~\_______|       |   -|                        |
+      |/ |   |-----------I_____I [][] []  D   |=======|____|________________________|_
+    __/ =| o |=-~~\  /~~\  /~~\  /~~\ ____Y___________|__|__________________________|_
+     |/-=|___||    ||    ||    ||    |_____/~\___/          |_D__D__D_|  |_D__D__D_|
+      \_/      \__/  \__/  \__/  \__/      \_/               \_/   \_/    \_/   \_/
+    `;
+    document.body.appendChild(sl);
+    setTimeout(() => sl.remove(), 10500);
+}
+
+// 魚とイカの群れ
+function spawnJumpingSchool() {
+    const count = 3 + Math.floor(Math.random() * 5); // 3〜7匹
+
+    for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+            const isSquid = Math.random() < 0.2; // 20%の確率でイカ
+            const creature = document.createElement('div');
+            creature.className = 'event-object';
+
+            // 出現位置の高さをバラけさせる
+            creature.style.bottom = (50 + Math.random() * 100) + "px";
+            creature.style.left = "0";
+
+            if (isSquid) {
+                creature.innerText = "くコ:彡";
+                creature.style.color = "#ffb6c1"; // イカは薄ピンク
+                creature.style.animation = "squid-jump 3.5s ease-in-out forwards";
+            } else {
+                creature.innerText = ">ﾟ)))彡";
+                creature.style.color = "#8af"; // 魚は水色
+                creature.style.animation = "jump-move 3s ease-in-out forwards";
+            }
+
+            document.body.appendChild(creature);
+            setTimeout(() => creature.remove(), 4000);
+        }, i * 400); // 0.4秒間隔で次々とはねる
+    }
+}
+
 createWave();
 startWaiting();
+triggerRandomEvent();
