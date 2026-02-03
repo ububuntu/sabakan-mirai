@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.validation.BindingResult
 import jakarta.validation.Valid
+import jp.sabakan.mirai.MessageConfig
 import jp.sabakan.mirai.entity.EsEntity
+import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
 @Controller
 class EsController {
@@ -74,14 +76,14 @@ class EsController {
         @RequestParam(required = false) activitiesResult: String?,
         @RequestParam(required = false) stweResult: String?,
         @AuthenticationPrincipal userDetails: LoginUserDetails,
-        model: Model
+        model: Model,
+        redirectAttributes: RedirectAttributes
     ): String {
         esRequest.userId = userDetails.getUserEntity().userId
 
         // 保存時のみバリデーションチェックを適用
         if (action == "save" && bindingResult.hasErrors()) {
-            val response = esService.saveEs(esRequest)
-            model.addAttribute("message", response.message)
+            model.addAttribute("message", MessageConfig.NOT_BLANK_ERROR)
             return "entrysheet/es-creation"
         }
 
@@ -92,9 +94,9 @@ class EsController {
             "checkStwe" -> model.addAttribute("stweResult", ecComponent.analyzeMessage(esRequest.esContentStwe ?: ""))
             "save" -> {
                 val response = esService.saveEs(esRequest)
-                model.addAttribute("message", response.message)
-//                return "redirect:/es/list"
-                return "entrysheet/es-list"
+                redirectAttributes.addFlashAttribute("message", response.message)
+                return "redirect:/es/list"
+//                return "entrysheet/es-list"
             }
         }
 
@@ -144,7 +146,8 @@ class EsController {
         @RequestParam(required = false) activitiesResult: String?,
         @RequestParam(required = false) stweResult: String?,
         @AuthenticationPrincipal userDetails: LoginUserDetails,
-        model: Model
+        model: Model,
+        redirectAttributes: RedirectAttributes
     ): String {
         esRequest.userId = userDetails.getUserEntity().userId
 
@@ -160,15 +163,15 @@ class EsController {
             "checkStwe" -> model.addAttribute("stweResult", ecComponent.analyzeMessage(esRequest.esContentStwe ?: ""))
             "save" -> {
                 val response = esService.saveEs(esRequest)
-                model.addAttribute("message", response.message)
-//                return "redirect:/es/list"
-                return "entrysheet/es-list"
+                redirectAttributes.addFlashAttribute("message", response.message)
+                return "redirect:/es/list"
+//                return "entrysheet/es-list"
             }
             "delete" -> {
                 val response = esService.deleteEs(esRequest)
-                model.addAttribute("message", response.message)
-                return "entrysheet/es-list"
-//                return "redirect:/es/list"
+                redirectAttributes.addFlashAttribute("message", response.message)
+                return "redirect:/es/list"
+//                return "entrysheet/es-list"
             }
         }
         model.addAttribute("esRequest", esRequest)
