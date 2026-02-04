@@ -14,7 +14,7 @@ const rarities = [
     { name: "Common", chance: 0.50, color: "#aaa", list: ["長靴", "空き缶", "流木", "スパゲッティコード"] },
     { name: "Uncommon", chance: 0.35, color: "#fff", list: ["アジ >ﾟ)))彡", "イワシ >ﾟ))彡", "メダカ >ﾟ)彡", "イカ くコ:彡", "シーラカンス >ﾟ))))彡"] },
     { name: "Rare", chance: 0.14, color: "#0af", list: ["ERROR: 404 Not Found", "ノーチラス号", "地球", "AlloyDB"] },
-    { name: "Legendary", chance: 0.01, color: "#f0f", list: ["ビットコイン", "root 権限 (☆∀☆)"] }
+    { name: "Legendary", chance: 0.01, color: "#f0f", list: ["ビットコイン"] }
 ];
 
 let escapeTimer = null;
@@ -108,9 +108,9 @@ function triggerRandomEvent() {
         return;
     }
     const eventRand = Math.random();
-    if (eventRand < 0.10) startTsunami();
-    else if (eventRand < 0.25) spawnSL();
-    else if (eventRand < 0.55) spawnJumpingSchool();
+    if (eventRand < 0.05) startTsunami();
+    else if (eventRand < 0.15) spawnSL();
+    else if (eventRand < 0.45) spawnJumpingSchool();
 
     setTimeout(triggerRandomEvent, Math.random() * 15000 + 15000);
 }
@@ -143,7 +143,7 @@ function startTsunami() {
             statusText.innerText = "波が引いていった...";
             statusText.style.color = "#fff";
         }
-    }, 100000);
+    }, 20000);
 }
 
 function spawnSL() {
