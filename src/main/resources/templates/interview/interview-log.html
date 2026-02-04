@@ -10,42 +10,31 @@
 <body>
 <header th:replace="common/header :: siteHeader('interviewLogHeader')"></header>
 <div th:replace="~{common/color :: svg-sprite}"></div>
-    <main>
-        <section class="menu" aria-label="面接結果グラフ">
-            <a class="note">スコア推移</a>
-            <div class="menu-item">
-                <div class="bar-chart-wrap">
-                    <dl class="bar-chart-1">
-                        <dd style="height: 5%"></dd>
+<main>
+    <section class="menu" aria-label="面接結果グラフ">
+        <a class="note">スコア推移（直近3回）</a>
+        <div class="menu-item">
+            <div class="bar-chart-wrap">
+                <th:block th:if="${recentInterviews != null and recentInterviews.interviews != null}">
+                    <dl th:each="interview : ${recentInterviews.interviews}" class="bar-chart-1">
+                        <dd th:style="'height: ' + ${interview.interviewScore} + '%'"></dd>
                     </dl>
-                    <dl class="bar-chart-1">
-                        <dd style="height: 50%"></dd>
-                    </dl>
-                    <dl class="bar-chart-1">
-                        <dd style="height: 100%"></dd>
-                    </dl>
-                </div>
+                </th:block>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="menu" aria-label="面接練習履歴">
-            <a class="note">練習履歴</a>
-            <button class="button-center menu-item" onclick="location.href='./'" type="button">
-                <span class="box">xx点</span>
-                <span class="note">2025年1月1日</span>
-            </button>
+    <section class="menu" aria-label="面接練習履歴">
+        <div th:each="interview : ${recentInterviews.interviews}" class="menu-item">
+            <span class="box" th:text="${interview.interviewScore} + '点'">点数</span>
+            <span class="note" th:text="${#temporals.format(interview.interviewDate, 'yyyy年M月d日')}">日付</span>
+        </div>
 
-            <button class="button-center menu-item" onclick="location.href='./'" type="button">
-                <span class="box">xx点</span>
-                <span class="note">2025年1月2日</span>
-            </button>
-
-            <button class="button-center menu-item" onclick="location.href='./'" type="button">
-                <span class="box">xx点</span>
-                <span class="note">2025年1月3日</span>
-            </button>
-        </section>
-    </main>
+        <div th:if="${#lists.isEmpty(recentInterviews.interviews)}" class="menu-item">
+            <span class="note">履歴がまだありません。</span>
+        </div>
+    </section>
+</main>
 <footer th:replace="common/footer :: siteFooter"></footer>
 <script th:src="@{/js/style.js}"></script>
 </body>

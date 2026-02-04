@@ -52,6 +52,7 @@
     --csv-interview: #FF8085;
     --csv-question: #30C851;
     --csv-es: #FF9853;
+    --csv-info: #6382FF;
     --csv-manage: #99999C;
 }
 
@@ -73,6 +74,7 @@
     --csv-interview: #e57373;
     --csv-question:  #66bb6a;
     --csv-es:        #ffb74d;
+    --csv-info:      #5571e0;
     --csv-manage:    #78909c;
 }
 
@@ -89,6 +91,11 @@
 
 .icon-es{
     --bg: var(--csv-es);
+    --icon-color: #FFFFFF;
+}
+
+.icon-info{
+    --bg: var(--csv-info);
     --icon-color: #FFFFFF;
 }
 
@@ -112,4 +119,5 @@
 .menu-item.is-colored.icon-interview { --csv-color: var(--csv-interview); }
 .menu-item.is-colored.icon-question  { --csv-color: var(--csv-question); }
 .menu-item.is-colored.icon-es        { --csv-color: var(--csv-es); }
+.menu-item.is-colored.icon-info      { --csv-color: var(--csv-info); }
 .menu-item.is-colored.icon-manage    { --csv-color: var(--csv-manage); }

@@ -26,7 +26,7 @@ class InterviewRepository(
                 interview_voice,
                 interview_date,
                 interview_score,
-                interview_comment
+                interviewComment
             FROM interview_t
             WHERE user_id = :userId
             ORDER BY interview_date DESC
@@ -42,7 +42,7 @@ class InterviewRepository(
                 interview_voice,
                 interview_date,
                 interview_score,
-                interview_comment
+                interviewComment
             ) VALUES (
                 :interviewId,
                 :userId,

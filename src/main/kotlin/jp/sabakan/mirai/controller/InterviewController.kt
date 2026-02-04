@@ -1,9 +1,14 @@
 package jp.sabakan.mirai.controller
 
+import jp.sabakan.mirai.request.InterviewRequest
+import jp.sabakan.mirai.security.LoginUserDetails
 import jp.sabakan.mirai.service.InterviewService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
 import java.util.concurrent.CompletableFuture
@@ -13,6 +18,9 @@ import java.util.concurrent.CompletableFuture
  */
 @Controller
 class InterviewViewController {
+
+    @Autowired
+    private lateinit var interviewService: InterviewService
 
     // 面接メイン画面
     @GetMapping("/interview")
@@ -27,8 +35,24 @@ class InterviewViewController {
     }
 
     //　面接ログ画面
+// 面接ログ画面
     @GetMapping("/interview/log")
-    fun getInterviewLog(): String {
+    fun getInterviewLog(
+        @AuthenticationPrincipal userDetails: LoginUserDetails,
+        model: Model
+    ): String {
+        val userId = userDetails.getUserEntity().userId
+
+        val request = InterviewRequest().apply {
+            this.userId = userId
+        }
+
+        // 直近3件の履歴を取得
+        val recentInterviews = interviewService.getInterviews(request)
+
+        // Thymeleafに渡す
+        model.addAttribute("recentInterviews", recentInterviews)
+
         return "/interview/interview-log"
     }
 

@@ -19,25 +19,27 @@
             <p>履歴はありません。</p>
         </div>
 
-        <table class="question-table" th:if="${historyList != null && historyList.size() > 0}" style="margin: 0 auto; width: 80%;">
+        <table class="history-table" th:if="${historyList != null && historyList.size() > 0}">
             <thead>
             <tr>
-                <th class="no">実施日時</th>
-                <th class="judge">正解数</th>
-                <th class="beginning">詳細</th>
+                <th class="col-date">実施日時</th>
+                <th class="col-score">正解数</th>
+                <th class="col-detail">詳細</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="hist : ${historyList}">
-                <td th:text="${#temporals.format(hist.spi_hs_date, 'yyyy/MM/dd HH:mm')}">2023/01/01</td>
-
                 <td>
-                    <span th:text="${hist.correct_count}">20</span> /
-                    <span th:text="${hist.total_questions}">70</span>
+                    <div class="history-date" th:text="${#dates.format(hist.spi_hs_date, 'yyyy/MM/dd')}">2026/02/04</div>
+                    <div class="history-time" th:text="${#dates.format(hist.spi_hs_date, 'HH:mm')}">11:30</div>
                 </td>
-
                 <td>
-                    <a th:href="@{/spi/result(id=${hist.spi_hs_id})}" class="button-small">詳細を見る</a>
+                    <span th:text="${hist.correct_count} ?: 0" style="font-weight:bold; color:var(--primary);">20</span>
+                    <span style="color:var(--muted); margin:0 2px;">/</span>
+                    <span th:text="${hist.total_questions} ?: 0">70</span>
+                </td>
+                <td>
+                    <a th:href="@{/spi/result(id=${hist.spi_hs_id})}" class="button-center">詳細を見る</a>
                 </td>
             </tr>
             </tbody>
@@ -51,5 +53,6 @@
 
 <footer th:replace="~{common/footer :: siteFooter}"></footer>
 
+<script th:src="@{/js/style.js}"></script>
 </body>
 </html>

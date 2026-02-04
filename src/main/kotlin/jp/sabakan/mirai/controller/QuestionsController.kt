@@ -164,10 +164,6 @@ class QuestionsController {
         return "questions/spi-result"
     }
 
-    @PostMapping("/spi/result")
-    fun postSpiResult(): String = "redirect:/spi"
-
-    // --- 6. SPI 履歴画面 (GET /spi/history) ---
     @GetMapping("/spi/history")
     fun getSpiHistory(
         model: Model,
@@ -317,7 +313,7 @@ class QuestionsController {
     @PostMapping("/cabgab/result")
     fun postCabGabResult(): String = "redirect:/cabgab"
 
-    // --- 6. SPI 履歴画面 (GET /cabgab/history) ---
+    // --- 6. CABGAB 履歴画面 (GET /cabgab/history) ---
     @GetMapping("/cabgab/history")
     fun getCabGabHistory(
         model: Model,
@@ -328,6 +324,7 @@ class QuestionsController {
 
         val historyList = cabgabService.getHistoryList(request)
         model.addAttribute("historyList", historyList)
+        model.addAttribute("fragmentName", "indexHeader")
 
         return "questions/cabgab-history"
     }

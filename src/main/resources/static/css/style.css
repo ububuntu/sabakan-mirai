@@ -765,3 +765,66 @@ footer nav.bottom {
         background-color: var(--primary);
     }
 }
+
+/* ====== 履歴テーブル (question-tableをベースに構築) ====== */
+.history-table {
+    border-collapse: collapse;
+    width: 100%;
+    background-color: var(--bg);
+    table-layout: fixed; /* 列幅を固定比率にする */
+    margin-top: 1.5rem;
+}
+
+/* ヘッダー・セルの共通設定 */
+.history-table th,
+.history-table td {
+    padding: 1.2rem 0.5rem;
+    text-align: center;
+    vertical-align: middle;
+    border: none; /* question-tableの設計を継承 */
+}
+
+/* ヘッダー設定 */
+.history-table thead th {
+    background-color: var(--question); /* question-tableと同じ背景 */
+    font-weight: bold;
+    font-size: var(--font-md); /* 1.75rem */
+    color: var(--text);
+}
+
+/* 奇数行の背景色（question-tableのストライプを継承） */
+.history-table tbody tr:nth-child(odd) {
+    background-color: color-mix(
+        in srgb,
+        var(--card) 60%,
+        var(--bg) 40%
+    ); /* question-tableと同じ色指定 */
+}
+
+/* 列ごとのフォント設定 */
+.history-date {
+    font-size: var(--font-md); /* 1.75rem */
+    font-weight: 600;
+}
+.history-time {
+    font-size: var(--font-sm); /* 0.875rem */
+    color: var(--muted);
+}
+
+/* 詳細ボタン（小サイズ） */
+.button-small {
+    display: inline-block;
+    background: var(--primary); /* 青色系 */
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 0.8rem;
+    border-radius: var(--radius-sm); /* 0.5rem */
+    font-size: var(--font-sm);
+    font-weight: 600;
+    white-space: nowrap; /* ボタン内の改行を防ぐ */
+}
+
+/* ====== 列幅の最適化：ここが重要です ====== */
+.col-date { width: 45%; }  /* 日時を広く確保 */
+.col-score { width: 25%; } /* スコアは数値のみなので狭く */
+.col-detail { width: 30%; } /* ボタンが収まる程度に設定 */

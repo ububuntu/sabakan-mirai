@@ -61,14 +61,11 @@ class InterviewService(
 
         val table = interviewRepository.getInterviews(data)
         val list = tableToListEntity(table)
-
-        if (list.isEmpty()) {
-            throw Exception(MessageConfig.INTERVIEW_NOT_FOUND)
-        }
+        val recentList = list.take(3).reversed().toList()
 
         return InterviewResponse().apply {
-            interviews = list
-            message = null
+            interviews = recentList
+            message = if (recentList.isEmpty()) MessageConfig.INTERVIEW_NOT_FOUND else null
         }
     }
 
