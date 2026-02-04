@@ -20,6 +20,9 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
+/**
+ * ユーザ情報サービス
+ */
 @Service
 class UserService {
     @Autowired
@@ -317,6 +320,11 @@ class UserService {
         userRepository.deleteUser(userId)
     }
 
+    /**
+     * ユーザ数を取得する
+     *
+     * @return ユーザ数
+     */
     fun getUserCount (): Int {
         return userRepository.countUsers()
     }

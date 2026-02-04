@@ -17,7 +17,9 @@ class MiraiController {
     @Autowired
     lateinit var userService: UserService
 
-    // ホーム画面
+    /**
+     * ホーム画面
+     */
     @GetMapping("/index")
     fun getIndex(
         @AuthenticationPrincipal userDetails: LoginUserDetails,
@@ -58,7 +60,9 @@ class MiraiController {
         return "/index"
     }
 
-    // ホーム画面
+    /**
+     * ホーム画面（POST）
+     */
     @PostMapping("/index")
     fun postIndex(): String {
         return "/index"

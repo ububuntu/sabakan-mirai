@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.UUID
 
+/**
+ * ES関連のサービスクラス
+ */
 @Service
 class EsService {
     @Autowired

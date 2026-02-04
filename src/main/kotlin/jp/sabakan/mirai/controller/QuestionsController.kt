@@ -25,15 +25,15 @@ class QuestionsController {
     lateinit var session: HttpSession
 
     // --- 1. 共通・メイン画面 ---
-
+    // --- 1. 質問メイン画面 (GET /questions) ---
     @GetMapping("/questions")
     fun getQuestions(): String = "questions/questions-main"
-
+    // --- 2. 質問メイン画面 (POST /questions) ---
     @PostMapping("/questions")
     fun postQuestions(): String = "questions/questions-main"
 
     // --- 2. SPI 制御ロジック ---
-// --- 1. SPI メイン画面 (GET /spi) ---
+    // --- 1. SPI メイン画面 (GET /spi) ---
     @GetMapping("/spi")
     fun getSpiMain(
         model: Model,
@@ -164,6 +164,7 @@ class QuestionsController {
         return "questions/spi-result"
     }
 
+    // --- 6. SPI 履歴画面 (GET /spi/history) ---
     @GetMapping("/spi/history")
     fun getSpiHistory(
         model: Model,
@@ -310,6 +311,7 @@ class QuestionsController {
         return "questions/cabgab-result"
     }
 
+    // --- 5. CABGAB 結果画面 (POST /cabgab/result) ---
     @PostMapping("/cabgab/result")
     fun postCabGabResult(): String = "redirect:/cabgab"
 

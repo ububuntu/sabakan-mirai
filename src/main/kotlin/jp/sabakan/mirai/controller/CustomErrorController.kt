@@ -14,6 +14,9 @@ class CustomErrorController: ErrorController {
 
     private val STATUS_CODE = "jakarta.servlet.error.status_code"
 
+    /**
+     * エラーページの表示
+     */
     @RequestMapping()
     fun error(request: HttpServletRequest): String{
         // HTTPステータスコードを取得
@@ -36,6 +39,9 @@ class CustomErrorController: ErrorController {
         return "/error"
     }
 
+    /**
+     * 前のページに戻る
+     */
     @GetMapping("/back")
     fun goBackToPreviousPage(request: HttpServletRequest): String {
         // Refererヘッダーから前のページのURLを取得

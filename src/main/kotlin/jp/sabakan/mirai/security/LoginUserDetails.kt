@@ -5,6 +5,10 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
+/**
+ * Spring SecurityのUserDetailsインターフェースを実装したクラス。
+ * UserEntityをラップし、認証情報として使用する。
+ */
 class LoginUserDetails(private val userEntity: UserEntity) : UserDetails {
 
     // 権限の取得

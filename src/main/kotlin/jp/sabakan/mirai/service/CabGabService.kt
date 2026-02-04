@@ -12,15 +12,24 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
+/**
+ * CABGAB試験関連のサービスクラス
+ */
 @Service
 class CabGabService {
 
     @Autowired
     lateinit var cabgabRepository: CabGabRepository
 
+    /**
+     * CABGAB試験開始処理
+     *
+     * @param request CABGAB試験開始リクエスト
+     * @return 生成されたCABGAB試験ID
+     */
     @Transactional
     fun startExam(request: CabGabRequest): String {
-        val hsId = "C"+UUID.randomUUID().toString()
+        val hsId = "S"+UUID.randomUUID().toString()
 
         // 1. 履歴ヘッダ作成
         val history = CabGabHistoryData().apply {
@@ -29,13 +38,12 @@ class CabGabService {
         }
         cabgabRepository.insertHistory(history)
 
-        // 2. 問題ランダム抽出 (言語30問、計数30問、暗号30問)
-        val verbal = cabgabRepository.getRandomQuestions(CabGabData().apply { cabgabCategory = "言語" }, 30)
-        val math = cabgabRepository.getRandomQuestions(CabGabData().apply { cabgabCategory = "計数" }, 30)
-        val crypto = cabgabRepository.getRandomQuestions(CabGabData().apply { cabgabCategory = "暗号" }, 30)
+        // 2. 問題ランダム抽出 (言語40問、非言語30問)
+        // 引数はDataクラスに詰めて渡す
+        val verbal = cabgabRepository.getRandomQuestions(CabGabData().apply { cabgabCategory = "言語" }, 40)
+        val nonVerbal = cabgabRepository.getRandomQuestions(CabGabData().apply { cabgabCategory = "非言語" }, 30)
 
-        // リストを結合 (計90問)
-        val allQuestions = verbal + math + crypto
+        val allQuestions = verbal + nonVerbal
 
         // 3. 70問分の明細枠(detail)を先に作成
         allQuestions.forEachIndexed { index, q ->
@@ -52,6 +60,11 @@ class CabGabService {
         return hsId
     }
 
+    /**
+     * CABGAB試験の回答保存処理
+     *
+     * @param request CABGAB試験回答リクエスト
+     */
     @Transactional
     fun saveAnswer(request: CabGabRequest) {
         // 現在の問題の正解を取得するために検索
@@ -77,27 +90,55 @@ class CabGabService {
         cabgabRepository.updateDetailAnswer(detail)
     }
 
+    /**
+     * CABGAB試験終了処理
+     *
+     * @param request CABGAB試験終了リクエスト
+     */
     @Transactional
     fun finishExam(request: CabGabRequest) {
         val data = CabGabHistoryData().apply { cabgabHsId = request.cabgabHsId }
         cabgabRepository.updateHistoryFinished(data)
     }
 
+    /**
+     * CABGAB試験結果取得処理
+     *
+     * @param request CABGAB試験結果リクエスト
+     * @return CABGAB試験結果リスト
+     */
     fun getExamResults(request: CabGabRequest): List<Map<String, Any?>> {
         val data = CabGabHistoryData().apply { cabgabHsId = request.cabgabHsId }
         return cabgabRepository.findDetailsWithQuestion(data)
     }
 
+    /**
+     * 進行中のCABGAB試験ID取得処理
+     *
+     * @param request CABGAB試験リクエスト
+     * @return 進行中のCABGAB試験ID
+     */
     fun getInProgressCabGabId(request: CabGabRequest): String? {
         val data = CabGabHistoryData().apply { userId = request.userId }
         return cabgabRepository.findInProgressId(data)
     }
 
+    /**
+     * CABGAB試験履歴一覧取得処理
+     *
+     * @param request CABGAB試験リクエスト
+     * @return CABGAB試験履歴リスト
+     */
     fun getHistoryList(request: CabGabRequest): List<Map<String, Any?>> {
         val data = CabGabHistoryData().apply { userId = request.userId }
         return cabgabRepository.findHistoryByUserId(data)
     }
 
+    /**
+     * 全CABGAB問題取得処理（管理者用）
+     *
+     * @return CABGAB問題リスト
+     */
     fun getAllCabGab(): List<CabGabRequest> {
         val list = cabgabRepository.findAllCabGab()
         // Map -> CabGabRequest 変換
@@ -115,6 +156,12 @@ class CabGabService {
         }
     }
 
+    /**
+     * CABGAB問題IDからCABGAB問題取得処理（管理者用）
+     *
+     * @param cabgabId CABGAB問題ID
+     * @return CABGAB問題
+     */
     fun getCabGabById(cabgabId: String): CabGabRequest? {
         val data = CabGabData().apply { this.cabgabId = cabgabId }
         val row = cabgabRepository.findCabGabById(data) ?: return null
@@ -131,6 +178,12 @@ class CabGabService {
         }
     }
 
+    /**
+     * CABGAB問題登録処理（管理者用）
+     *
+     * @param request CABGAB問題登録リクエスト
+     * @return CABGAB問題登録レスポンス
+     */
     @Transactional
     fun insertCabGab(request: CabGabRequest): CabGabResponse {
         val response = CabGabResponse()
@@ -146,13 +199,19 @@ class CabGabService {
         }
         try{
             cabgabRepository.insertCabGabMaster(data)
-            response.message = MessageConfig.SPI_INSERT_SUCCESS
+            response.message = MessageConfig.CABGAB_INSERT_SUCCESS
         } catch (e: Exception) {
-            response.message = MessageConfig.SPI_INSERT_FAILED
+            response.message = MessageConfig.CABGAB_INSERT_FAILED
         }
         return response
     }
 
+    /**
+     * CABGAB問題更新処理（管理者用）
+     *
+     * @param request CABGAB問題更新リクエスト
+     * @return CABGAB問題更新レスポンス
+     */
     @Transactional
     fun updateCabGab(request: CabGabRequest): CabGabResponse {
         val response = CabGabResponse()
@@ -168,26 +227,37 @@ class CabGabService {
         }
         try {
             cabgabRepository.updateCabGabMaster(data)
-            response.message = MessageConfig.SPI_UPDATE_SUCCESS
+            response.message = MessageConfig.CABGAB_UPDATE_SUCCESS
         } catch (e: Exception) {
-            response.message = MessageConfig.SPI_UPDATE_FAILED
+            response.message = MessageConfig.CABGAB_UPDATE_FAILED
         }
         return response
     }
 
+    /**
+     * CABGAB問題削除処理（管理者用）
+     *
+     * @param cabgabId CABGAB問題ID
+     * @return CABGAB問題削除レスポンス
+     */
     @Transactional
     fun deleteCabGab(cabgabId: String): CabGabResponse {
         val response = CabGabResponse()
         val data = CabGabData().apply { this.cabgabId = cabgabId }
         try {
             cabgabRepository.deleteCabGabMaster(data)
-            response.message = MessageConfig.SPI_DELETE_SUCCESS
+            response.message = MessageConfig.CABGAB_DELETE_SUCCESS
         } catch (e: Exception) {
-            response.message = MessageConfig.SPI_DELETE_FAILED
+            response.message = MessageConfig.CABGAB_DELETE_FAILED
         }
         return response
     }
 
+    /**
+     * CABGAB問題数取得処理（管理者用）
+     *
+     * @return CABGAB問題数
+     */
     fun getCabGabCount(): Int {
         return cabgabRepository.countCabGab()
     }

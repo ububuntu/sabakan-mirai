@@ -3,9 +3,9 @@ package jp.sabakan.mirai
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-public class MessageConfig {
+class MessageConfig {
     companion object {
-        // --- 共通 / テスト (000-009) ---
+        // --- 共通 / テスト (000) ---
         // M000: テストメッセージ
         const val TEST = "テストメッセージ"
 

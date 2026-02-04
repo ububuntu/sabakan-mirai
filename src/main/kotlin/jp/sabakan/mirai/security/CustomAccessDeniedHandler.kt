@@ -7,8 +7,14 @@ import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.web.access.AccessDeniedHandler
 import java.io.IOException
 
+/**
+ * カスタムアクセス拒否ハンドラー
+ *
+ * アクセス拒否時にリファラーを確認し、適切なリダイレクトを行う。
+ */
 class CustomAccessDeniedHandler : AccessDeniedHandler {
     @Throws(IOException::class, ServletException::class)
+    // アクセス拒否時の処理
     override fun handle(
         request: HttpServletRequest,
         response: HttpServletResponse,

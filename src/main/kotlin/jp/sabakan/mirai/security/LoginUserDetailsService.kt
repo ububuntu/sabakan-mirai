@@ -8,6 +8,10 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
+/**
+ * Spring SecurityのUserDetailsServiceインターフェースを実装したクラス。
+ * ユーザ名（メールアドレス）からユーザ情報を取得し、UserDetailsを返す。
+ */
 @Service
 class LoginUserDetailsService : UserDetailsService {
 

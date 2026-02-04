@@ -5,6 +5,10 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
+/**
+ * パスワードエンコーダーの設定クラス。
+ * BCryptPasswordEncoderをBeanとして登録する。
+ */
 @Configuration
 class PasswordEncoderConfig {
     @Bean

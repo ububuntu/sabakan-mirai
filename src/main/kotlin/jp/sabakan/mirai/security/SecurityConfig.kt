@@ -16,6 +16,10 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 
+/**
+ * Spring Securityの設定クラス。
+ * 認可、認証、ログイン、ログアウト、例外処理、セッション管理などを設定する。
+ */
 @Configuration
 @EnableWebSecurity
 class SecurityConfig {

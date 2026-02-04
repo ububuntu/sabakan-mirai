@@ -5,10 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 
+/**
+ * ESデータへのデータアクセスを担当するRepository
+ * データベースへの読み書きのみを行い、ビジネスロジックは含まない
+ */
 @Repository
 class EsRepository {
     @Autowired
     lateinit var jdbc: NamedParameterJdbcTemplate
+
+    // --- SQL定義エリア ---
 
     // ES一覧を取得するSQLクエリ
     val getEsList = """

@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository
 import java.util.Date
 
 /**
- * ユーザ情報リポジトリクラス
+ * ユーザデータへのデータアクセスを担当するRepository
+ * データベースへの読み書きのみを行い、ビジネスロジックは含まない
  */
 @Repository
 class UserRepository {
@@ -129,6 +130,7 @@ class UserRepository {
         WHERE user_address = :userAddress
     """.trimIndent()
 
+    // ユーザ数カウントSQL
     val countUsers = """
         SELECT COUNT(*) FROM user_m
     """.trimIndent()
@@ -320,6 +322,11 @@ class UserRepository {
         njdbc.update(deleteUser, params)
     }
 
+    /**
+     * ユーザ数をカウントする
+     *
+     * @return ユーザ数
+     */
     fun countUsers(): Int {
         val params = mapOf<String, Any?>()
         return njdbc.queryForObject(countUsers, params, Int::class.java) ?: 0
