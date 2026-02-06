@@ -12,7 +12,7 @@ data class EcApiResponse(
 @Component
 class EcComponent(
     private val restTemplate: RestTemplate,
-    @Value("\${ec.api.url:http://localhost:8000}")
+    @Value("\${ec.api.url:http://ai-2:8000}")
     private val baseUrl: String
 ) {
     fun analyzeMessage(message: String): String? {

@@ -1,0 +1,25 @@
+services:
+  # ① Kotlin Webアプリ
+  mirai-web:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ai-1
+      - ai-2
+
+  # ② AIサービス1
+  ai-1:
+    build: ./ai_service_1
+    ports:
+      - "8001:8000"
+    expose:
+      - "8000"
+
+  # ③ AIサービス2
+  ai-2:
+    build: ./ai_service_2
+    ports:
+      - "8002:8000"
+    expose:
+      - "8000"

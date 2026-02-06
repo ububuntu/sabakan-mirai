@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture
 @Component
 class InterviewComponent(
     private val restTemplate: RestTemplate,
-    @Value("\${interview.api.url:http://localhost:5000}")
+    @Value("\${interview.api.url:http://ai-1:8000}")
     private val baseUrl: String
 ) {
     /**

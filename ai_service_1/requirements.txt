@@ -1,0 +1,10 @@
+flask
+flask-cors
+deepface
+opencv-python
+tensorflow
+tensorflow-hub
+numpy
+webrtcvad
+speechrecognition
+gunicorn
