@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 import editing
+import os
+# Ollamaライブラリが参照するホスト先を、コンテナ名に変更
+
+os.environ["OLLAMA_HOST"] = "http://ollama-server:11434"
 
 app = FastAPI()
 app.add_middleware(

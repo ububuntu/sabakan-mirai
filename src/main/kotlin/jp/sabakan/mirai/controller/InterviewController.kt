@@ -25,13 +25,13 @@ class InterviewViewController {
     // 面接メイン画面
     @GetMapping("/interview")
     fun getInterview(): String {
-        return "/interview/interview-main"
+        return "interview/interview-main"
     }
 
     // Web面接画面
     @GetMapping("/interview/do")
     fun getInterviewDo(): String {
-        return "/interview/interview-do"
+        return "interview/interview-do"
     }
 
     //　面接ログ画面
@@ -53,13 +53,13 @@ class InterviewViewController {
         // Thymeleafに渡す
         model.addAttribute("recentInterviews", recentInterviews)
 
-        return "/interview/interview-log"
+        return "interview/interview-log"
     }
 
     // 面接結果画面
     @GetMapping("/interview/result")
     fun getInterviewResult(): String {
-        return "/interview/interview-result"
+        return "interview/interview-result"
     }
 }
 

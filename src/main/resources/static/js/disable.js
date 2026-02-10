@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector(".menu");
+    const form = document.querySelector("form.menu");
     const checkButtons = document.querySelectorAll(".check-button");
     // 保存ボタンを取得
     const saveButton = document.querySelector("button[value='save']");

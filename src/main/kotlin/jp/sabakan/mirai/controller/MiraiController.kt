@@ -57,7 +57,7 @@ class MiraiController {
             model.addAttribute("goalContent", "目標は設定されていません")
             model.addAttribute("remainingDays", "-")
         }
-        return "/index"
+        return "index"
     }
 
     /**
@@ -65,6 +65,6 @@ class MiraiController {
      */
     @PostMapping("/index")
     fun postIndex(): String {
-        return "/index"
+        return "index"
     }
 }

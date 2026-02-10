@@ -38,22 +38,22 @@ class ManageController {
         model.addAttribute("userCount", userService.getUserCount())
         model.addAttribute("spiCount", spiService.getSpiCount())
         model.addAttribute("cabgabCount", cabGabService.getCabGabCount())
-        return "/manage/manage-main"
+        return "manage/manage-main"
     }
     // 管理メイン画面
     @PostMapping("/manage")
     fun postManage(): String {
-        return "/manage/manage-main"
+        return "manage/manage-main"
     }
     // ログ管理画面
     @GetMapping("/manage/logs")
     fun getManageLogs(): String {
-        return "/manage/manage-logs"
+        return "manage/manage-logs"
     }
     // ログ管理画面
     @PostMapping("/manage/logs")
     fun postManageLogs(): String {
-        return "/manage/manage-logs"
+        return "manage/manage-logs"
     }
 
     // ユーザー管理画面
@@ -69,12 +69,12 @@ class ManageController {
         val users = userService.getUserListByName(request)
         model.addAttribute("users", users)
         model.addAttribute("keyword", keyword)
-        return "/manage/users/manage-users-main"
+        return "manage/users/manage-users-main"
     }
     // ユーザー管理画面
     @PostMapping("/manage/users")
     fun postManageUsers(): String {
-        return "/manage/users/manage-users-main"
+        return "manage/users/manage-users-main"
     }
     // ユーザー情報変更画面
     @GetMapping("/manage/users/edit/{user}")
@@ -95,7 +95,7 @@ class ManageController {
 
         // 画面の th:object="${user}" にセット
         model.addAttribute("user", user)
-        return "/manage/users/manage-users-edit"
+        return "manage/users/manage-users-edit"
     }
     // ユーザー情報変更画面
     @PostMapping("/manage/users/edit")
@@ -107,13 +107,13 @@ class ManageController {
     ): String {
         // フォームのバリデーションチェック
         if (bindingResult.hasErrors()) {
-            return "/manage/users/manage-users-edit"
+            return "manage/users/manage-users-edit"
         }
 
         // バリデーションチェック
         if (!request.password.isNullOrEmpty() && request.password!!.length < 8) {
             model.addAttribute("message", MessageConfig.EMAIL_NOT_BLANK_ERROR)
-            return "/manage/users/manage-users-edit"
+            return "manage/users/manage-users-edit"
         }
         // 更新処理を実行
         val response = userService.updatePassword(request)
@@ -126,7 +126,7 @@ class ManageController {
         } else {
             // 失敗時：編集画面に戻りエラーメッセージを表示
             model.addAttribute("message", response.message)
-            return "/manage/user/manage-user-edit"
+            return "manage/user/manage-user-edit"
         }
     }
     // ユーザー追加画面
@@ -134,7 +134,7 @@ class ManageController {
     fun getManageUsersAdd(model: Model): String {
         // 空のUserRequestをフォームにセット
         model.addAttribute("userRequest", UserRequest())
-        return "/manage/users/manage-users-add"
+        return "manage/users/manage-users-add"
     }
     // ユーザー追加画面
     @PostMapping("/manage/users/add")
@@ -146,13 +146,13 @@ class ManageController {
     ): String {
         // フォームのバリデーションチェック
         if (bindingResult.hasErrors()) {
-            return "/manage/users/manage-users-add"
+            return "manage/users/manage-users-add"
         }
 
         // バリデーションチェック
         if (!request.password.isNullOrEmpty() && request.password!!.length < 8) {
             model.addAttribute("message", MessageConfig.EMAIL_NOT_BLANK_ERROR)
-            return "/manage/users/manage-users-edit"
+            return "manage/users/manage-users-edit"
         }
 
         try{
@@ -165,7 +165,7 @@ class ManageController {
         } catch (e: Exception){
             // 登録失敗メッセージをセットして元の画面に戻る
             model.addAttribute("message", MessageConfig.USER_REGISTER_FAILED)
-            return "/manage/users/manage-users-add"
+            return "manage/users/manage-users-add"
         }
 
     }
@@ -365,6 +365,6 @@ class ManageController {
 
     @GetMapping("/fish")
     fun getfishing(): String {
-        return "/sea"
+        return "sea"
     }
 }
