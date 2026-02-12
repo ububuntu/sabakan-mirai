@@ -1,6 +1,12 @@
+version:  '3'
+
 services:
   mirai-web:
-    build: .
+    build:
+      context: ./springboot
+      dockerfile: Dockerfile.springboot
+    image: s3a125/saba.springboot
+    container_name: springboot-saba-container
     ports:
       - "8080:8080"
     depends_on:
@@ -10,14 +16,22 @@ services:
       - app_net
 
   ai-1:
-    build: ./ai_service_1
+    build:
+        context: ./ai_service_1
+        dockerfile: Dockerfile.ai1
+    image: s3a125/saba.ai1
+    container_name: ai-service-1-container
     ports:
       - "8001:8001"
     networks:
       - app_net
 
   ai-2:
-    build: ./ai_service_2
+    build:
+        context: ./ai_service_2
+        dockerfile: Dockerfile.ai2
+    image: s3a125/saba.ai2
+    container_name: ai-service-2-container
     ports:
       - "8002:8002"
     environment:
